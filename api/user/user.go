@@ -3,7 +3,7 @@ package user
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"hdyx/api"
+	"log"
 	"net/http"
 )
 
@@ -15,6 +15,10 @@ var upGrader = websocket.Upgrader{
 	},
 }
 
-func Ping(c *gin.Context) {
-	api.MsgWsHandler(c)
+//func Ping(c *gin.Context) {
+//	api.MsgWsHandler(c)
+//}
+
+func Pong(c *gin.Context) {
+	log.Println("pong")
 }

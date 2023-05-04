@@ -2,7 +2,7 @@ redis:
   common:
     user: root
     pass: 123456
-  db:
-    1:
-      host: 127.0.0.1
-      port: 5432
+    port: 5432
+  game:
+    db1: 127.0.0.1
+    db2: 127.0.0.2
