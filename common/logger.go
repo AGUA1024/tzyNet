@@ -17,17 +17,17 @@ type tLogger struct {
 
 var Logger tLogger
 
-func (this tLogger) infoLog(message string) {
+func (this tLogger) InfoLog(message string) {
 	this.logger.Info(message)
 }
 
-func (this tLogger) errorLog(message string) {
+func (this tLogger) ErrorLog(message string) {
 	this.logger.Error(message + `\r\n` + string(debug.Stack()))
 	os.Exit(1)
 }
 
 func init() {
-	logCfg := GetYamlCfg("serverCfg", "logger")
+	logCfg := GetYamlMapCfg("serverCfg", "logger").(map[string]any)
 	maxSizeCfg := logCfg["maxSize"].(int)
 	maxBackupsCfg := logCfg["maxBackups"].(int)
 	maxKeepDayCfg := logCfg["maxKeepDay"].(int)
