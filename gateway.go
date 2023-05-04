@@ -7,9 +7,9 @@ package main
 
 import (
 	_ "hdyx/common"
-	"hdyx/server"
+	"hdyx/route"
 )
 
 func main() {
-	defer server.R.Run("localhost:8000")
+	defer route.R.Run("localhost:8000")
 }
