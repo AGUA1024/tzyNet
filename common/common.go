@@ -49,7 +49,14 @@ func GetYamlMapCfg(fileName string, index ...string) any {
 	return ret
 }
 
-func GetDb(sevId int) {
-	dbId := fmt.Sprintln("db", sevId)
-	GetYamlMapCfg("mysqlCfg", "mysql", "game", dbId)
+func GetDb(sevId int) int {
+	//dbId := fmt.Sprintln("db", sevId)
+	//GetYamlMapCfg("mysqlCfg", "mysql", "game", dbId)
+	hahah(3)
+	return sevId
+}
+
+func hahah(a int) int {
+	Logger.ErrorLog("get_db")
+	return a
 }

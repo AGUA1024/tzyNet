@@ -1,12 +1,15 @@
 package common
 
 import (
+	"fmt"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"os"
-	"runtime/debug"
+	"reflect"
+	"runtime"
 	"time"
+	"unsafe"
 )
 
 var DEFAULT_TIME_TYPE = zapcore.TimeEncoderOfLayout(time.DateTime)
@@ -22,7 +25,8 @@ func (this tLogger) InfoLog(message string) {
 }
 
 func (this tLogger) ErrorLog(message string) {
-	this.logger.Error(message + `\r\n` + string(debug.Stack()))
+	this.logger.Error(message)
+	fmt.Println(callStack())
 	os.Exit(1)
 }
 
@@ -74,4 +78,83 @@ func init() {
 	coreArr = append(coreArr, infoFileCore)
 	coreArr = append(coreArr, errorFileCore)
 	Logger.logger = zap.New(zapcore.NewTee(coreArr...), zap.AddCaller()) //zap.AddCaller()为显示文件名和行号，可省略
+}
+
+func callStack() string {
+	var trace string
+	pcs := make([]uintptr, 32)
+	n := runtime.Callers(0, pcs)
+	frames := runtime.CallersFrames(pcs[:n])
+
+	for {
+		frame, more := frames.Next()
+		fn := runtime.FuncForPC(frame.PC)
+		file, line := fn.FileLine(frame.PC)
+		args := getArgs(frame)
+		fmt.Printf("%s - %s(%v)\n\t%s:%d\n", trace, fn.Name(), args, file, line)
+		if !more {
+			break
+		}
+	}
+	return trace
+}
+
+func getArgs(frame runtime.Frame) []interface{} {
+	fn := frame.Func
+	f := reflect.ValueOf(fn)
+	if f.Kind() != reflect.Func { // 检查是否为函数类型
+		return nil
+	}
+	in := make([]reflect.Value, f.Type().NumIn())
+	for i := range in {
+		// 获取参数类型
+		t := f.Type().In(i)
+
+		// 如果参数类型是 interface{}，则返回 nil
+		if t.Kind() == reflect.Interface {
+			return nil
+		}
+
+		// 创建一个具有指定类型并初始化为零值的新变量
+		v := reflect.New(t).Elem()
+
+		// 将参数值存储到新变量中
+		switch t.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			intSize := int(unsafe.Sizeof(int(0)))
+			ptr := unsafe.Pointer(&frame.Entry)
+			val := *(*int64)(unsafe.Pointer(uintptr(ptr) + uintptr(i*intSize)))
+			v.SetInt(val)
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+			intSize := int(unsafe.Sizeof(int(0)))
+			ptr := unsafe.Pointer(&frame.Entry)
+			val := *(*uint64)(unsafe.Pointer(uintptr(ptr) + uintptr(i*intSize)))
+			v.SetUint(val)
+		case reflect.Float32, reflect.Float64:
+			floatSize := int(unsafe.Sizeof(float32(0)))
+			ptr := unsafe.Pointer(&frame.Entry)
+			val := *(*float64)(unsafe.Pointer(uintptr(ptr) + uintptr(i*floatSize)))
+			v.SetFloat(val)
+		case reflect.String:
+			intSize := int(unsafe.Sizeof(int(0)))
+			ptr := unsafe.Pointer(&frame.Entry)
+			strPtr := *(*uintptr)(unsafe.Pointer(uintptr(ptr) + uintptr(i*intSize))) // 获取字符串指针
+			str := *(*string)(unsafe.Pointer(&reflect.StringHeader{Data: strPtr}))   // 使用 StringHeader 解析字符串
+			v.SetString(str)
+		default:
+			// 如果参数类型是自定义类型，则无法获取其值
+			return nil
+		}
+
+		in[i] = v
+	}
+	return getInterfaceSlice(in)
+}
+
+func getInterfaceSlice(values []reflect.Value) []interface{} {
+	out := make([]interface{}, len(values))
+	for i, v := range values {
+		out[i] = v.Interface()
+	}
+	return out
 }
