@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"google.golang.org/protobuf/proto"
-	"hdyx/proto/ioBuf"
+	"hdyx/api/user"
+	ioBuf2 "hdyx/net/ioBuf"
 	"net/http"
 )
 
@@ -20,19 +21,20 @@ func main() {
 	}
 	defer conn.Close()
 
-	buf := "hello world"
-	dataBuf := []byte(buf)
+	buf := user.GetUserInfo_InObj{Uid: 1315}
+	cendBuf, _ := proto.Marshal(&buf)
+
 	// 发送消息
-	message := &ioBuf.ClientBuf{
+	message := &ioBuf2.ClientBuf{
 		ProtocolSwitch: 1,
-		CmdMerge:       123,
-		Data:           dataBuf,
+		CmdMerge:       0x10001,
+		Data:           cendBuf,
 	}
 	data, err := proto.Marshal(message)
 	if err != nil {
 		panic(err)
 	}
-	err = conn.WriteMessage(websocket.BinaryMessage, data)
+	err = conn.WriteMessage(websocket.TextMessage, data)
 	if err != nil {
 		panic(err)
 	}
@@ -42,7 +44,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	receivedMessage := &ioBuf.OutPutBuf{}
+	receivedMessage := &ioBuf2.OutPutBuf{}
 	err = proto.Unmarshal(resp, receivedMessage)
 	if err != nil {
 		panic(err)
