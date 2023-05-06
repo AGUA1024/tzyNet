@@ -1,0 +1,11 @@
+syntax="proto3"; //版本号
+package user;  //包名
+option go_package = "./;user";
+
+message GetUserInfo_InObj {
+  int32 uid=1;
+}
+
+message GetUserInfo_OutObj {
+  int32 uid=1;
+}
