@@ -27,7 +27,7 @@ func (this tLogger) InfoLog(message string) {
 func (this tLogger) ErrorLog(message string) {
 	this.logger.Error(message)
 	fmt.Println(callStack())
-	os.Exit(1)
+	runtime.Goexit()
 }
 
 func init() {

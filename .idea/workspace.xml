@@ -5,9 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cde824a8-151e-40fd-b9ee-c85c4a0611ca" name="变更" comment="">
+      <change afterPath="$PROJECT_DIR$/model/act1Model.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/actBaseModel.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/userModel.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tool/mysqlIni.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/common/common.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/logger.go" beforeDir="false" afterPath="$PROJECT_DIR$/common/logger.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/mysqlCfg.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/mysqlCfg.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/redisCfg.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/redisCfg.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doc/数据库.md" beforeDir="false" afterPath="$PROJECT_DIR$/doc/数据库.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway.go" beforeDir="false" afterPath="$PROJECT_DIR$/gateway.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proto/act1/test.pb.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/proto/act1/test.proto" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/route/route.go" beforeDir="false" afterPath="$PROJECT_DIR$/route/route.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/route/routeIni.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/route/user.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/db.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/redis.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/redis.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tool/wsClient.go" beforeDir="false" afterPath="$PROJECT_DIR$/tool/wsClient.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +39,31 @@
   <component name="GOROOT" url="file://$PROJECT_DIR$/../../golang/go1.20.2" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitToolBoxStore">
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="master" />
+                    <option name="lastUsedInstant" value="1683381161" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="github" />
+                    <option name="lastUsedInstant" value="1683381160" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
   </component>
   <component name="GoLibraries">
     <option name="indexEntireGoPath" value="true" />
@@ -52,9 +92,9 @@
     &quot;configurable.GoLibrariesConfigurable.is.expanded&quot;: &quot;true&quot;,
     &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
     &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/GoProgram/ginWsServer&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/GoProgram/hdyx_ljx&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;go.sdk&quot;
   }
 }</component>
   <component name="RecentsManager">
@@ -73,7 +113,24 @@
       <recent name="D:\GoProgram\hdyx\net" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Go 构建.go build gateway.go (1)">
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="hdyx" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build gateway.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="hdyx" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <package value="hdyx" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/gateway.go" />
+      <method v="2" />
+    </configuration>
     <configuration name="go build gateway.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="ginWsServer" />
       <working_directory value="$PROJECT_DIR$" />
@@ -83,8 +140,18 @@
       <filePath value="$PROJECT_DIR$/gateway.go" />
       <method v="2" />
     </configuration>
+    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+      <module name="hdyx" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="DIRECTORY" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go 构建.go build gateway.go (1)" />
         <item itemvalue="Go 构建.go build gateway.go" />
       </list>
     </recent_temporary>

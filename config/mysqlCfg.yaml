@@ -1,10 +1,17 @@
 mysql:
   common:
     user: root
-    pass: 123456
-    port: 6379
-    maxCon: 4000
+    pass: "&2xs5CzX00ymRmEl"
+    maxOpenCon: 1000  #最大链接数
+    maxIdleConns: 700 #最大空闲连接数
+    conLiveTime: 3600 #超时时间
+    pieceNum: 1  # 分片数量
 
   game:
-    db1: 127.0.0.1
-    db2: 127.0.0.2
+    host1:
+      ip: 127.0.0.1
+      port: 63763
+    host2:
+      ip: 127.0.0.1
+      port: 63744
+      

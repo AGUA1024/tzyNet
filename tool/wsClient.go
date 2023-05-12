@@ -1,13 +1,23 @@
 package main
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
 	"github.com/gorilla/websocket"
 	"google.golang.org/protobuf/proto"
 	"hdyx/api/user"
 	ioBuf2 "hdyx/net/ioBuf"
 	"net/http"
+	"os"
 )
+
+type Message struct {
+	DataLen uint32 //消息的长度
+	ID      uint32 //消息的ID
+	Data    []byte //消息的内容
+	rawData []byte //原始数据
+}
 
 func main() {
 	// 创建 HTTP 请求头
@@ -34,10 +44,36 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
 	err = conn.WriteMessage(websocket.TextMessage, data)
 	if err != nil {
 		panic(err)
 	}
+
+	dd := &Message{
+		ID:      1,
+		DataLen: uint32(len(data)),
+		Data:    data,
+		rawData: data,
+	}
+
+	buff := new(bytes.Buffer)
+	err = binary.Write(buff, binary.LittleEndian, dd)
+	if err != nil {
+		// 错误处理
+	}
+	err = os.WriteFile("data.bin", buff.Bytes(), 0777)
+	if err != nil {
+		// 错误处理
+	}
+
+	//err = os.WriteFile("data.bin", []byte(dd), 0777)
+	if err != nil {
+		fmt.Println("write file error:", err)
+		return
+	}
+
+	fmt.Println("write file success")
 
 	// 接收消息
 	_, resp, err := conn.ReadMessage()
