@@ -8,10 +8,9 @@ type Act1Model struct {
 	actBaseModel
 }
 
-var act1Model *Act1Model
-var act1ModelOnce sync.Once
-
 func NewAct1Model(uid int32) ActBaseInterface {
+	var act1ModelOnce sync.Once
+	var act1Model *Act1Model
 	act1ModelOnce.Do(func() {
 		act1Model = &Act1Model{
 			actBaseModel: actBaseModel{
@@ -28,8 +27,6 @@ func NewAct1Model(uid int32) ActBaseInterface {
 		}
 	})
 
+	act1Model.Init()
 	return act1Model
-}
-
-func init() {
 }

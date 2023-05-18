@@ -36,10 +36,10 @@ func GetRedis(uid int32) RedisOperater {
 var redisCfg redisCfgObj
 
 func init() {
-	// 配置初始化
-	redisCfgIni()
-	// redis初始化
-	redisPoolInit()
+	//// 配置初始化
+	//redisCfgIni()
+	//// redis初始化
+	//redisPoolInit()
 }
 
 func redisCfgIni() {

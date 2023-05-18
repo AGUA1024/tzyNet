@@ -3,25 +3,16 @@ package route
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/reflect/protoreflect"
+	"hdyx/api"
 	"hdyx/common"
 	ioBuf2 "hdyx/net/ioBuf"
 	"hdyx/server"
-	"net/http"
 	"reflect"
 	"regexp"
 )
 
 var R *gin.Engine = gin.Default()
-
-// 设置websocket, CheckOrigin防止跨站点的请求伪造
-var upGrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
 
 func init() {
 	// 使用正则表达式匹配 URL，并提取请求路径
@@ -32,23 +23,18 @@ func init() {
 		common.Logger.ErrorLog("GAME_URL_ERROR")
 	}
 
-	reqPath := matches[1]
+	//reqPath := matches[1]
 
-	R.GET(reqPath, ListenAndHandel)
+	R.GET("", ListenAndHandel)
 }
 
 func ListenAndHandel(c *gin.Context) {
-	// 升级get请求为webSocket协议
-	ws, err := upGrader.Upgrade(c.Writer, c.Request, nil)
-	if err != nil {
-		common.Logger.ErrorLog("WEBSOCKET_UPGRADE_ERROR")
-	}
-
-	defer ws.Close() //返回前关闭
+	common.GameMasterInit(c)
+	defer common.GameMaster.GameDestroy()
 
 	for {
 		// 读取ws中的数据
-		mt, msgBuf, err := ws.ReadMessage()
+		_, msgBuf, err := common.GameMaster.ReadMsg()
 		if err != nil {
 			break
 		}
@@ -62,45 +48,26 @@ func ListenAndHandel(c *gin.Context) {
 		fmt.Println("clientBuf：")
 		fmt.Println(clientBuf)
 
-		RouteHandel(clientBuf.CmdMerge, clientBuf.Data)
-
-		outPut := &ioBuf2.OutPutBuf{
-			CmdCode:        12,
-			ProtocolSwitch: 22,
-			CmdMerge:       35,
-			ResponseStatus: 67,
-			ValidMsg:       "hello world",
-			Data:           nil,
-		}
-
-		msg, _ := proto.Marshal(outPut)
-
-		// 写入ws数据
-		err = ws.WriteMessage(mt, msg)
-		if err != nil {
-			break
-		}
+		go func() {
+			defer func() {
+				if r := recover(); r != nil {
+					common.Logger.ErrorLog("PANIC_ERROR:", r)
+				}
+			}()
+			routeHandel(clientBuf.CmdMerge, clientBuf.Data)
+		}()
 	}
 }
 
 // 路由处理
-func RouteHandel(cmd uint32, byteArg []byte) {
-	api := GetApiByCmd(cmd)
-
-	// 获取入参类型
-	bufType := api.GetInType()
-
-	param := reflect.New(bufType).Interface().(protoreflect.ProtoMessage)
-
-	proto.Unmarshal(byteArg, param)
-
-	apiFunc := api.GetFunc()
+func routeHandel(cmd uint32, byteArg []byte) {
+	apiFunc := api.GetApiByCmd(cmd)
 
 	fValue := reflect.ValueOf(apiFunc)
 	if fValue.Kind() == reflect.Func {
 
 		argValues := []reflect.Value{
-			reflect.ValueOf(param),
+			reflect.ValueOf(byteArg),
 		}
 
 		resultValues := fValue.Call(argValues)

@@ -2,13 +2,32 @@ package common
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v3"
 	"os"
 )
 
-type DbConfig struct {
-	Common map[string]string   `yaml:"common"`
-	Db     []map[string]string `yaml:"db"`
+func GameMasterInit(c *gin.Context) {
+	// 升级get请求为webSocket协议
+	ws, err := upGrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		Logger.ErrorLog("WEBSOCKET_UPGRADE_ERROR")
+	}
+
+	GameMaster.conn = ws
+}
+
+func (master *gameMasterObj) OutMsg(messageType int, data []byte) error {
+	return master.conn.WriteMessage(messageType, data)
+}
+
+func (master *gameMasterObj) ReadMsg() (messageType int, p []byte, err error) {
+	return master.conn.ReadMessage()
+}
+
+func (master *gameMasterObj) GameDestroy() {
+	// 关闭连接
+	master.conn.Close()
 }
 
 func GetYamlMapCfg(fileName string, index ...string) any {

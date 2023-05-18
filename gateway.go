@@ -11,5 +11,8 @@ import (
 )
 
 func main() {
-	defer route.R.Run("localhost:8000")
+	//uid := int32(1)
+	//db := server.GetDb(uid, "hdyx_game")
+	//db.InsertData(context.Background(), "act", info)
+	defer route.R.Run("0.0.0.0:80")
 }

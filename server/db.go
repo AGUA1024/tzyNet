@@ -40,17 +40,26 @@ var (
 	arrDbPools []*dbPool
 )
 
+var mpDatabase = map[string]string{
+	"game": "hdyx_game",
+}
+
 func init() {
-	// 配置初始化
-	dbCfgIni()
-	// 数据库初始化
-	dbPoolInit()
+	//// 配置初始化
+	//dbCfgIni()
+	//// 数据库初始化
+	//dbPoolInit()
 }
 
 func GetDb(uid int32, database string) DbOperator {
+	dbName, ok := mpDatabase[database]
+	if !ok {
+		common.Logger.ErrorLog("DB_NAME_NOT_FOUNT:" + database)
+	}
+
 	piece := uid % int32(dbCfg.PieceNum)
 
-	dataBase := fmt.Sprintf("%s%02d", database+"_", piece+1)
+	dataBase := fmt.Sprintf("%s%02d", dbName+"_", piece+1)
 	var dbOp = DbOperator{
 		pool:     *arrDbPools[piece],
 		database: dataBase,
@@ -67,9 +76,9 @@ func (op *DbOperator) QueryData(ctx context.Context, table string, where map[str
 	}
 	defer op.pool.releaseConn(db)
 
-	op.pool.db.Exec("Use " + op.database + ";")
+	dbTable := op.database + "." + table
+	result := db.WithContext(ctx).Table(dbTable).Where(where).Find(dest)
 
-	result := db.WithContext(ctx).Table(table).Where(where).Find(dest)
 	return result.Error
 }
 
@@ -93,7 +102,9 @@ func (op *DbOperator) UpdateData(ctx context.Context, table string, where map[st
 		return err
 	}
 	defer op.pool.releaseConn(db)
-	result := db.WithContext(ctx).Table(table).Where(where).Updates(data)
+
+	dbTable := op.database + "." + table
+	result := db.WithContext(ctx).Table(dbTable).Where(where).Updates(data)
 	return result.Error
 }
 
@@ -104,7 +115,9 @@ func (op *DbOperator) DeleteData(ctx context.Context, table string, where map[st
 		return err
 	}
 	defer op.pool.releaseConn(db)
-	result := db.WithContext(ctx).Table(table).Where(where).Delete(nil)
+
+	dbTable := op.database + "." + table
+	result := db.WithContext(ctx).Table(dbTable).Where(where).Delete(nil)
 	return result.Error
 }
 
