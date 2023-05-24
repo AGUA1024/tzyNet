@@ -4,7 +4,7 @@ metadata:
   name: hdyx-pvc
 spec:
   capacity:
-    storage: 2Gi
+    storage: 50Gi
   volumeMode: Filesystem  # Filesystem（文件系统） Block（块）
   accessModes:
     - ReadWriteOnce       # 卷可以被一个节点以读写方式挂载

@@ -3,31 +3,47 @@ package common
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
+	"google.golang.org/protobuf/proto"
 	"gopkg.in/yaml.v3"
+	"hdyx/global"
+	"hdyx/net/ioBuf"
+	"net/http"
 	"os"
 )
 
-func GameMasterInit(c *gin.Context) {
+type wsConnect struct {
+	conn *websocket.Conn
+}
+
+// 设置websocket, CheckOrigin防止跨站点的请求伪造
+var upGrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
+func WebSocketInit(c *gin.Context) *websocket.Conn {
 	// 升级get请求为webSocket协议
 	ws, err := upGrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		Logger.ErrorLog("WEBSOCKET_UPGRADE_ERROR")
+		Logger.SystemErrorLog("WEBSOCKET_UPGRADE_ERROR")
 	}
 
-	GameMaster.conn = ws
+	return ws
 }
 
-func (master *gameMasterObj) OutMsg(messageType int, data []byte) error {
+func (master *wsConnect) GameDestroy() {
+	// 关闭连接
+	master.conn.Close()
+}
+
+func (master *wsConnect) OutMsg(messageType int, data []byte) error {
 	return master.conn.WriteMessage(messageType, data)
 }
 
-func (master *gameMasterObj) ReadMsg() (messageType int, p []byte, err error) {
+func (master *wsConnect) ReadMsg() (messageType int, p []byte, err error) {
 	return master.conn.ReadMessage()
-}
-
-func (master *gameMasterObj) GameDestroy() {
-	// 关闭连接
-	master.conn.Close()
 }
 
 func GetYamlMapCfg(fileName string, index ...string) any {
@@ -38,7 +54,7 @@ func GetYamlMapCfg(fileName string, index ...string) any {
 	cfgFile := CONFIG_PATH + `/` + fileName + ".yaml"
 	bytes, err := os.ReadFile(cfgFile)
 	if err != nil {
-		Logger.ErrorLog("GET_YAML_CFG_ERROR:" + cfgFile)
+		Logger.SystemErrorLog("GET_YAML_CFG_ERROR:" + cfgFile)
 	}
 	// 创建配置文件的结构体
 	var conf map[string]any
@@ -46,7 +62,7 @@ func GetYamlMapCfg(fileName string, index ...string) any {
 	// 注意要穿配置结构体的指针进去
 	err = yaml.Unmarshal(bytes, &conf)
 	if err != nil {
-		Logger.ErrorLog("YAML_UNMARSHAL_ERROR:" + fmt.Sprintln(err))
+		Logger.SystemErrorLog("YAML_UNMARSHAL_ERROR:" + fmt.Sprintln(err))
 	}
 
 	for _, i := range index {
@@ -54,7 +70,7 @@ func GetYamlMapCfg(fileName string, index ...string) any {
 		var ok bool
 
 		if value, ok = conf[i]; !ok {
-			Logger.ErrorLog("GET_YAML_CFG_INDEX_ERROR:" + fmt.Sprintln(err, "INDEX:", i))
+			Logger.SystemErrorLog("GET_YAML_CFG_INDEX_ERROR:" + fmt.Sprintln(err, "INDEX:", i))
 		}
 
 		// 是否读完
@@ -66,4 +82,32 @@ func GetYamlMapCfg(fileName string, index ...string) any {
 	}
 
 	return ret
+}
+
+func GetParamObj[T proto.Message](params []byte, obj T) T {
+	proto.Unmarshal(params, obj)
+	return obj
+}
+
+func OutPutStream[T proto.Message](ctx *global.ConContext, obj T) {
+	data, _ := proto.Marshal(obj)
+
+	out := ioBuf.OutPutBuf{
+		CmdCode:        0,
+		ProtocolSwitch: 0,
+		CmdMerge:       ctx.GetConGlobalVal().Cmd,
+		ResponseStatus: 0,
+		ValidMsg:       "",
+		Data:           data,
+	}
+
+	outStream, err := proto.Marshal(&out)
+	if err != nil {
+		Logger.SystemErrorLog("GET_OUT_STREAM_Marshal_ERROR", err)
+	}
+
+	err = ctx.GetConGlobalVal().WsCon.WriteMessage(TextMessage, outStream)
+	if err != nil {
+		Logger.SystemErrorLog("OUT_STREAM_ERROR", err)
+	}
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"hdyx/common"
-	"log"
 	"time"
 )
 
@@ -24,22 +23,21 @@ type RedisOperater struct {
 	pool redis.Pool
 }
 
-func GetRedis(uid int32) RedisOperater {
-	piece := uid % int32(redisCfg.PieceNum)
+func GetRedis(id uint64) RedisOperater {
+	piece := id % uint64(redisCfg.PieceNum)
 	var redisOp = RedisOperater{
 		pool: *redisPools[piece],
 	}
-
 	return redisOp
 }
 
 var redisCfg redisCfgObj
 
 func init() {
-	//// 配置初始化
-	//redisCfgIni()
-	//// redis初始化
-	//redisPoolInit()
+	// 配置初始化
+	redisCfgIni()
+	// redis初始化
+	redisPoolInit()
 }
 
 func redisCfgIni() {
@@ -56,7 +54,7 @@ func redisPoolInit() {
 	for i := 1; i <= redisCfg.PieceNum; i++ {
 		host := fmt.Sprintf("%s%d", "host", i)
 		var hostCfg map[string]any
-		hostCfg = dbCfg.AllHostCfg[host].(map[string]any)
+		hostCfg = redisCfg.AllHostCfg[host].(map[string]any)
 
 		ip := hostCfg["ip"].(string)
 		port := fmt.Sprintf("%d", hostCfg["port"])
@@ -68,7 +66,7 @@ func redisPoolInit() {
 			IdleTimeout: time.Duration(redisCfg.ConLiveTime) * time.Minute, // 空闲连接超时时间
 			Dial: func() (redis.Conn, error) {
 				// 建立连接的函数
-				c, err := redis.Dial("tcp", ip+":"+port)
+				c, err := redis.Dial("tcp", ip+":"+port, redis.DialPassword(redisCfg.Pass))
 				if err != nil {
 					return nil, err
 				}
@@ -86,14 +84,16 @@ func redisPoolInit() {
 }
 
 // 查询数据
-func (op *RedisOperater) redisDo(commandName string, args ...interface{}) (any, error) {
+func (op *RedisOperater) RedisDo(commandName string, args ...interface{}) (any, error) {
 	// 使用连接池获取连接并进行操作
 	conn := op.pool.Get()
 	defer conn.Close()
 
-	data, err := conn.Do(commandName, args)
+	data, err := conn.Do(commandName, args[0], args[1])
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		common.Logger.SystemErrorLog("REDIS_DO_ERROR:", commandName, args)
+
 	}
 
 	return data, err

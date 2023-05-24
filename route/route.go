@@ -1,18 +1,61 @@
 package route
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/protobuf/proto"
 	"hdyx/api"
 	"hdyx/common"
-	ioBuf2 "hdyx/net/ioBuf"
+	"hdyx/global"
+	"hdyx/net/ioBuf"
 	"hdyx/server"
 	"reflect"
 	"regexp"
+	"runtime"
+	"strconv"
 )
 
-var R *gin.Engine = gin.Default()
+var GinEngine *gin.Engine = gin.Default()
+
+func newConContext() *global.ConContext {
+	return &global.ConContext{
+		ConnectId: getGoroutineID(),
+	}
+}
+
+// 注册connectGorutine全局空间
+func registerConGlobal() *global.ConContext {
+	ctx := newConContext()
+	conId := ctx.GetConnectId()
+	if _, ok := global.MpConRoutineStorage[conId]; ok {
+		common.Logger.SystemErrorLog("RoutineStorage_MEM_OVERWRITE")
+	}
+
+	global.MpConRoutineStorage[conId] = global.RoutineStorage{
+		Uid:    0,
+		Cmd:    0,
+		RoomId: 0,
+	}
+
+	return ctx
+}
+
+// 销毁connectGorutine全局空间
+func destroyConGlobalObj(this *global.ConContext) {
+	conId := this.GetConnectId()
+	global.MpConRoutineStorage[conId].WsCon.Close()
+	delete(global.MpConRoutineStorage, conId)
+}
+
+func getGoroutineID() uint64 {
+	arrByte := make([]byte, 64)
+	arrByte = arrByte[:runtime.Stack(arrByte, false)]
+	arrByte = bytes.TrimPrefix(arrByte, []byte("goroutine "))
+	arrByte = arrByte[:bytes.IndexByte(arrByte, ' ')]
+	GoroutineID, _ := strconv.ParseUint(string(arrByte), 10, 64)
+	return GoroutineID
+}
 
 func init() {
 	// 使用正则表达式匹配 URL，并提取请求路径
@@ -20,29 +63,35 @@ func init() {
 	matches := re.FindStringSubmatch(server.ENV_GAME_URL)
 
 	if len(matches) != 2 {
-		common.Logger.ErrorLog("GAME_URL_ERROR")
+		common.Logger.SystemErrorLog("GAME_URL_ERROR")
 	}
 
 	//reqPath := matches[1]
 
-	R.GET("", ListenAndHandel)
+	GinEngine.GET("", ListenAndHandel)
 }
 
-func ListenAndHandel(c *gin.Context) {
-	common.GameMasterInit(c)
-	defer common.GameMaster.GameDestroy()
+func ListenAndHandel(ginCtx *gin.Context) {
+	ws := common.WebSocketInit(ginCtx)
+
+	// 注册connectGorutine全局空间
+	conCtx := registerConGlobal()
+	// 注册ws连接管道
+	conCtx.SetConGlobalWsCon(ws)
+	// 延迟注销connectGorutine全局空间,关闭ws连接
+	defer destroyConGlobalObj(conCtx)
 
 	for {
 		// 读取ws中的数据
-		_, msgBuf, err := common.GameMaster.ReadMsg()
+		_, msgBuf, err := ws.ReadMessage()
 		if err != nil {
 			break
 		}
-
-		clientBuf := &ioBuf2.ClientBuf{}
+		fmt.Println(msgBuf)
+		clientBuf := &ioBuf.ClientBuf{}
 
 		if err = proto.Unmarshal(msgBuf, clientBuf); err != nil {
-			common.Logger.ErrorLog("PROTO_UNMARSHAL_ERROR")
+			common.Logger.SystemErrorLog("PROTO_UNMARSHAL_ERROR")
 		}
 
 		fmt.Println("clientBuf：")
@@ -51,23 +100,27 @@ func ListenAndHandel(c *gin.Context) {
 		go func() {
 			defer func() {
 				if r := recover(); r != nil {
-					common.Logger.ErrorLog("PANIC_ERROR:", r)
+					common.Logger.SystemErrorLog("PANIC_ERROR:", r)
 				}
 			}()
-			routeHandel(clientBuf.CmdMerge, clientBuf.Data)
+
+			routeHandel(conCtx, clientBuf)
 		}()
 	}
 }
 
 // 路由处理
-func routeHandel(cmd uint32, byteArg []byte) {
+func routeHandel(conCtx *global.ConContext, cbuf *ioBuf.ClientBuf) {
+	cmd := cbuf.CmdMerge
+	byteApiBuf := cbuf.Data
 	apiFunc := api.GetApiByCmd(cmd)
 
 	fValue := reflect.ValueOf(apiFunc)
 	if fValue.Kind() == reflect.Func {
 
 		argValues := []reflect.Value{
-			reflect.ValueOf(byteArg),
+			reflect.ValueOf(conCtx),
+			reflect.ValueOf(byteApiBuf),
 		}
 
 		resultValues := fValue.Call(argValues)

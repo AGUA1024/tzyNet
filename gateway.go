@@ -6,13 +6,21 @@
 package main
 
 import (
+	"flag"
+	"hdyx/common"
 	_ "hdyx/common"
 	"hdyx/route"
+	"hdyx/server"
 )
 
 func main() {
-	//uid := int32(1)
-	//db := server.GetDb(uid, "hdyx_game")
-	//db.InsertData(context.Background(), "act", info)
-	defer route.R.Run("0.0.0.0:80")
+	flag.StringVar(&server.ENV_NODE_TAG, "tag", "", "Unique node label")
+	flag.Parse()
+
+	if len(server.ENV_NODE_TAG) == 0 {
+		common.Logger.SystemErrorLog("Invalid node tag")
+	}
+
+	server.ServerInit()
+	defer route.GinEngine.Run("0.0.0.0:80")
 }

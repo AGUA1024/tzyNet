@@ -1,23 +1,24 @@
 package api
 
-import "google.golang.org/protobuf/proto"
+import "hdyx/global"
 
-var masterRouteRegister = map[uint32]map[uint32]func([]byte){
-	0x1: userRouteRegMp,
+var masterRouteRegister = map[uint32]map[uint32]func(*global.ConContext, []byte){
+	0x1: gameNetRegMp,
+	0x2: roomRegMp,
 }
 
-var userRouteRegMp = map[uint32]func([]byte){
-	0x1: GetUserInfo,
+var gameNetRegMp = map[uint32]func(*global.ConContext, []byte){
+	0x1: GetGateWay,
+	0x2: ConGlobalObjInit,
 }
 
-func GetApiByCmd(cmd uint32) func([]byte) {
+var roomRegMp = map[uint32]func(*global.ConContext, []byte){
+	0x1: CreateRoom,
+}
+
+func GetApiByCmd(cmd uint32) func(*global.ConContext, []byte) {
 	highCmd := (cmd >> 16) & 0xffff
 	lowCmd := cmd & 0xffff
 
 	return masterRouteRegister[highCmd][lowCmd]
-}
-
-func getParamObj[T proto.Message](params []byte, obj T) T {
-	proto.Unmarshal(params, obj)
-	return obj
 }

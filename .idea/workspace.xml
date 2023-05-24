@@ -5,24 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cde824a8-151e-40fd-b9ee-c85c4a0611ca" name="变更" comment="">
-      <change afterPath="$PROJECT_DIR$/model/act1Model.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/model/actBaseModel.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/model/userModel.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tool/mysqlIni.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/common/common.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/logger.go" beforeDir="false" afterPath="$PROJECT_DIR$/common/logger.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/mysqlCfg.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/mysqlCfg.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/redisCfg.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/redisCfg.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/doc/数据库.md" beforeDir="false" afterPath="$PROJECT_DIR$/doc/数据库.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway.go" beforeDir="false" afterPath="$PROJECT_DIR$/gateway.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proto/act1/test.pb.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/proto/act1/test.proto" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/route/route.go" beforeDir="false" afterPath="$PROJECT_DIR$/route/route.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/db.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/redis.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/redis.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tool/wsClient.go" beforeDir="false" afterPath="$PROJECT_DIR$/tool/wsClient.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,81 +61,105 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.format.on.save.advertiser.fired&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;configurable..is.expanded&quot;: &quot;false&quot;,
-    &quot;configurable.GoLibrariesConfigurable.is.expanded&quot;: &quot;true&quot;,
-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/GoProgram/hdyx_ljx&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;go.sdk&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.go.format.on.save.advertiser.fired": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "configurable..is.expanded": "false",
+    "configurable.GoLibrariesConfigurable.is.expanded": "true",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "D:/GoProgram/hdyx/script",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "ts.external.directory.path": "D:\\GoLand 2022.2.4\\plugins\\JavaScriptLanguage\\jsLanguageServicesImpl\\external"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="GoMoveDeclarationDialog.RECENT_KEY">
+      <recent name="$PROJECT_DIR$/global" />
+      <recent name="$PROJECT_DIR$/common" />
+      <recent name="$PROJECT_DIR$/route" />
+      <recent name="$PROJECT_DIR$/api" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\GoProgram\hdyx\script" />
+      <recent name="D:\GoProgram\hdyx\api\protobuf" />
+      <recent name="D:\GoProgram\hdyx\tool" />
+      <recent name="D:\GoProgram\hdyx\testYaml" />
       <recent name="D:\GoProgram\hdyx\api\user" />
-      <recent name="D:\GoProgram\hdyx\api\user\outPutPb" />
-      <recent name="D:\GoProgram\hdyx\proto\gameInBuf" />
-      <recent name="D:\GoProgram\hdyx\proto\user" />
-      <recent name="D:\GoProgram\hdyx\proto\act1" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\GoProgram\hdyx\api\user" />
-      <recent name="D:\GoProgram\hdyx\api\user\pbObj" />
-      <recent name="D:\GoProgram\hdyx\api\user\inPutPb" />
-      <recent name="D:\GoProgram\hdyx\api\user\outPutPb" />
-      <recent name="D:\GoProgram\hdyx\net" />
+      <recent name="D:\GoProgram\hdyx\api" />
+      <recent name="D:\GoProgram\hdyx\route" />
+      <recent name="D:\GoProgram\hdyx\script" />
+      <recent name="D:\GoProgram\hdyx\script\ljx" />
+      <recent name="D:\GoProgram\hdyx\tool" />
     </key>
   </component>
-  <component name="RunManager" selected="Go 构建.go build gateway.go (1)">
-    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+  <component name="RunManager" selected="Go 构建.go build cmd.go">
+    <configuration name="go build cmd.go" type="GoApplicationRunConfiguration" factoryName="Go Application" singleton="false" temporary="true" nameIsGenerated="true">
       <module name="hdyx" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build gateway.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="hdyx" />
-      <working_directory value="$PROJECT_DIR$" />
+      <working_directory value="$PROJECT_DIR$/" />
       <kind value="FILE" />
       <package value="hdyx" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/gateway.go" />
+      <filePath value="$PROJECT_DIR$/tool/cmd.go" />
+      <output_directory value="$PROJECT_DIR$/tool" />
       <method v="2" />
     </configuration>
-    <configuration name="go build gateway.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="ginWsServer" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <package value="hdyx" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/gateway.go" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+    <configuration name="go build gateway.go (linux)" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="hdyx" />
       <working_directory value="$PROJECT_DIR$" />
+      <envs>
+        <env name="GOARCH" value="amd64" />
+        <env name="GOOS" value="linux" />
+      </envs>
       <kind value="DIRECTORY" />
+      <package value="hdyx" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
+      <filePath value="$PROJECT_DIR$/tool/wsClient.go" />
+      <output_directory value="$PROJECT_DIR$/deploy" />
+      <option name="run" value="false" />
+      <input_file value="main" />
       <method v="2" />
     </configuration>
+    <configuration name="go build gateway.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
+      <module name="hdyx" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <package value="hdyx" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/gateway.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build hdyx/tool" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="hdyx" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="hdyx/tool" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/tool/ljx1.go" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Go 构建.go build gateway.go (linux)" />
+      <item itemvalue="Go 构建.go build cmd.go" />
+      <item itemvalue="Go 构建.go build hdyx/tool" />
+      <item itemvalue="Go 构建.go build gateway.go" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Go 构建.go build gateway.go (1)" />
+        <item itemvalue="Go 构建.go build cmd.go" />
+        <item itemvalue="Go 构建.go build hdyx/tool" />
+        <item itemvalue="Go 构建.go build gateway.go" />
         <item itemvalue="Go 构建.go build gateway.go" />
       </list>
     </recent_temporary>

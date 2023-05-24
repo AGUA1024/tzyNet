@@ -5,6 +5,8 @@ import (
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"hdyx/global"
+	"hdyx/net/ioBuf"
 	"os"
 	"runtime"
 	"runtime/debug"
@@ -23,10 +25,24 @@ func (this tLogger) InfoLog(message string) {
 	this.logger.Info(message)
 }
 
-func (this tLogger) ErrorLog(message ...any) {
+func (this tLogger) SystemErrorLog(message ...any) {
 	this.logger.Error(fmt.Sprintln(message...) + string(debug.Stack()))
-	//fmt.Println(string(debug.Stack()))
+	runtime.Goexit()
+}
 
+func (this tLogger) GameErrorLog(conCtx *global.ConContext, message ...any) {
+	this.logger.Error(fmt.Sprintln(message...) + string(debug.Stack()))
+
+	out := ioBuf.OutPutBuf{
+		CmdCode:        1,
+		ProtocolSwitch: 0,
+		CmdMerge:       conCtx.GetConGlobalVal().Cmd,
+		ResponseStatus: -1001,
+		ValidMsg:       fmt.Sprintln(message),
+		Data:           nil,
+	}
+
+	OutPutStream[*ioBuf.OutPutBuf](conCtx, &out)
 	runtime.Goexit()
 }
 

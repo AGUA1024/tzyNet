@@ -10,7 +10,7 @@ import (
 
 var userName = "root"
 var password = "&2xs5CzX00ymRmEl"
-var host = "127.0.0.1"
+var host = "gz-cdb-7y8s3zq9.sql.tencentcdb.com"
 var port = "63763"
 
 var dsn string = userName + ":" + password + "@tcp(" + host + ":" + port + ")/?charset=utf8mb4"
@@ -19,7 +19,7 @@ func main() {
 	fmt.Println(dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Println("error")
+		log.Println("here")
 		os.Exit(1)
 	}
 	var dbName string

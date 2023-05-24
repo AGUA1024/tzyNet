@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: hdyx
-          image: agua1024/hdyx:v1.0.0.0
+          image: agua1024/hdyx:v1.0.0.1
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - mountPath: /app/log

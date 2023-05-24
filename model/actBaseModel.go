@@ -9,20 +9,16 @@ import (
 )
 
 type actData struct {
-	Uid        int32  `gorm:"uid"`
-	ActId      int    `gorm:"actId"`
+	Uid        uint64 `gorm:"uid"`
+	ActId      uint32 `gorm:"actId"`
 	TJson      string `gorm:"tJson"`
 	CreateTime string `gorm:"createTime"`
 	UpdateTime string `gorm:"updateTime"`
 }
 
 // GameType : GameName
-var actRegister = map[int]func(int32) ActBaseInterface{
+var actRegister = map[uint32]func(uint64) ActBaseInterface{
 	1: NewAct1Model,
-}
-
-type RoomIneterface interface {
-	gameStart()
 }
 
 type ActBaseInterface interface {
@@ -30,31 +26,11 @@ type ActBaseInterface interface {
 	Init() error
 }
 
-type playerInterface interface {
-	joinRoom()
-	leaveRoom()
-}
-
-type player struct {
-	uid      int32
-	playerId int
-	power    int
-	playTime int64
-}
-
-type roomBaseModel struct {
-	actType     int
-	lvType      int
-	roomSize    int
-	playerLists []player
-	playerNeed  int
-	playerNum   int
-}
-
 type actBaseModel struct {
-	uid     int32
-	actId   int
+	uid     uint64
+	actId   uint32
 	actInfo map[string]any
+	isOver  bool
 }
 
 func (this actBaseModel) Save() error {
@@ -83,7 +59,7 @@ func (this actBaseModel) Init() error {
 
 	err := db.QueryData(context.Background(), "act", map[string]any{"uid": this.uid}, &dest)
 	if err != nil {
-		common.Logger.ErrorLog(err)
+		common.Logger.SystemErrorLog(err)
 	} else if len(dest) == 0 {
 		err = this.actFirstIni()
 		return err
@@ -95,7 +71,7 @@ func (this actBaseModel) Init() error {
 	return err
 }
 
-func GetAct(uid int32, actId int) ActBaseInterface {
+func GetAct(uid uint64, actId uint32) ActBaseInterface {
 	fun := actRegister[actId]
 	return fun(uid)
 }
@@ -105,7 +81,7 @@ func (this actBaseModel) actFirstIni() error {
 
 	jsonData, err := json.Marshal(this.actInfo)
 	if err != nil {
-		common.Logger.ErrorLog(err)
+		common.Logger.SystemErrorLog(err)
 	}
 	strJsData := string(jsonData)
 

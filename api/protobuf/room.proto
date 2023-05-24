@@ -1,0 +1,61 @@
+syntax="proto3"; //版本号
+package api;  //包名
+option go_package = "./;api";
+
+// 创建房间
+message CreateRoom_InObj {
+  uint64 roomId=1;
+  uint32 actId=2;
+}
+
+message CreateRoom_OutObj {
+  bool ok=1;
+}
+
+// 销毁房间
+message DestroyRoom_InObj {
+  uint64 roomId=1;
+}
+
+message DestroyRoom_OutObj {
+  bool ok=1;
+}
+
+// 加入房间
+message JoinRoom_InObj {
+  uint64 roomId=1;
+}
+
+message JoinRoom_OutObj {
+  map<uint64,bool> players = 1;  //房间内的玩家uid,准备情况
+}
+
+
+// 离开房间
+message LeaveRoom_InObj {
+  uint64 roomId=1;
+}
+
+message LeaveRoom_OutObj {
+  bool ok=1;
+}
+
+
+// 准备
+message RoomPrepare_InObj {
+  uint64 roomId=1;
+}
+
+message RoomPrepare_OutObj {
+  bool ok=1;
+}
+
+
+// 开始游戏
+message GameStart_InObj {
+  uint64 roomId=1;
+}
+
+message GameStart_OutObj {
+  bool ok=1;
+}

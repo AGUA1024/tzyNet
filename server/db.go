@@ -51,13 +51,13 @@ func init() {
 	//dbPoolInit()
 }
 
-func GetDb(uid int32, database string) DbOperator {
+func GetDb(uid uint64, database string) DbOperator {
 	dbName, ok := mpDatabase[database]
 	if !ok {
-		common.Logger.ErrorLog("DB_NAME_NOT_FOUNT:" + database)
+		common.Logger.SystemErrorLog("DB_NAME_NOT_FOUNT:" + database)
 	}
 
-	piece := uid % int32(dbCfg.PieceNum)
+	piece := uid % uint64(dbCfg.PieceNum)
 
 	dataBase := fmt.Sprintf("%s%02d", dbName+"_", piece+1)
 	var dbOp = DbOperator{
@@ -144,7 +144,7 @@ func dbPoolInit() {
 
 		pool, err := newDbPool(dbUrl, dbCfg.MaxOpenCon, dbCfg.MaxIdleConns, time.Duration(dbCfg.ConLiveTime)*time.Second)
 		if err != nil {
-			common.Logger.ErrorLog(fmt.Sprintln(err))
+			common.Logger.SystemErrorLog(fmt.Sprintln(err))
 		}
 		arrDbPools = append(arrDbPools, pool)
 	}

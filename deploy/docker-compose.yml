@@ -1,0 +1,11 @@
+version: "3.7"
+
+services:
+  hdyx:
+    image: agua1024/hdyx:v1.0.0.1
+    ports:
+      - 8000:80
+    volumes:
+      - ../log:/app/log
+    environment:
+      - TZ=Asia/Shanghai
