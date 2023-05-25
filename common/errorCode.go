@@ -1,0 +1,11 @@
+package common
+
+// 错误码
+const (
+	ERR_NO_GATEWAY          = 1
+	ERR_NO_GATEWAY_PORT     = 2
+	ERR_ETCD_GET_PORT       = 3
+	ERR_NO_CONNECT_EXIST    = 3
+	ERR_CREAT_ROOMID_EXIST  = 4
+	ERR_REDIS_LOAD_ROOMINFO = 5
+)

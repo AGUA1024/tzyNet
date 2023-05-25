@@ -43,7 +43,7 @@ func (m *roomMaster) IsRoomExits(ctx *global.ConContext, roomId uint64) bool {
 	redis := server.GetRedis(roomId)
 	jsData, err := redis.RedisDo("HGET", KEY_ROOMIDTOINFO, roomId)
 	if err != nil {
-		common.Logger.GameErrorLog(ctx, "LOAD_ROOMINFO_ERROR", err)
+		common.Logger.GameErrorLog(ctx, common.ERR_REDIS_LOAD_ROOMINFO, "redis获取房间id失败")
 	}
 
 	return jsData != nil

@@ -15,6 +15,7 @@ RUN go build -o main ./gateway.go
 
 # 暴露的端口
 EXPOSE 8000
+EXPOSE 8001
 
 #设置容器的启动命令，CMD是设置容器的启动指令
-CMD /app/main
+CMD /app/main -tag ${NODEMARK}

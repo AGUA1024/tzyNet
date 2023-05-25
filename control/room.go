@@ -11,7 +11,7 @@ import (
 func CreateRoom(ctx *global.ConContext, roomId uint64, actId uint32) *api.CreateRoom_OutObj {
 	// 房间已经存在
 	if model.RoomMaster.IsRoomExits(ctx, roomId) {
-		common.Logger.SystemErrorLog("ERROR_ROOM_EXITS")
+		common.Logger.GameErrorLog(ctx, common.ERR_CREAT_ROOMID_EXIST, "创建失败，房间id已存在")
 	}
 
 	// 创建房间

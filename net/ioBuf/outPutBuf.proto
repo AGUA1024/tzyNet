@@ -13,5 +13,5 @@ message outPutBuf {
   // 响应码: 0:成功, 其他为有错误
   uint32 responseStatus = 4;
   // 业务请求数据
-  bytes data = 6;
+  bytes data = 5;
 }

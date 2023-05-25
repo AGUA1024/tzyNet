@@ -1,8 +1,6 @@
 package common
 
-import (
-	"path/filepath"
-)
+import "path/filepath"
 
 const (
 	// TextMessage denotes a text data message. The text message payload is
@@ -27,7 +25,7 @@ const (
 )
 
 var ROOT_PATH, _ = filepath.Abs("./")
-var CONFIG_PATH, _ = filepath.Abs("./config")
-var PROTO_PATH, _ = filepath.Abs("./proto")
-var LOG_PATH, _ = filepath.Abs("./log")
-var API_PATH, _ = filepath.Abs("./api")
+var CONFIG_PATH = ROOT_PATH + "/config"
+var PROTO_PATH = ROOT_PATH + "/proto"
+var LOG_PATH = ROOT_PATH + "/log"
+var API_PATH = ROOT_PATH + "/api"

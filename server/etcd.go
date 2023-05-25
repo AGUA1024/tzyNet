@@ -11,6 +11,9 @@ import (
 var Etcd_Client *clientv3.Client
 var etcd_keepLive_ch <-chan *clientv3.LeaseKeepAliveResponse
 
+// 服务器暴露接口
+var Etcd_sevPort_Key = "sevPort"
+
 func init() {
 	endPoint := common.GetYamlMapCfg("etcdCfg", "etcd", "host").(string)
 	// 创建etcd客户端

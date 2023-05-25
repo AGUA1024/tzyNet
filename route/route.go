@@ -9,9 +9,7 @@ import (
 	"hdyx/common"
 	"hdyx/global"
 	"hdyx/net/ioBuf"
-	"hdyx/server"
 	"reflect"
-	"regexp"
 	"runtime"
 	"strconv"
 )
@@ -58,16 +56,6 @@ func getGoroutineID() uint64 {
 }
 
 func init() {
-	// 使用正则表达式匹配 URL，并提取请求路径
-	re := regexp.MustCompile(`^ws?:\/\/[^\/]+([^?#]*)`)
-	matches := re.FindStringSubmatch(server.ENV_GAME_URL)
-
-	if len(matches) != 2 {
-		common.Logger.SystemErrorLog("GAME_URL_ERROR")
-	}
-
-	//reqPath := matches[1]
-
 	GinEngine.GET("", ListenAndHandel)
 }
 

@@ -10,12 +10,6 @@ import (
 	"runtime"
 )
 
-const (
-	ENV_SERVER_PORT = 8000
-	ENV_GAME_MARK   = "release" // 正式环境：release，开发环境:develop
-	ENV_GAME_URL    = "ws://0.0.0.0:8000/hdyx_game"
-)
-
 var (
 	ENV_NODE_TAG  = "" // 节点唯一标签
 	ENV_NODE_HOST = ""
@@ -40,27 +34,40 @@ func ServerInit() {
 		return
 	}
 
-	// 服务注册
-	err = registerService(Etcd_Client, ENV_NODE_TAG, ENV_NODE_HOST, ENV_SERVER_PORT)
-	if err != nil {
-		common.Logger.SystemErrorLog("ETCD_REGISTER_ERROR: ", err)
+	// 注册权限列表
+	mpEtcdRegPerList, ok := common.GetYamlMapCfg("serverCfg", "server", "release").(map[string]any)
+	if !ok {
+		common.Logger.SystemErrorLog("ERR_ETCD_REGISTER_CFG: ")
 	}
+
+	// 判断是否有服务注册权限
+	for _, reg := range mpEtcdRegPerList {
+		strRegHost := reg.(string)
+
+		// 有注册权限
+		if ENV_NODE_HOST == strRegHost {
+			// 服务注册
+			err = registerService(Etcd_Client, ENV_NODE_TAG, ENV_NODE_HOST)
+			if err != nil {
+				common.Logger.SystemErrorLog("ETCD_REGISTER_ERROR: ", err)
+			}
+			break
+		}
+	}
+
 }
 
 // registerService 向etcd注册服务信息
-func registerService(cli *clientv3.Client, serviceName, host string, port int) error {
+func registerService(cli *clientv3.Client, serviceName, host string) error {
 	// 创建租约
 	resp, err := cli.Grant(context.Background(), 10)
 	if err != nil {
 		return err
 	}
 
-	// 构建服务地址
-	addr := fmt.Sprintf("%s:%d", host, port)
-
 	// 注册服务
-	key := fmt.Sprintf("/services/%s/%s", serviceName, addr)
-	_, err = cli.Put(context.Background(), key, addr, clientv3.WithLease(resp.ID))
+	key := fmt.Sprintf("/services/%s/%s", serviceName, host)
+	_, err = cli.Put(context.Background(), key, host, clientv3.WithLease(resp.ID))
 	if err != nil {
 		return err
 	}

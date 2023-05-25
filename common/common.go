@@ -97,7 +97,6 @@ func OutPutStream[T proto.Message](ctx *global.ConContext, obj T) {
 		ProtocolSwitch: 0,
 		CmdMerge:       ctx.GetConGlobalVal().Cmd,
 		ResponseStatus: 0,
-		ValidMsg:       "",
 		Data:           data,
 	}
 
@@ -110,4 +109,13 @@ func OutPutStream[T proto.Message](ctx *global.ConContext, obj T) {
 	if err != nil {
 		Logger.SystemErrorLog("OUT_STREAM_ERROR", err)
 	}
+}
+
+func IsInArray[T int | string](obj T, arr ...T) bool {
+	for _, s := range arr {
+		if obj == s {
+			return true
+		}
+	}
+	return false
 }

@@ -26,7 +26,7 @@ export default class MainScene extends cc.Component {
     }
 
     clickConnect() {
-        this.ws = new WebSocket("ws://127.0.0.1:80");
+        this.ws = new WebSocket("ws://127.0.0.1:8000");
         this.ws.onopen = (event) => {
             console.log("Send Text WS was opened.");
             this.isConnect = true;

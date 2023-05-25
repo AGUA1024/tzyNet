@@ -9,6 +9,7 @@ message GetGateWay_InObj {
 
 message GetGateWay_OutObj {
   string host=1;
+  string port=2;
 }
 
 // 连接游戏服务器

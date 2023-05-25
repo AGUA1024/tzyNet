@@ -26,19 +26,18 @@ func (this tLogger) InfoLog(message string) {
 }
 
 func (this tLogger) SystemErrorLog(message ...any) {
-	this.logger.Error(fmt.Sprintln(message...) + string(debug.Stack()))
+	this.logger.Panic(fmt.Sprintln(message...) + string(debug.Stack()))
 	runtime.Goexit()
 }
 
-func (this tLogger) GameErrorLog(conCtx *global.ConContext, message ...any) {
+func (this tLogger) GameErrorLog(conCtx *global.ConContext, errId uint32, message ...any) {
 	this.logger.Error(fmt.Sprintln(message...) + string(debug.Stack()))
 
 	out := ioBuf.OutPutBuf{
 		CmdCode:        1,
 		ProtocolSwitch: 0,
 		CmdMerge:       conCtx.GetConGlobalVal().Cmd,
-		ResponseStatus: -1001,
-		ValidMsg:       fmt.Sprintln(message),
+		ResponseStatus: errId,
 		Data:           nil,
 	}
 
@@ -91,7 +90,19 @@ func init() {
 	})
 	errorFileCore := zapcore.NewCore(encoder, zapcore.NewMultiWriteSyncer(errorFileWriteSyncer, zapcore.AddSync(os.Stdout)), highPriority) //第三个及之后的参数为写入文件的日志级别,ErrorLevel模式只记录error级别的日志
 
+	//panic文件writeSyncer
+	panicFileWriteSyncer := zapcore.AddSync(&lumberjack.Logger{
+		Filename:   LOG_PATH + "/sysErr_" + time.Now().Format(time.DateOnly) + ".log", //日志文件存放目录
+		MaxSize:    maxSizeCfg,                                                        //文件大小限制,单位MB
+		MaxBackups: maxBackupsCfg,                                                     //最大保留日志文件数量
+		MaxAge:     maxKeepDayCfg,                                                     //日志文件保留天数
+		Compress:   isCompressCfg,                                                     //是否压缩处理
+	})
+	panicFileCore := zapcore.NewCore(encoder, zapcore.NewMultiWriteSyncer(panicFileWriteSyncer, zapcore.AddSync(os.Stdout)), highPriority) //第三个及之后的参数为写入文件的日志级别,ErrorLevel模式只记录error级别的日志
+
 	coreArr = append(coreArr, infoFileCore)
 	coreArr = append(coreArr, errorFileCore)
+	coreArr = append(coreArr, panicFileCore)
 	Logger.logger = zap.New(zapcore.NewTee(coreArr...), zap.AddCaller()) //zap.AddCaller()为显示文件名和行号，可省略
+
 }
