@@ -8,8 +8,7 @@ package main
 import (
 	"flag"
 	"hdyx/common"
-	_ "hdyx/common"
-	"hdyx/route"
+	"hdyx/net"
 	"hdyx/server"
 )
 
@@ -22,5 +21,5 @@ func main() {
 	}
 
 	server.ServerInit()
-	defer route.GinEngine.Run("0.0.0.0:80")
+	defer net.GinEngine.Run("0.0.0.0:80")
 }

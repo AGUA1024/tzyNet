@@ -5,7 +5,6 @@ import (
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"hdyx/global"
 	"hdyx/net/ioBuf"
 	"os"
 	"runtime"
@@ -30,13 +29,13 @@ func (this tLogger) SystemErrorLog(message ...any) {
 	runtime.Goexit()
 }
 
-func (this tLogger) GameErrorLog(conCtx *global.ConContext, errId uint32, message ...any) {
+func (this tLogger) GameErrorLog(conCtx *ConContext, errId uint32, message ...any) {
 	this.logger.Error(fmt.Sprintln(message...) + string(debug.Stack()))
 
 	out := ioBuf.OutPutBuf{
 		CmdCode:        1,
 		ProtocolSwitch: 0,
-		CmdMerge:       conCtx.GetConGlobalVal().Cmd,
+		CmdMerge:       conCtx.GetConGlobalObj().Cmd,
 		ResponseStatus: errId,
 		Data:           nil,
 	}

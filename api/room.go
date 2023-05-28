@@ -4,11 +4,10 @@ import (
 	api "hdyx/api/protobuf"
 	"hdyx/common"
 	"hdyx/control"
-	"hdyx/global"
 )
 
 // 创建房间
-func CreateRoom(ctx *global.ConContext, params []byte) {
+func CreateRoom(ctx *common.ConContext, params []byte) {
 	parmObj := common.GetParamObj[*api.CreateRoom_InObj](params, &api.CreateRoom_InObj{})
 
 	roomId := parmObj.GetRoomId()

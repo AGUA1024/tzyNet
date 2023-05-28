@@ -2,14 +2,13 @@ package control
 
 import (
 	"context"
-	apiProto "hdyx/api/protobuf"
+	api "hdyx/api/protobuf"
 	"hdyx/common"
-	"hdyx/global"
 	"hdyx/server"
 )
 
 // 获取游戏服网关
-func GetGateWay(ctx *global.ConContext, roomId uint64) *apiProto.GetGateWay_OutObj {
+func GetGateWay(ctx *common.ConContext, roomId uint64) *api.GetGateWay_OutObj {
 	// 发现服务
 	addrs, err := server.DiscoverService(server.Etcd_Client, "")
 	if err != nil {
@@ -30,14 +29,14 @@ func GetGateWay(ctx *global.ConContext, roomId uint64) *apiProto.GetGateWay_OutO
 	}
 
 	port := string(resp.Kvs[0].Value)
-	return &apiProto.GetGateWay_OutObj{
+	return &api.GetGateWay_OutObj{
 		Host: host,
 		Port: port,
 	}
 }
 
 // 注册用户信息
-func ConGlobalObjInit(ctx *global.ConContext, cin *apiProto.ConGlobalObjInit_InObj) *apiProto.ConGlobalObjInit_OutObj {
+func ConGlobalObjInit(ctx *common.ConContext, cin *api.ConGlobalObjInit_InObj) *api.ConGlobalObjInit_OutObj {
 	ok := ctx.SetConGlobalUid(cin.GetUid())
 	if !ok {
 		common.Logger.GameErrorLog(ctx, common.ERR_NO_CONNECT_EXIST, "与服务器的连接不存在")
@@ -46,5 +45,5 @@ func ConGlobalObjInit(ctx *global.ConContext, cin *apiProto.ConGlobalObjInit_InO
 	if ok = ctx.SetConGlobalRoomId(cin.GetRoomId()); !ok {
 		common.Logger.GameErrorLog(ctx, common.ERR_NO_CONNECT_EXIST, "与服务器的连接不存在")
 	}
-	return &apiProto.ConGlobalObjInit_OutObj{Ok: true}
+	return &api.ConGlobalObjInit_OutObj{Ok: true}
 }

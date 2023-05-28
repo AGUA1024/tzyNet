@@ -3,8 +3,7 @@ package model
 import (
 	"encoding/json"
 	"hdyx/common"
-	"hdyx/global"
-	"hdyx/server"
+	"strconv"
 )
 
 const (
@@ -12,49 +11,37 @@ const (
 	KEY_ROOMIDTOINFO = "roomIdToRoomInfo"
 )
 
-type roomMaster struct {
-	mpUidToRoomId    map[uint64]uint64
-	mpRoomIdToActId  map[uint64]uint32
-	roomIdToRoomInfo map[uint64]map[uint64]bool
+type roomModel struct {
+	actId      uint32          `json:"actId"`
+	uidToState map[uint64]bool `json:"uidToState"`
 }
 
-var RoomMaster = roomMaster{
-	mpUidToRoomId:    map[uint64]uint64{},
-	mpRoomIdToActId:  map[uint64]uint32{},
-	roomIdToRoomInfo: map[uint64]map[uint64]bool{},
-}
+func CreateRoom(ctx *common.ConContext, roomId uint64, actId uint32) bool {
+	redis := GetCacheById(roomId)
+	strRoomId := strconv.FormatUint(roomId, 10)
 
-func (m *roomMaster) CreateRoom(uid uint64, roomId uint64, actId uint32) {
-	m.mpUidToRoomId[uid] = roomId
-	m.mpRoomIdToActId[roomId] = actId
-	m.roomIdToRoomInfo[roomId] = map[uint64]bool{uid: false}
-}
-
-func (m *roomMaster) RegisterUidToRoom(uid uint64, roomId uint64, actId uint32) {
-	m.mpUidToRoomId[uid] = roomId
-
-	if _, ok := m.roomIdToRoomInfo[roomId]; !ok {
-		// 载入数据
-		m.loadRoomInfo(roomId)
+	roomData := roomModel{
+		actId: actId,
+		uidToState: map[uint64]bool{
+			ctx.GetConGlobalObj().Uid: false,
+		},
 	}
+
+	data, _ := json.Marshal(roomData)
+
+	ok := redis.RedisWrite(ctx, REDIS_ROOM, "HSET", KEY_ROOMIDTOINFO, strRoomId, string(data))
+
+	return ok
 }
 
-func (m *roomMaster) IsRoomExits(ctx *global.ConContext, roomId uint64) bool {
-	redis := server.GetRedis(roomId)
-	jsData, err := redis.RedisDo("HGET", KEY_ROOMIDTOINFO, roomId)
+func IsRoomExits(ctx *common.ConContext, roomId uint64) (bool, error) {
+	redis := GetCacheById(roomId)
+	strRoomId := strconv.FormatUint(roomId, 10)
+
+	data, err := redis.RedisQuery("HGET", KEY_ROOMIDTOINFO, strRoomId)
 	if err != nil {
-		common.Logger.GameErrorLog(ctx, common.ERR_REDIS_LOAD_ROOMINFO, "redis获取房间id失败")
+		return false, err
 	}
 
-	return jsData != nil
-}
-
-func (m *roomMaster) loadRoomInfo(roomId uint64) {
-	redis := server.GetRedis(roomId)
-	jsData, err := redis.RedisDo("HGET", KEY_ROOMIDTOINFO, roomId)
-	if err != nil {
-		common.Logger.SystemErrorLog("LOAD_ROOMINFO_ERROR", err)
-	}
-	data, _ := jsData.([]byte)
-	err = json.Unmarshal(data, &m.roomIdToRoomInfo)
+	return data != nil, nil
 }

@@ -3,7 +3,6 @@ package model
 import (
 	"context"
 	"encoding/json"
-	"hdyx/common"
 	"hdyx/server"
 	"time"
 )
@@ -59,7 +58,7 @@ func (this actBaseModel) Init() error {
 
 	err := db.QueryData(context.Background(), "act", map[string]any{"uid": this.uid}, &dest)
 	if err != nil {
-		common.Logger.SystemErrorLog(err)
+		return err
 	} else if len(dest) == 0 {
 		err = this.actFirstIni()
 		return err
@@ -81,7 +80,7 @@ func (this actBaseModel) actFirstIni() error {
 
 	jsonData, err := json.Marshal(this.actInfo)
 	if err != nil {
-		common.Logger.SystemErrorLog(err)
+		return err
 	}
 	strJsData := string(jsonData)
 

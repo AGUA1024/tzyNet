@@ -1,4 +1,4 @@
-package route
+package net
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 	"google.golang.org/protobuf/proto"
 	"hdyx/api"
 	"hdyx/common"
-	"hdyx/global"
+	"hdyx/model"
 	"hdyx/net/ioBuf"
 	"reflect"
 	"runtime"
@@ -16,21 +16,21 @@ import (
 
 var GinEngine *gin.Engine = gin.Default()
 
-func newConContext() *global.ConContext {
-	return &global.ConContext{
+func newConContext() *common.ConContext {
+	return &common.ConContext{
 		ConnectId: getGoroutineID(),
 	}
 }
 
 // 注册connectGorutine全局空间
-func registerConGlobal() *global.ConContext {
+func registerConGlobal() *common.ConContext {
 	ctx := newConContext()
 	conId := ctx.GetConnectId()
-	if _, ok := global.MpConRoutineStorage[conId]; ok {
+	if _, ok := common.MpConRoutineStorage[conId]; ok {
 		common.Logger.SystemErrorLog("RoutineStorage_MEM_OVERWRITE")
 	}
 
-	global.MpConRoutineStorage[conId] = global.RoutineStorage{
+	common.MpConRoutineStorage[conId] = common.ConGlobalStorage{
 		Uid:    0,
 		Cmd:    0,
 		RoomId: 0,
@@ -40,10 +40,10 @@ func registerConGlobal() *global.ConContext {
 }
 
 // 销毁connectGorutine全局空间
-func destroyConGlobalObj(this *global.ConContext) {
-	conId := this.GetConnectId()
-	global.MpConRoutineStorage[conId].WsCon.Close()
-	delete(global.MpConRoutineStorage, conId)
+func destroyConGlobalObj(conCtx *common.ConContext) {
+	conCtx.GetConGlobalObj().WsCon.Close()
+
+	delete(common.MpConRoutineStorage, conCtx.ConnectId)
 }
 
 func getGoroutineID() uint64 {
@@ -60,7 +60,10 @@ func init() {
 }
 
 func ListenAndHandel(ginCtx *gin.Context) {
-	ws := common.WebSocketInit(ginCtx)
+	ws, err := common.WebSocketInit(ginCtx)
+	if err != nil {
+		common.Logger.SystemErrorLog("WebSocketInit_ERROR")
+	}
 
 	// 注册connectGorutine全局空间
 	conCtx := registerConGlobal()
@@ -92,13 +95,16 @@ func ListenAndHandel(ginCtx *gin.Context) {
 				}
 			}()
 
+			conCtx.GetConGlobalObj().EventStorageInit()
 			routeHandel(conCtx, clientBuf)
+
+			model.AllRedisSave(conCtx)
 		}()
 	}
 }
 
 // 路由处理
-func routeHandel(conCtx *global.ConContext, cbuf *ioBuf.ClientBuf) {
+func routeHandel(conCtx *common.ConContext, cbuf *ioBuf.ClientBuf) {
 	cmd := cbuf.CmdMerge
 	byteApiBuf := cbuf.Data
 	apiFunc := api.GetApiByCmd(cmd)

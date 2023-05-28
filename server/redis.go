@@ -7,8 +7,6 @@ import (
 	"time"
 )
 
-var redisPools []*redis.Pool
-
 type redisCfgObj struct {
 	User         string
 	Pass         string
@@ -19,19 +17,10 @@ type redisCfgObj struct {
 	AllHostCfg   map[string]any
 }
 
-type RedisOperater struct {
-	pool redis.Pool
-}
-
-func GetRedis(id uint64) RedisOperater {
-	piece := id % uint64(redisCfg.PieceNum)
-	var redisOp = RedisOperater{
-		pool: *redisPools[piece],
-	}
-	return redisOp
-}
-
-var redisCfg redisCfgObj
+var (
+	RedisPools []*redis.Pool
+	RedisCfg   redisCfgObj
+)
 
 func init() {
 	// 配置初始化
@@ -41,32 +30,32 @@ func init() {
 }
 
 func redisCfgIni() {
-	redisCfg.User = common.GetYamlMapCfg("redisCfg", "redis", "common", "user").(string)
-	redisCfg.Pass = common.GetYamlMapCfg("redisCfg", "redis", "common", "pass").(string)
-	redisCfg.MaxOpenCon = common.GetYamlMapCfg("redisCfg", "redis", "common", "maxOpenCon").(int)
-	redisCfg.MaxIdleConns = common.GetYamlMapCfg("redisCfg", "redis", "common", "maxIdleConns").(int)
-	redisCfg.ConLiveTime = common.GetYamlMapCfg("redisCfg", "redis", "common", "conLiveTime").(int)
-	redisCfg.PieceNum = common.GetYamlMapCfg("redisCfg", "redis", "common", "pieceNum").(int)
-	redisCfg.AllHostCfg = common.GetYamlMapCfg("redisCfg", "redis", "game").(map[string]any)
+	RedisCfg.User = common.GetYamlMapCfg("redisCfg", "redis", "common", "user").(string)
+	RedisCfg.Pass = common.GetYamlMapCfg("redisCfg", "redis", "common", "pass").(string)
+	RedisCfg.MaxOpenCon = common.GetYamlMapCfg("redisCfg", "redis", "common", "maxOpenCon").(int)
+	RedisCfg.MaxIdleConns = common.GetYamlMapCfg("redisCfg", "redis", "common", "maxIdleConns").(int)
+	RedisCfg.ConLiveTime = common.GetYamlMapCfg("redisCfg", "redis", "common", "conLiveTime").(int)
+	RedisCfg.PieceNum = common.GetYamlMapCfg("redisCfg", "redis", "common", "pieceNum").(int)
+	RedisCfg.AllHostCfg = common.GetYamlMapCfg("redisCfg", "redis", "game").(map[string]any)
 }
 
 func redisPoolInit() {
-	for i := 1; i <= redisCfg.PieceNum; i++ {
+	for i := 1; i <= RedisCfg.PieceNum; i++ {
 		host := fmt.Sprintf("%s%d", "host", i)
 		var hostCfg map[string]any
-		hostCfg = redisCfg.AllHostCfg[host].(map[string]any)
+		hostCfg = RedisCfg.AllHostCfg[host].(map[string]any)
 
 		ip := hostCfg["ip"].(string)
 		port := fmt.Sprintf("%d", hostCfg["port"])
 
 		// 创建 Redis 连接池
 		redisPool := &redis.Pool{
-			MaxIdle:     redisCfg.MaxIdleConns,                             // 最大空闲连接数
-			MaxActive:   redisCfg.MaxOpenCon,                               // 最大连接数
-			IdleTimeout: time.Duration(redisCfg.ConLiveTime) * time.Minute, // 空闲连接超时时间
+			MaxIdle:     RedisCfg.MaxIdleConns,                             // 最大空闲连接数
+			MaxActive:   RedisCfg.MaxOpenCon,                               // 最大连接数
+			IdleTimeout: time.Duration(RedisCfg.ConLiveTime) * time.Minute, // 空闲连接超时时间
 			Dial: func() (redis.Conn, error) {
 				// 建立连接的函数
-				c, err := redis.Dial("tcp", ip+":"+port, redis.DialPassword(redisCfg.Pass))
+				c, err := redis.Dial("tcp", ip+":"+port, redis.DialPassword(RedisCfg.Pass))
 				if err != nil {
 					return nil, err
 				}
@@ -79,22 +68,6 @@ func redisPoolInit() {
 			},
 		}
 
-		redisPools = append(redisPools, redisPool)
+		RedisPools = append(RedisPools, redisPool)
 	}
-}
-
-// 查询数据
-func (op *RedisOperater) RedisDo(commandName string, args ...interface{}) (any, error) {
-	// 使用连接池获取连接并进行操作
-	conn := op.pool.Get()
-	defer conn.Close()
-
-	data, err := conn.Do(commandName, args[0], args[1])
-	if err != nil {
-		fmt.Println(err)
-		common.Logger.SystemErrorLog("REDIS_DO_ERROR:", commandName, args)
-
-	}
-
-	return data, err
 }
