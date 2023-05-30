@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"encoding/json"
+	"hdyx/common"
 	"hdyx/server"
 	"time"
 )
@@ -16,7 +17,7 @@ type actData struct {
 }
 
 // GameType : GameName
-var actRegister = map[uint32]func(uint64) ActBaseInterface{
+var actRegister = map[uint32]func(*common.ConContext) ActBaseInterface{
 	1: NewAct1Model,
 }
 
@@ -70,9 +71,9 @@ func (this actBaseModel) Init() error {
 	return err
 }
 
-func GetAct(uid uint64, actId uint32) ActBaseInterface {
+func GetAct(ctx *common.ConContext, actId uint32) ActBaseInterface {
 	fun := actRegister[actId]
-	return fun(uid)
+	return fun(ctx)
 }
 
 func (this actBaseModel) actFirstIni() error {

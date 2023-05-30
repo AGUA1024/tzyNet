@@ -18,21 +18,21 @@ var mpNodeTagToHost = map[string]string{}
 var nodePort = "8000"
 
 // 镜像版本
-var imageVersion = "v1.0.0.1"
+var imageVersion = "v1.0.0.2"
 var preVersion = "v1.0.0.1" //老版本名，用于删除老版本容器
 
 // 主机身份
 var hostUserName = "root"
-var hostPassWord = "5$vu7X9dCj&Zun9e"
+var hostPassWord = "123456"
 
 // etcd
-var etcdHost = "114.132.213.154:2381"
+var etcdHost = "127.0.0.1:2381"
 
 func main() {
-	//// 部署新版本
-	//deployImage(mpNodeTagToHost)
 	// 销毁旧版本
 	destroyContainer(mpNodeTagToHost)
+	// 部署新版本
+	deployImage(mpNodeTagToHost)
 }
 
 func init() {

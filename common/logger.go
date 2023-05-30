@@ -62,9 +62,14 @@ func init() {
 	encoder := zapcore.NewConsoleEncoder(encoderConfig)
 
 	//日志级别判定
-	highPriority := zap.LevelEnablerFunc(func(lev zapcore.Level) bool { //error级别
-		return lev >= zap.ErrorLevel
+	gameErrPriority := zap.LevelEnablerFunc(func(lev zapcore.Level) bool { //error级别
+		return lev == zap.ErrorLevel
 	})
+
+	sysErrPriority := zap.LevelEnablerFunc(func(lev zapcore.Level) bool { //error级别
+		return lev > zap.ErrorLevel
+	})
+
 	lowPriority := zap.LevelEnablerFunc(func(lev zapcore.Level) bool { //info和debug级别,debug级别是最低的
 		return lev < zap.ErrorLevel && lev >= zap.DebugLevel
 	})
@@ -87,7 +92,7 @@ func init() {
 		MaxAge:     maxKeepDayCfg,                                                    //日志文件保留天数
 		Compress:   isCompressCfg,                                                    //是否压缩处理
 	})
-	errorFileCore := zapcore.NewCore(encoder, zapcore.NewMultiWriteSyncer(errorFileWriteSyncer, zapcore.AddSync(os.Stdout)), highPriority) //第三个及之后的参数为写入文件的日志级别,ErrorLevel模式只记录error级别的日志
+	errorFileCore := zapcore.NewCore(encoder, zapcore.NewMultiWriteSyncer(errorFileWriteSyncer, zapcore.AddSync(os.Stdout)), gameErrPriority) //第三个及之后的参数为写入文件的日志级别,ErrorLevel模式只记录error级别的日志
 
 	//panic文件writeSyncer
 	panicFileWriteSyncer := zapcore.AddSync(&lumberjack.Logger{
@@ -97,7 +102,7 @@ func init() {
 		MaxAge:     maxKeepDayCfg,                                                     //日志文件保留天数
 		Compress:   isCompressCfg,                                                     //是否压缩处理
 	})
-	panicFileCore := zapcore.NewCore(encoder, zapcore.NewMultiWriteSyncer(panicFileWriteSyncer, zapcore.AddSync(os.Stdout)), highPriority) //第三个及之后的参数为写入文件的日志级别,ErrorLevel模式只记录error级别的日志
+	panicFileCore := zapcore.NewCore(encoder, zapcore.NewMultiWriteSyncer(panicFileWriteSyncer, zapcore.AddSync(os.Stdout)), sysErrPriority) //第三个及之后的参数为写入文件的日志级别,ErrorLevel模式只记录error级别的日志
 
 	coreArr = append(coreArr, infoFileCore)
 	coreArr = append(coreArr, errorFileCore)

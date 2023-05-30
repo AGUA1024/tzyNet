@@ -5,14 +5,21 @@ import (
 )
 
 // connectGorutine局部空间
-var MpConRoutineStorage = map[uint64]ConGlobalStorage{}
+var MpConRoutineStorage = map[uint64]*ConGlobalStorage{}
+
+var MpUserStorage = map[uint64]*userModel{}
+
+type userModel struct {
+	WsCon  *websocket.Conn
+	RoomId uint64
+}
 
 type ConGlobalStorage struct {
 	WsCon        *websocket.Conn
 	Uid          uint64
 	Cmd          uint32
 	RoomId       uint64
-	eventStorage *eventGlobalStorage
+	EventStorage *eventGlobalStorage
 }
 
 type eventGlobalStorage struct {
@@ -22,19 +29,11 @@ type eventGlobalStorage struct {
 
 type CacheEvent interface {
 	GetCommand() string
-	GetArgs() []string
+	GetArgs() []interface{}
 }
 
 type CacheOperator interface {
 	CacheSave(arrCacheEvent []CacheEvent) error
-}
-
-// 事件全局存储空间初始化
-func (this *ConGlobalStorage) EventStorageInit() {
-	this.eventStorage = &eventGlobalStorage{
-		playerCache: []CacheEvent{},
-		roomCache:   []CacheEvent{},
-	}
 }
 
 // connectGorutine上下文
@@ -42,22 +41,31 @@ type ConContext struct {
 	ConnectId uint64
 }
 
+// 事件全局存储空间初始化
+func (ctx *ConContext) EventStorageInit(cmd uint32) {
+	MpConRoutineStorage[ctx.GetConnectId()].Cmd = cmd
+	MpConRoutineStorage[ctx.GetConnectId()].EventStorage = &eventGlobalStorage{
+		playerCache: []CacheEvent{},
+		roomCache:   []CacheEvent{},
+	}
+}
+
 func (ctx *ConContext) PlayerRedisEventPush(playerRedisEvent CacheEvent) bool {
 	global := ctx.GetConGlobalObj()
-	if global == nil || global.eventStorage.playerCache == nil || global.eventStorage.playerCache == nil {
+	if global == nil || global.EventStorage.playerCache == nil || global.EventStorage.playerCache == nil {
 		return false
 	}
-	global.eventStorage.playerCache = append(global.eventStorage.playerCache, playerRedisEvent)
+	global.EventStorage.playerCache = append(global.EventStorage.playerCache, playerRedisEvent)
 
 	return true
 }
 
 func (ctx *ConContext) RoomRedisEventPush(roomRedisEvent CacheEvent) bool {
 	global := ctx.GetConGlobalObj()
-	if global == nil || global.eventStorage.playerCache == nil || global.eventStorage.playerCache == nil {
+	if global == nil || global.EventStorage.playerCache == nil || global.EventStorage.playerCache == nil {
 		return false
 	}
-	global.eventStorage.roomCache = append(global.eventStorage.playerCache, roomRedisEvent)
+	global.EventStorage.roomCache = append(global.EventStorage.playerCache, roomRedisEvent)
 
 	return true
 }
@@ -66,8 +74,8 @@ func (ctx *ConContext) RoomRedisEventPush(roomRedisEvent CacheEvent) bool {
 func (ctx *ConContext) AllCacheSave(playerCacheOp, RoomCacheOp CacheOperator) error {
 
 	// 获取redis事件
-	roomCache := ctx.GetConGlobalObj().eventStorage.roomCache
-	playerCache := ctx.GetConGlobalObj().eventStorage.playerCache
+	roomCache := ctx.GetConGlobalObj().EventStorage.roomCache
+	playerCache := ctx.GetConGlobalObj().EventStorage.playerCache
 
 	// 本地内存落地redis
 	err := playerCacheOp.CacheSave(roomCache)
@@ -86,7 +94,7 @@ func (ctx *ConContext) GetConGlobalObj() *ConGlobalStorage {
 	if !ok {
 		return nil
 	}
-	return &conGlobalObj
+	return conGlobalObj
 }
 
 func (ctx *ConContext) SetConGlobalWsCon(conn *websocket.Conn) bool {
@@ -142,6 +150,22 @@ func (ctx *ConContext) SetConGlobalUid(uid uint64) bool {
 	conGlobalObj.Uid = uid
 
 	MpConRoutineStorage[conId] = conGlobalObj
+
+	return true
+}
+
+func (ctx *ConContext) RegisterUserForStorage() bool {
+	if MpUserStorage == nil || ctx.GetConGlobalObj() == nil {
+		return false
+	}
+	uid := ctx.GetConGlobalObj().Uid
+	wsCon := ctx.GetConGlobalObj().WsCon
+	roomId := ctx.GetConGlobalObj().RoomId
+
+	MpUserStorage[uid] = &userModel{
+		WsCon:  wsCon,
+		RoomId: roomId,
+	}
 
 	return true
 }

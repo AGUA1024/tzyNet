@@ -11,6 +11,7 @@ ADD . /app
 
 # 因为已经是在 /app下了，所以使用  ./
 RUN go mod download
+RUN go mod tidy
 RUN go build -o main ./gateway.go
 
 # 暴露的端口

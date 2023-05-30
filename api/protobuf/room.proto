@@ -27,9 +27,13 @@ message JoinRoom_InObj {
 }
 
 message JoinRoom_OutObj {
-  map<uint64,bool> players = 1;  //房间内的玩家uid,准备情况
+  map<uint64,playerInfo> players = 1;  //房间内的玩家uid,准备情况
 }
 
+message playerInfo{
+  bool state=1;
+  bool isMaster=2;
+}
 
 // 离开房间
 message LeaveRoom_InObj {
@@ -37,17 +41,17 @@ message LeaveRoom_InObj {
 }
 
 message LeaveRoom_OutObj {
-  bool ok=1;
+  map<uint64,playerInfo> players = 1;  //房间内的玩家uid,准备情况
 }
 
 
 // 准备
-message RoomPrepare_InObj {
+message SetOrCancelPrepare_InObj {
   uint64 roomId=1;
 }
 
-message RoomPrepare_OutObj {
-  bool ok=1;
+message SetOrCancelPrepare_OutObj {
+  map<uint64,playerInfo> players = 1;  //房间内的玩家uid,准备情况
 }
 
 

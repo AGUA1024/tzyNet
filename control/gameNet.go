@@ -45,5 +45,10 @@ func ConGlobalObjInit(ctx *common.ConContext, cin *api.ConGlobalObjInit_InObj) *
 	if ok = ctx.SetConGlobalRoomId(cin.GetRoomId()); !ok {
 		common.Logger.GameErrorLog(ctx, common.ERR_NO_CONNECT_EXIST, "与服务器的连接不存在")
 	}
+
+	if !ctx.RegisterUserForStorage() {
+		common.Logger.GameErrorLog(ctx, common.ERR_NO_CONNECT_EXIST, "与服务器的连接不存在")
+	}
+
 	return &api.ConGlobalObjInit_OutObj{Ok: true}
 }

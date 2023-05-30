@@ -1,6 +1,7 @@
 package model
 
 import (
+	"hdyx/common"
 	"sync"
 )
 
@@ -33,13 +34,13 @@ type Player struct {
 	DefuseCh chan bool //拆弹通道
 }
 
-func NewAct1Model(uid uint64) ActBaseInterface {
+func NewAct1Model(ctx *common.ConContext) ActBaseInterface {
 	var act1ModelOnce sync.Once
 	var act1Model *Act1Model
 	act1ModelOnce.Do(func() {
 		act1Model = &Act1Model{
 			actBaseModel: actBaseModel{
-				uid:    uid,
+				uid:    ctx.GetConGlobalObj().Uid,
 				actId:  GANE_TYPE,
 				isOver: true,
 				actInfo: map[string]any{

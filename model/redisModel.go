@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"hdyx/common"
 	"hdyx/server"
@@ -12,7 +13,7 @@ type RedisEventQueue struct {
 
 type RedisEvent struct {
 	command string
-	args    []string
+	args    []interface{}
 }
 
 type RedisOperator struct {
@@ -24,11 +25,15 @@ const (
 	REDIS_ROOM   = 2
 )
 
+func GetRedisPreKey(id uint64) string {
+	return fmt.Sprintf("%02d_", id%100)
+}
+
 func (this RedisEvent) GetCommand() string {
 	return this.command
 }
 
-func (this RedisEvent) GetArgs() []string {
+func (this RedisEvent) GetArgs() []interface{} {
 	return this.args
 }
 
@@ -48,7 +53,9 @@ func (this *RedisOperator) CacheSave(arrCacheEvent []common.CacheEvent) error {
 	}
 
 	for _, event := range arrCacheEvent {
-		err = conn.Send(event.GetCommand(), event.GetArgs())
+		fmt.Println("saveing")
+		fmt.Println(event.GetCommand(), event.GetArgs())
+		err = conn.Send(event.GetCommand(), event.GetArgs()...)
 		if err != nil {
 			return err
 		}
@@ -67,11 +74,12 @@ func GetCacheById(id uint64) *RedisOperator {
 	return &redisOp
 }
 
-func (this *RedisOperator) RedisQuery(command string, args ...string) (any, error) {
+func (this *RedisOperator) RedisQuery(command string, args ...interface{}) (any, error) {
 	conn := this.pool.Get()
 	defer conn.Close()
 
-	data, err := conn.Do(command, args)
+	fmt.Println(command, args)
+	data, err := conn.Do(command, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +87,7 @@ func (this *RedisOperator) RedisQuery(command string, args ...string) (any, erro
 	return data, err
 }
 
-func (this *RedisOperator) RedisWrite(ctx *common.ConContext, typeId int, command string, args ...string) bool {
+func (this *RedisOperator) RedisWrite(ctx *common.ConContext, typeId int, command string, args ...interface{}) bool {
 	var ok bool
 
 	event := RedisEvent{

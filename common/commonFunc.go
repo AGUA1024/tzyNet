@@ -17,6 +17,7 @@ func OutPutStream[T proto.Message](ctx *ConContext, obj T) {
 	data, _ := proto.Marshal(obj)
 
 	out := ioBuf.OutPutBuf{
+		Uid:            ctx.GetConGlobalObj().Uid,
 		CmdCode:        0,
 		ProtocolSwitch: 0,
 		CmdMerge:       ctx.GetConGlobalObj().Cmd,
