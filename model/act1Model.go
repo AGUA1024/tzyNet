@@ -2,71 +2,154 @@ package model
 
 import (
 	"hdyx/common"
-	"sync"
+	"math/rand"
 )
 
-const GANE_TYPE = 1
+// 游戏基础配置设置
+const (
+	actId        = 1
+	maxPlayerNum = 5
+	minPlayerNum = 5
+)
+
+const (
+	const_CARD_SKIP             = iota // 0跳过
+	const_CARD_FORBID_1                // 1嫁祸v1
+	const_CARD_FORBID_2                // 2嫁祸v2
+	const_CARD_REVERSE                 // 3转向
+	const_CARD_DRAW_FROM_BOTTOM        // 4抽底
+	const_CARD_DEMAND                  // 5索要
+	const_CARD_SWAP                    // 6替换
+	const_CARD_PREDICT                 // 7预测
+	const_CARD_VIEW                    // 8透视
+	const_CARD_SHUFFLE                 // 9洗牌
+	const_CARD_BOMB                    // 10炸弹
+	const_CARD_DISMANTLE               // 11拆除
+)
+
+// 牌型对数量的映射
+var cfgCardTypeToNum = map[int]int{
+	const_CARD_SKIP:             8,
+	const_CARD_FORBID_1:         5,
+	const_CARD_FORBID_2:         3,
+	const_CARD_REVERSE:          5,
+	const_CARD_DRAW_FROM_BOTTOM: 3,
+	const_CARD_DEMAND:           4,
+	const_CARD_SWAP:             3,
+	const_CARD_PREDICT:          4,
+	const_CARD_VIEW:             4,
+	const_CARD_SHUFFLE:          4,
+	const_CARD_BOMB:             4,
+	const_CARD_DISMANTLE:        6,
+}
 
 type Act1Model struct {
 	actBaseModel
 }
 
-const (
-	CARD_SKIP             = iota // 0跳过
-	CARD_FORBID_1                // 1嫁祸v1
-	CARD_FORBID_2                // 2嫁祸v2
-	CARD_REVERSE                 // 3转向
-	CARD_DRAW_FROM_BOTTOM        // 4抽底
-	CARD_DEMAND                  // 5索要
-	CARD_SWAP                    // 6替换
-	CARD_PREDICT                 // 7预测
-	CARD_VIEW                    // 8透视
-	CARD_SHUFFLE                 // 9洗牌
-	CARD_BOMB                    // 10炸弹
-	CARD_DISMANTLE               // 11拆除
-)
-
 type Player struct {
-	Uid      uint64    //玩家id
-	Cards    []int     // 手中的牌
-	Status   bool      // 是否已失败
-	PlayCh   chan int  //出牌通道
-	DefuseCh chan bool //拆弹通道
+	Uid    uint64 //玩家id
+	Cards  []int  // 手中的牌
+	Status bool   // 是否已失败
 }
 
-func NewAct1Model(ctx *common.ConContext) ActBaseInterface {
-	var act1ModelOnce sync.Once
-	var act1Model *Act1Model
-	act1ModelOnce.Do(func() {
-		act1Model = &Act1Model{
-			actBaseModel: actBaseModel{
-				uid:    ctx.GetConGlobalObj().Uid,
-				actId:  GANE_TYPE,
-				isOver: true,
-				actInfo: map[string]any{
-					"playerId":         -1,               // 玩家id
-					"playerList":       map[int]Player{}, // playerId : cardId
-					"curPlayerId":      -1,               // 当前出牌玩家id
-					"curPlayerRemTime": -1,               // 当前玩家剩余时间
-					"cardPool":         []int{},          // 卡池
-					"discarded":        []int{},          // 弃卡池
-					"direction":        true,             // 回合顺序，true 表示正向，false表示反向
-				},
-			},
-		}
-	})
+func (this *Act1Model) GetActCfg() *GameCfg {
+	return &GameCfg{
+		ActId:        actId,
+		MaxPlayerNum: maxPlayerNum,
+		MinPlayerNum: minPlayerNum,
+	}
+}
 
-	act1Model.Init()
+// 创建一个新游戏
+func (this Act1Model) NewActModel(ctx *common.ConContext) ActBaseInterface {
+	// 获取房间信息
+	roomInfo, err := GetGameRoomInfo(ctx, ctx.GetConGlobalObj().RoomId)
+	if err != nil || roomInfo == nil {
+		return nil
+	}
+
+	// 抽出炸弹牌，初始牌堆
+	deckNoBombs := deckInitNobombs()
+	cardPoolShuffle(deckNoBombs)
+
+	// 初始化玩家属性，给玩家发初始手牌
+	playerList, cardPool := playerListInit(ctx, deckNoBombs)
+
+	// 发完手牌后加入炸弹牌
+	for i := 0; i < cfgCardTypeToNum[const_CARD_BOMB]; i++ {
+		cardPool = append(cardPool, const_CARD_BOMB)
+	}
+	// 洗牌
+	cardPoolShuffle(cardPool)
+
+	act1Model := &Act1Model{
+		actBaseModel: actBaseModel{
+			RoomId: ctx.GetConGlobalObj().RoomId,
+			ActId:  1,
+			IsOver: false,
+			ActInfo: map[string]any{
+				"playerList":       playerList, // playerId : cardId
+				"curPlayerId":      0,          // 当前出牌玩家id
+				"curPlayerRemTime": -1,         // 当前玩家剩余时间
+				"cardPool":         cardPool,   // 卡池
+				"discarded":        []int{},    // 弃卡池
+				"direction":        true,       // 回合顺序，true 表示正向，false表示反向
+			},
+		},
+	}
+
+	this.Save(ctx)
 	return act1Model
 }
 
-//
-//// 根据玩家数量初始化游戏
+func deckInitNobombs() []int {
+	var deck []int
+	for cardType, num := range cfgCardTypeToNum {
+		if cardType == const_CARD_BOMB {
+			continue
+		}
+
+		for i := 0; i < num; i++ {
+			deck = append(deck, cardType)
+		}
+	}
+
+	return deck
+}
+
+func playerListInit(ctx *common.ConContext, cardDeck []int) (*map[uint32]Player, []int) {
+	roomInfo, err := GetGameRoomInfo(ctx, ctx.GetConGlobalObj().RoomId)
+	if err != nil || roomInfo == nil {
+		return nil, nil
+	}
+
+	mpRet := map[uint32]Player{}
+	for index, player := range roomInfo.PosIdToPlayer {
+		// 初始化手牌
+		var playerCards = cardDeck[:5]
+		cardDeck = cardDeck[5:]
+
+		mpRet[index] = Player{
+			Uid:    player.Uid,
+			Cards:  playerCards,
+			Status: false,
+		}
+		index++
+	}
+
+	return &mpRet, cardDeck
+}
+
+// 洗牌
+func cardPoolShuffle(cardpool []int) {
+	rand.Shuffle(len(cardpool), func(i, j int) {
+		cardpool[i], cardpool[j] = cardpool[j], cardpool[i]
+	})
+}
+
+//// // 根据玩家数量初始化游戏
 //func NewGame(playerCount int, playerId []int16) *Game {
-//	// 玩家数量必须在 2 到 5 之间
-//	if playerCount < 2 || playerCount > 5 {
-//		panic("invalid player count")
-//	}
 //	// 创建玩家数组，并初始化每个玩家的 ID、手牌和状态
 //	players := make([]*Player, playerCount)
 //	for i := 0; i < playerCount; i++ {
@@ -95,94 +178,88 @@ func NewAct1Model(ctx *common.ConContext) ActBaseInterface {
 //		IsOver:    true,
 //	}
 //}
+
+// // 初始化牌堆
 //
-//// 初始化牌堆
-//func NewDeck() []int {
-//	cards := []int{}
-//	cards = addCard(cards, 0, 8)
-//	cards = addCard(cards, 1, 5)
-//	cards = addCard(cards, 2, 3)
-//	cards = addCard(cards, 3, 5)
-//	cards = addCard(cards, 4, 3)
-//	cards = addCard(cards, 5, 4)
-//	cards = addCard(cards, 6, 3)
-//	cards = addCard(cards, 7, 4)
-//	cards = addCard(cards, 8, 4)
-//	cards = addCard(cards, 9, 4)
-//	cards = addCard(cards, 10, 4)
-//	cards = addCard(cards, 11, 6)
-//	return cards
-//}
-//
-//// 将牌按照数量加入牌组
-//func addCard(cards []int, CardType int, nums int) []int {
-//
-//	for i := 0; i < nums; i++ {
-//		cards = append(cards, CardType)
+//	func NewDeck() []int {
+//		cards := []int{}
+//		cards = addCard(cards, 0, 8)
+//		cards = addCard(cards, 1, 5)
+//		cards = addCard(cards, 2, 3)
+//		cards = addCard(cards, 3, 5)
+//		cards = addCard(cards, 4, 3)
+//		cards = addCard(cards, 5, 4)
+//		cards = addCard(cards, 6, 3)
+//		cards = addCard(cards, 7, 4)
+//		cards = addCard(cards, 8, 4)
+//		cards = addCard(cards, 9, 4)
+//		cards = addCard(cards, 10, 4)
+//		cards = addCard(cards, 11, 6)
+//		return cards
 //	}
-//	return cards
-//}
 //
-//// 玩家打出手中的某张牌
-//func (p *Player) PlayCard(game *Game, cardIndex int) {
-//	log.Printf("玩家%s的回合\n", p.PlayerID)
-//	// 从玩家手牌中取出要打出的卡牌
-//	card := p.Cards[cardIndex]
-//	// 将该卡牌从玩家手牌中删除，并将其加入弃牌堆中
-//	p.Cards = append(p.Cards[:cardIndex], p.Cards[cardIndex+1:]...)
-//	game.Discarded = append(game.Discarded, card)
-//	card = 0
-//	switch card {
-//	case SKIP:
-//		game.NextTurn()
-//		return
-//	case FORBID_1, FORBID_2:
-//		game.blame(5)
-//		return
-//	case REVERSE:
-//		game.reverse()
-//		return
-//	case DRAW_FROM_BOTTOM:
-//		game.NextTurn()
-//		p.drawbotton(game)
-//		return
-//	case DEMAND:
-//		p.ask(game.Players[4], 0) //获取要选的卡的索引
-//		return
-//	case SWAP:
-//		p.swap(game.Players[4], 0, 0)
-//		return
-//	case PREDICT:
-//		predict := p.predict(game)
-//		if predict == 13 {
-//			log.Println("程序出错")
+// // 将牌按照数量加入牌组
+// func addCard(cards []int, CardType int, nums int) []int {
+//
+//		for i := 0; i < nums; i++ {
+//			cards = append(cards, CardType)
 //		}
-//		return
-//	case VIEW:
-//		p.see(game)
-//		return
-//	case SHUFFLE:
-//		game.shuffleDeck()
-//		return
-//	case DISMANTLE:
-//		//拆炸弹
-//
-//		return
-//	default:
-//		// 如果遇到未知卡牌类型，则报错提示
-//		panic(fmt.Sprintf("invalid card type: %s", card))
-//		return
+//		return cards
 //	}
-//}
 //
-//// 洗牌
-//func shuffle(cardpool []int) {
-//	rand.Seed(time.Now().Unix())
-//	for i := len(cardpool) - 1; i > 0; i-- {
-//		j := rand.Intn(i + 1)
-//		cardpool[i], cardpool[j] = cardpool[j], cardpool[i]
+// // 玩家打出手中的某张牌
+//
+//	func (p *Player) PlayCard(game *Game, cardIndex int) {
+//		log.Printf("玩家%s的回合\n", p.PlayerID)
+//		// 从玩家手牌中取出要打出的卡牌
+//		card := p.Cards[cardIndex]
+//		// 将该卡牌从玩家手牌中删除，并将其加入弃牌堆中
+//		p.Cards = append(p.Cards[:cardIndex], p.Cards[cardIndex+1:]...)
+//		game.Discarded = append(game.Discarded, card)
+//		card = 0
+//		switch card {
+//		case SKIP:
+//			game.NextTurn()
+//			return
+//		case FORBID_1, FORBID_2:
+//			game.blame(5)
+//			return
+//		case REVERSE:
+//			game.reverse()
+//			return
+//		case DRAW_FROM_BOTTOM:
+//			game.NextTurn()
+//			p.drawbotton(game)
+//			return
+//		case DEMAND:
+//			p.ask(game.Players[4], 0) //获取要选的卡的索引
+//			return
+//		case SWAP:
+//			p.swap(game.Players[4], 0, 0)
+//			return
+//		case PREDICT:
+//			predict := p.predict(game)
+//			if predict == 13 {
+//				log.Println("程序出错")
+//			}
+//			return
+//		case VIEW:
+//			p.see(game)
+//			return
+//		case SHUFFLE:
+//			game.shuffleDeck()
+//			return
+//		case DISMANTLE:
+//			//拆炸弹
+//
+//			return
+//		default:
+//			// 如果遇到未知卡牌类型，则报错提示
+//			panic(fmt.Sprintf("invalid card type: %s", card))
+//			return
+//		}
 //	}
-//}
+//
 
 //// 摸一张牌
 //func (g *Game) draw() int {

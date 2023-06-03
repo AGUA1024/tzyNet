@@ -101,6 +101,6 @@ func (this *RedisOperator) RedisWrite(ctx *common.ConContext, typeId int, comman
 	case REDIS_ROOM:
 		ok = ctx.RoomRedisEventPush(event)
 	}
-
+	
 	return ok
 }

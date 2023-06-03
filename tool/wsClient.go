@@ -37,8 +37,6 @@ func main() {
 					panic(err)
 				}
 				fmt.Println("write ok!")
-
-				//
 				//out := script.CreateRoom_OutObj{}
 				//proto.Unmarshal(receivedMessage.Data, &out)
 				//fmt.Println(out.Ok)
@@ -81,23 +79,42 @@ func bufferShow() {
 	//_, str1 := script.GetGateWayBuf()
 	//fmt.Println("GetGateWayBuf:", str1)
 
-	_, str1 := script.ConGlobalObjInitBuf(1111, roomId)
+	_, str1 := script.ConGlobalObjInitBuf(13324782, roomId)
 	fmt.Println("ConGlobalObjInitBuf1:", str1)
-	_, str11 := script.ConGlobalObjInitBuf(2222, roomId)
+	_, str11 := script.ConGlobalObjInitBuf(11834295, roomId)
 	fmt.Println("ConGlobalObjInitBuf11:", str11)
-	_, str111 := script.ConGlobalObjInitBuf(333, roomId)
+	_, str111 := script.ConGlobalObjInitBuf(11677176, roomId)
 	fmt.Println("ConGlobalObjInitBuf111:", str111)
 
 	_, str3 := script.CreateRoomBuf(roomId)
 	fmt.Println("CreateRoomBuf：", str3)
-	_, str4 := script.DestroyRoom(roomId)
-	fmt.Println("DestroyRoom：", str4)
-	_, str5 := script.JoinRoom(roomId)
-	fmt.Println("JoinRoom:", str5)
-	_, str6 := script.LeaveRoom(roomId)
-	fmt.Println("LeaveRoom:", str6)
-	_, str7 := script.SetOrCancelPrepare(roomId)
-	fmt.Println("SetOrCancelPrepare:", str7)
-	_, str8 := script.GameStart(roomId)
-	fmt.Println("GameStart:", str8)
+	_, str4 := script.JoinRoom(roomId)
+	fmt.Println("JoinRoom:", str4)
+
+	_, str5 := script.JoinGame(1)
+	fmt.Println("JoinGame1:", str5)
+	_, str6 := script.JoinGame(2)
+	fmt.Println("JoinGame2:", str6)
+	_, str7 := script.JoinGame(0)
+	fmt.Println("JoinGame0:", str7)
+
+	_, str8 := script.LeaveGame()
+	fmt.Println("LeaveGame:", str8)
+
+	_, str9 := script.SetOrCancelPrepare()
+	fmt.Println("SetOrCancelPrepare:", str9)
+	_, str10 := script.GameStart()
+	fmt.Println("GameStart:", str10)
+
+	_, str12 := script.ChangePos(1)
+	fmt.Println("ChangePos3:", str12)
+	_, str13 := script.ChangePos(2)
+	fmt.Println("ChangePos4:", str13)
+	_, str14 := script.ChangePos(1)
+	fmt.Println("ChangePos3:", str14)
+	_, str15 := script.ChangePos(2)
+	fmt.Println("ChangePos4:", str15)
+
+	//_, str4 := script.DestroyRoom(roomId)
+	//fmt.Println("DestroyRoom：", str4)
 }

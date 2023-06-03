@@ -30,7 +30,7 @@ func OutPutStream[T proto.Message](ctx *ConContext, obj T) {
 		Logger.SystemErrorLog("GET_OUT_STREAM_Marshal_ERROR", err)
 	}
 
-	err = ctx.GetConGlobalObj().WsCon.WriteMessage(TextMessage, outStream)
+	err = ctx.GetConGlobalObj().WsCon.WriteMessage(BinaryMessage, outStream)
 	if err != nil {
 		Logger.SystemErrorLog("OUT_STREAM_ERROR", err)
 	}

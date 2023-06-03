@@ -7,59 +7,83 @@ import (
 	"hdyx/model"
 )
 
-// 创建房间
+// 判断房间是否存在
+func IsRoomExist(ctx *common.ConContext, params []byte) {
+	parmObj := common.GetParamObj[*api.IsRoomExist_InObj](params, &api.IsRoomExist_InObj{})
+
+	outObj := control.IsRoomExist(ctx, parmObj.RoomId)
+
+	common.OutPutStream[*api.IsRoomExist_OutObj](ctx, outObj)
+}
+
+// 创建游戏房、观众房
 func CreateRoom(ctx *common.ConContext, params []byte) {
 	parmObj := common.GetParamObj[*api.CreateRoom_InObj](params, &api.CreateRoom_InObj{})
 
-	roomId := parmObj.GetRoomId()
-	actId := parmObj.GetActId()
-
-	outObj := control.CreateRoom(ctx, roomId, actId)
+	roomId := parmObj.RoomId
+	actId := parmObj.ActId
+	gameLv := parmObj.GameLv
+	outObj := control.CreateRoom(ctx, roomId, actId, gameLv)
 
 	common.OutPutStream[*api.CreateRoom_OutObj](ctx, outObj)
 }
 
-// 销毁房间
-func DestroyRoom(ctx *common.ConContext, params []byte) {
-	parmObj := common.GetParamObj[*api.DestroyRoom_InObj](params, &api.DestroyRoom_InObj{})
-
-	outObj := control.DestoryRoom(ctx, parmObj.RoomId)
-
-	model.MsgRoomBroadcast[*api.DestroyRoom_OutObj](ctx, outObj)
-}
-
-// 进入游戏房间
+// 加入观众房
 func JoinRoom(ctx *common.ConContext, params []byte) {
 	parmObj := common.GetParamObj[*api.JoinRoom_InObj](params, &api.JoinRoom_InObj{})
 
-	outObj := control.JoinRoom(ctx, parmObj.RoomId)
+	roomId := parmObj.RoomId
+	outObj := control.JoinRoom(ctx, roomId)
 
-	model.MsgRoomBroadcast[*api.JoinRoom_OutObj](ctx, outObj)
+	common.OutPutStream[*api.JoinRoom_OutObj](ctx, outObj)
+}
+
+// 加入游戏位次
+func JoinGame(ctx *common.ConContext, params []byte) {
+	parmObj := common.GetParamObj[*api.JoinGame_InObj](params, &api.JoinGame_InObj{})
+
+	posId := parmObj.PostionId
+	outObj := control.JoinGame(ctx, posId)
+
+	model.MsgRoomBroadcast[*api.JoinGame_OutObj](ctx, outObj)
+}
+
+func ChangePos(ctx *common.ConContext, params []byte) {
+	parmObj := common.GetParamObj[*api.ChangePos_InObj](params, &api.ChangePos_InObj{})
+
+	newPosId := parmObj.NewPosId
+
+	outObj := control.ChangePos(ctx, newPosId)
+
+	model.MsgRoomBroadcast[*api.ChangePos_OutObj](ctx, outObj)
 }
 
 // 离开游戏房间
-func LeaveRoom(ctx *common.ConContext, params []byte) {
-	parmObj := common.GetParamObj[*api.LeaveRoom_InObj](params, &api.LeaveRoom_InObj{})
+func LeaveGame(ctx *common.ConContext, params []byte) {
+	outObj := control.LeaveGame(ctx)
 
-	outObj := control.LeaveRoom(ctx, parmObj.RoomId)
-
-	model.MsgRoomBroadcast[*api.LeaveRoom_OutObj](ctx, outObj)
+	model.MsgRoomBroadcast[*api.LeaveGame_OutObj](ctx, outObj)
 }
 
 // 准备
 func SetOrCancelPrepare(ctx *common.ConContext, params []byte) {
-	parmObj := common.GetParamObj[*api.SetOrCancelPrepare_InObj](params, &api.SetOrCancelPrepare_InObj{})
-
-	outObj := control.SetOrCancelPrepare(ctx, parmObj.RoomId)
+	outObj := control.SetOrCancelPrepare(ctx)
 
 	model.MsgRoomBroadcast[*api.SetOrCancelPrepare_OutObj](ctx, outObj)
 }
 
 // 开始游戏
 func GameStart(ctx *common.ConContext, params []byte) {
-	parmObj := common.GetParamObj[*api.GameStart_InObj](params, &api.GameStart_InObj{})
-
-	outObj := control.GameStart(ctx, parmObj.RoomId)
+	outObj := control.GameStart(ctx)
 
 	model.MsgRoomBroadcast[*api.GameStart_OutObj](ctx, outObj)
 }
+
+//// 销毁房间
+//func DestroyRoom(ctx *common.ConContext, params []byte) {
+//	parmObj := common.GetParamObj[*api.DestroyRoom_InObj](params, &api.DestroyRoom_InObj{})
+//
+//	outObj := control.DestoryRoom(ctx, parmObj.RoomId)
+//
+//	model.MsgRoomBroadcast[*api.DestroyRoom_OutObj](ctx, outObj)
+//}

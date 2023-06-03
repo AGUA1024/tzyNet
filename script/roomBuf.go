@@ -20,32 +20,6 @@ func CreateRoomBuf(roomId uint64) ([]byte, string) {
 	// 发送消息
 	message := &ioBuf2.ClientBuf{
 		ProtocolSwitch: 1,
-		CmdMerge:       0x20001,
-		Data:           cendBuf,
-	}
-	data, err := proto.Marshal(message)
-	if err != nil {
-		panic(err)
-	}
-
-	// 将 byte 装换为 2进制的字符串
-	binaryString := hex.EncodeToString(data)
-
-	return data, binaryString
-}
-
-func DestroyRoom(roomId uint64) ([]byte, string) {
-	buf := DestroyRoom_InObj{
-		state:         protoimpl.MessageState{},
-		sizeCache:     0,
-		unknownFields: nil,
-		RoomId:        roomId,
-	}
-	cendBuf, _ := proto.Marshal(&buf)
-
-	// 发送消息
-	message := &ioBuf2.ClientBuf{
-		ProtocolSwitch: 1,
 		CmdMerge:       0x20002,
 		Data:           cendBuf,
 	}
@@ -86,12 +60,12 @@ func JoinRoom(roomId uint64) ([]byte, string) {
 	return data, binaryString
 }
 
-func LeaveRoom(roomId uint64) ([]byte, string) {
-	buf := LeaveRoom_InObj{
+func JoinGame(posId uint32) ([]byte, string) {
+	buf := JoinGame_InObj{
 		state:         protoimpl.MessageState{},
 		sizeCache:     0,
 		unknownFields: nil,
-		RoomId:        roomId,
+		PostionId:     posId,
 	}
 	cendBuf, _ := proto.Marshal(&buf)
 
@@ -112,12 +86,12 @@ func LeaveRoom(roomId uint64) ([]byte, string) {
 	return data, binaryString
 }
 
-func SetOrCancelPrepare(roomId uint64) ([]byte, string) {
-	buf := SetOrCancelPrepare_InObj{
+func ChangePos(newPosId uint32) ([]byte, string) {
+	buf := ChangePos_InObj{
 		state:         protoimpl.MessageState{},
 		sizeCache:     0,
 		unknownFields: nil,
-		RoomId:        roomId,
+		NewPosId:      newPosId,
 	}
 	cendBuf, _ := proto.Marshal(&buf)
 
@@ -138,20 +112,20 @@ func SetOrCancelPrepare(roomId uint64) ([]byte, string) {
 	return data, binaryString
 }
 
-func GameStart(roomId uint64) ([]byte, string) {
-	buf := GameStart_InObj{
-		state:         protoimpl.MessageState{},
-		sizeCache:     0,
-		unknownFields: nil,
-		RoomId:        roomId,
-	}
-	cendBuf, _ := proto.Marshal(&buf)
+func LeaveGame() ([]byte, string) {
+	//buf := L{
+	//	state:         protoimpl.MessageState{},
+	//	sizeCache:     0,
+	//	unknownFields: nil,
+	//	RoomId:        roomId,
+	//}
+	//cendBuf, _ := proto.Marshal(&buf)
 
 	// 发送消息
 	message := &ioBuf2.ClientBuf{
 		ProtocolSwitch: 1,
 		CmdMerge:       0x20006,
-		Data:           cendBuf,
+		Data:           nil,
 	}
 	data, err := proto.Marshal(message)
 	if err != nil {
@@ -163,3 +137,81 @@ func GameStart(roomId uint64) ([]byte, string) {
 
 	return data, binaryString
 }
+
+func SetOrCancelPrepare() ([]byte, string) {
+	//buf := SetOrCancelPrepare_InObj{
+	//	state:         protoimpl.MessageState{},
+	//	sizeCache:     0,
+	//	unknownFields: nil,
+	//	RoomId:        roomId,
+	//}
+	//cendBuf, _ := proto.Marshal(&buf)
+
+	// 发送消息
+	message := &ioBuf2.ClientBuf{
+		ProtocolSwitch: 1,
+		CmdMerge:       0x20007,
+		Data:           nil,
+	}
+	data, err := proto.Marshal(message)
+	if err != nil {
+		panic(err)
+	}
+
+	// 将 byte 装换为 2进制的字符串
+	binaryString := hex.EncodeToString(data)
+
+	return data, binaryString
+}
+
+func GameStart() ([]byte, string) {
+	//buf := GameStart_InObj{
+	//	state:         protoimpl.MessageState{},
+	//	sizeCache:     0,
+	//	unknownFields: nil,
+	//	RoomId:        roomId,
+	//}
+	//cendBuf, _ := proto.Marshal(&buf)
+
+	// 发送消息
+	message := &ioBuf2.ClientBuf{
+		ProtocolSwitch: 1,
+		CmdMerge:       0x20008,
+		Data:           nil,
+	}
+	data, err := proto.Marshal(message)
+	if err != nil {
+		panic(err)
+	}
+
+	// 将 byte 装换为 2进制的字符串
+	binaryString := hex.EncodeToString(data)
+
+	return data, binaryString
+}
+
+//func DestroyRoom(roomId uint64) ([]byte, string) {
+//	buf := DestroyRoom_InObj{
+//		state:         protoimpl.MessageState{},
+//		sizeCache:     0,
+//		unknownFields: nil,
+//		RoomId:        roomId,
+//	}
+//	cendBuf, _ := proto.Marshal(&buf)
+//
+//	// 发送消息
+//	message := &ioBuf2.ClientBuf{
+//		ProtocolSwitch: 1,
+//		CmdMerge:       0x20002,
+//		Data:           cendBuf,
+//	}
+//	data, err := proto.Marshal(message)
+//	if err != nil {
+//		panic(err)
+//	}
+//
+//	// 将 byte 装换为 2进制的字符串
+//	binaryString := hex.EncodeToString(data)
+//
+//	return data, binaryString
+//}

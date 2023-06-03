@@ -1,102 +1,65 @@
 package model
 
 import (
-	"context"
 	"encoding/json"
+	"fmt"
 	"hdyx/common"
-	"hdyx/server"
-	"time"
 )
 
-type actData struct {
-	Uid        uint64 `gorm:"uid"`
-	ActId      uint32 `gorm:"actId"`
-	TJson      string `gorm:"tJson"`
-	CreateTime string `gorm:"createTime"`
-	UpdateTime string `gorm:"updateTime"`
-}
-
-// GameType : GameName
-var actRegister = map[uint32]func(*common.ConContext) ActBaseInterface{
-	1: NewAct1Model,
+type GameCfg struct {
+	ActId        uint32
+	MaxPlayerNum int
+	MinPlayerNum int
 }
 
 type ActBaseInterface interface {
-	Save() error
-	Init() error
+	NewActModel(ctx *common.ConContext) ActBaseInterface
+	Save(ctx *common.ConContext) (bool, error)
+	LoadModelInfo() (bool, error)
+	GetActCfg() *GameCfg
 }
 
 type actBaseModel struct {
-	uid     uint64
-	actId   uint32
-	actInfo map[string]any
-	isOver  bool
+	RoomId  uint64
+	ActId   uint32
+	ActInfo map[string]any
+	IsOver  bool
 }
 
-func (this actBaseModel) Save() error {
-	jsonData, _ := json.Marshal(this.actInfo)
-	strJsData := string(jsonData)
+func (this *actBaseModel) GetActKey() string {
+	return GetRedisPreKey(this.RoomId) + "act_" + fmt.Sprintf("%d", this.ActId)
+}
 
-	now := time.Now()
-	strNow := now.Format(time.DateTime)
-
-	actInfo := actData{
-		Uid:        this.uid,
-		ActId:      this.actId,
-		TJson:      strJsData,
-		UpdateTime: strNow,
+func (this *actBaseModel) LoadModelInfo() (bool, error) {
+	key := this.GetActKey()
+	cache := GetCacheById(this.RoomId)
+	data, err := cache.RedisQuery("HGET", key, this.RoomId)
+	if data == nil || err != nil {
+		return false, err
 	}
 
-	db := server.GetDb(this.uid, "game")
-	db.UpdateData(context.Background(), "act", map[string]any{"uid": this.uid}, actInfo)
+	json.Unmarshal(data.([]byte), this)
 
-	return nil
+	return true, nil
 }
 
-func (this actBaseModel) Init() error {
-	db := server.GetDb(this.uid, "game")
-	var dest []actData
+func (this *actBaseModel) Save(ctx *common.ConContext) (bool, error) {
+	key := this.GetActKey()
+	cache := GetCacheById(this.RoomId)
 
-	err := db.QueryData(context.Background(), "act", map[string]any{"uid": this.uid}, &dest)
+	arrByte, err := json.Marshal(this)
 	if err != nil {
-		return err
-	} else if len(dest) == 0 {
-		err = this.actFirstIni()
-		return err
+		return false, err
 	}
 
-	actInfo := dest[0]
-	err = json.Unmarshal([]byte(actInfo.TJson), &this.actInfo)
-
-	return err
+	ok := cache.RedisWrite(ctx, REDIS_ROOM, "HSET", key, this.RoomId, string(arrByte))
+	return ok, nil
 }
 
-func GetAct(ctx *common.ConContext, actId uint32) ActBaseInterface {
-	fun := actRegister[actId]
-	return fun(ctx)
-}
+func (this *actBaseModel) Destory(ctx *common.ConContext) bool {
+	key := this.GetActKey()
+	cache := GetCacheById(this.RoomId)
 
-func (this actBaseModel) actFirstIni() error {
-	db := server.GetDb(this.uid, "game")
-
-	jsonData, err := json.Marshal(this.actInfo)
-	if err != nil {
-		return err
-	}
-	strJsData := string(jsonData)
-
-	now := time.Now()
-	strNow := now.Format(time.DateTime)
-
-	actInfo := actData{
-		Uid:        this.uid,
-		ActId:      this.actId,
-		TJson:      strJsData,
-		CreateTime: strNow,
-		UpdateTime: strNow,
-	}
-
-	err = db.InsertData(context.Background(), "act", actInfo)
-
-	return err
+	ok := cache.RedisWrite(ctx, REDIS_ROOM, "HDEL", key, this.RoomId)
+	return ok
 }

@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"github.com/gorilla/websocket"
 )
 
@@ -65,7 +66,7 @@ func (ctx *ConContext) RoomRedisEventPush(roomRedisEvent CacheEvent) bool {
 	if global == nil || global.EventStorage.playerCache == nil || global.EventStorage.playerCache == nil {
 		return false
 	}
-	global.EventStorage.roomCache = append(global.EventStorage.playerCache, roomRedisEvent)
+	global.EventStorage.roomCache = append(global.EventStorage.roomCache, roomRedisEvent)
 
 	return true
 }

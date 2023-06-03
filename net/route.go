@@ -7,7 +7,6 @@ import (
 	"google.golang.org/protobuf/proto"
 	"hdyx/api"
 	"hdyx/common"
-	"hdyx/control"
 	"hdyx/model"
 	"hdyx/net/ioBuf"
 	"reflect"
@@ -45,17 +44,8 @@ func registerConGlobal() *common.ConContext {
 // 连接断开;空间回收
 // 断开连接,退出游戏房间
 func destroyConGlobalObj(conCtx *common.ConContext) {
-	// 房间不存在
-	roomModel, _ := model.GetRoomInfo(conCtx, conCtx.GetConGlobalObj().RoomId)
-	if roomModel != nil {
-		roomInfo := roomModel.UidToPlayerInfo
-		// 是否在房间中
-		if _, ok := roomInfo[conCtx.GetConGlobalObj().Uid]; ok {
-			// 退出房间
-			obj := control.LeaveRoom(conCtx, conCtx.GetConGlobalObj().RoomId)
-			model.MsgRoomBroadcast(conCtx, obj)
-		}
-	}
+	// 如果在房间则离开房间，并广播
+	model.LeaveRoomAndBroadcast(conCtx)
 
 	// cache数据落地
 	model.AllRedisSave(conCtx)
