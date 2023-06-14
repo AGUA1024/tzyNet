@@ -1,0 +1,14 @@
+redis:
+  common:
+    user: root
+    pass: "123456"
+    maxOpenCon: 1000  #最大链接数
+    maxIdleConns: 700 #最大空闲连接数
+    conLiveTime: 3600 #超时时间
+    pieceNum: 1  # 分片数量
+  game:
+    host1:
+      ip: 123.207.49.151
+      port: 6379
+
+

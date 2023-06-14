@@ -1,0 +1,44 @@
+2023-06-08 10:27:39	PANIC	common/logger.go:28	PROTO_UNMARSHAL_ERROR
+goroutine 52 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0xc000160000?}, {0xc0004bb6e0?, 0x200?, 0x1436140?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel(0xc000533760?)
+	D:/GoProgram/hdyx/net/route.go:64 +0x29a
+github.com/gin-gonic/gin.(*Context).Next(...)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.7.7/context.go:168
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1(0xc0001d6100)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.7.7/recovery.go:99 +0x82
+github.com/gin-gonic/gin.(*Context).Next(...)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.7.7/context.go:168
+github.com/gin-gonic/gin.LoggerWithConfig.func1(0xc0001d6100)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.7.7/logger.go:241 +0xe7
+github.com/gin-gonic/gin.(*Context).Next(...)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.7.7/context.go:168
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest(0xc000605860, 0xc0001d6100)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.7.7/gin.go:555 +0x66b
+github.com/gin-gonic/gin.(*Engine).ServeHTTP(0xc000605860, {0x143cc10?, 0xc00014c0e0}, 0xc0001d6000)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.7.7/gin.go:511 +0x1d2
+net/http.serverHandler.ServeHTTP({0xc00068a630?}, {0x143cc10, 0xc00014c0e0}, 0xc0001d6000)
+	D:/golang/go1.20.2/src/net/http/server.go:2936 +0x316
+net/http.(*conn).serve(0xc000540090, {0x143d5f8, 0xc0001de090})
+	D:/golang/go1.20.2/src/net/http/server.go:1995 +0x612
+created by net/http.(*Server).Serve
+	D:/golang/go1.20.2/src/net/http/server.go:3089 +0x5ed
+
+2023-06-08 14:57:33	PANIC	common/logger.go:28	RoutineStorage_MEM_OVERWRITE
+goroutine 6 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0x9a5d80?}, {0xc000013d38?, 0x6?, 0x10?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/common.RegisterConGlobal()
+	D:/GoProgram/hdyx/common/conGlobalStorage.go:190 +0x8a
+hdyx/model.RobotHandle({0xc0001df7d0, 0x3, 0x0?})
+	D:/GoProgram/hdyx/model/act1Model.go:820 +0x125
+hdyx/common.init.1.func1()
+	D:/GoProgram/hdyx/common/sysEventQueue.go:18 +0x64
+created by hdyx/common.init.1
+	D:/GoProgram/hdyx/common/sysEventQueue.go:12 +0x25
+

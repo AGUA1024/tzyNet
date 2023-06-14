@@ -1,0 +1,287 @@
+2023-06-09 10:09:52	PANIC	common/logger.go:28	PANIC_ERROR: reflect.Value.Call: call of nil function
+goroutine 12 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0x0?}, {0xc00008d6b0?, 0x0?, 0x0?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel.func1.1()
+	D:/GoProgram/hdyx/net/route.go:73 +0x6c
+panic({0xe7b660, 0x10e6840})
+	D:/golang/go1.20.2/src/runtime/panic.go:884 +0x213
+reflect.Value.call({0xe86080?, 0x0?, 0xc00008deb0?}, {0xfb237a, 0x4}, {0xc00008df10, 0x2, 0x108b0?})
+	D:/golang/go1.20.2/src/reflect/value.go:408 +0x1b65
+reflect.Value.Call({0xe86080?, 0x0?, 0x0?}, {0xc00008df10?, 0xedba40?, 0xe0f37c?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc000120338, 0xc0003ff4a0?)
+	D:/GoProgram/hdyx/net/route.go:103 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:78 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:70 +0x15a
+
+2023-06-09 10:10:11	PANIC	common/logger.go:28	PANIC_ERROR: runtime error: invalid memory address or nil pointer dereference
+goroutine 30 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0x945b60?}, {0xc0004b5528?, 0xc00059e1b0?, 0x9bb660?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel.func1.1()
+	D:/GoProgram/hdyx/net/route.go:73 +0x6c
+panic({0x9fef40, 0x11a11d0})
+	D:/golang/go1.20.2/src/runtime/panic.go:884 +0x213
+hdyx/model.(*Act1Model).IsPlayer(...)
+	D:/GoProgram/hdyx/model/act1Model.go:1046
+hdyx/control.GetAct1Info(0xc000480208)
+	D:/GoProgram/hdyx/control/act1.go:155 +0x66
+hdyx/api.GetAct1Info(0x0?, {0x0?, 0x0?, 0x1d37d9?})
+	D:/GoProgram/hdyx/api/act1.go:47 +0x1e
+reflect.Value.call({0x9c6080?, 0xb569b8?, 0xc0004d1eb0?}, {0xaf237a, 0x4}, {0xc0004d1f10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0x9c6080?, 0xb569b8?, 0x0?}, {0xc0004d1f10?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc000480208, 0xc00042d470?)
+	D:/GoProgram/hdyx/net/route.go:103 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:78 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:70 +0x15a
+
+2023-06-09 10:10:57	PANIC	common/logger.go:28	PANIC_ERROR: runtime error: invalid memory address or nil pointer dereference
+goroutine 47 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0x557ba0?}, {0xc00001d528?, 0x557c00?, 0xc0000b2280?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel.func1.1()
+	D:/GoProgram/hdyx/net/route.go:73 +0x6c
+panic({0xcfef40, 0x14a11d0})
+	D:/golang/go1.20.2/src/runtime/panic.go:884 +0x213
+hdyx/model.(*Act1Model).IsPlayer(...)
+	D:/GoProgram/hdyx/model/act1Model.go:1046
+hdyx/control.GetAct1Info(0xc000712258)
+	D:/GoProgram/hdyx/control/act1.go:155 +0x66
+hdyx/api.GetAct1Info(0x0?, {0x0?, 0x0?, 0x4d37d9?})
+	D:/GoProgram/hdyx/api/act1.go:47 +0x1e
+reflect.Value.call({0xcc6080?, 0xe569b8?, 0xc0004b5eb0?}, {0xdf237a, 0x4}, {0xc0004b5f10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0xcc6080?, 0xe569b8?, 0x0?}, {0xc0004b5f10?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc000712258, 0xc0004014a0?)
+	D:/GoProgram/hdyx/net/route.go:103 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:78 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:70 +0x15a
+
+2023-06-09 10:12:01	PANIC	common/logger.go:28	PANIC_ERROR: runtime error: invalid memory address or nil pointer dereference
+goroutine 32 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0x617ba0?}, {0xc000129528?, 0x617c00?, 0xc0000b2280?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel.func1.1()
+	D:/GoProgram/hdyx/net/route.go:73 +0x6c
+panic({0xdbef40, 0x15611d0})
+	D:/golang/go1.20.2/src/runtime/panic.go:884 +0x213
+hdyx/model.(*Act1Model).IsPlayer(...)
+	D:/GoProgram/hdyx/model/act1Model.go:1046
+hdyx/control.GetAct1Info(0xc000454398)
+	D:/GoProgram/hdyx/control/act1.go:155 +0x66
+hdyx/api.GetAct1Info(0x0?, {0x0?, 0x0?, 0x5937d9?})
+	D:/GoProgram/hdyx/api/act1.go:47 +0x1e
+reflect.Value.call({0xd86080?, 0xf169b8?, 0xc0002c1eb0?}, {0xeb237a, 0x4}, {0xc0002c1f10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0xd86080?, 0xf169b8?, 0x0?}, {0xc0002c1f10?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc000454398, 0xc0004014a0?)
+	D:/GoProgram/hdyx/net/route.go:103 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:78 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:70 +0x15a
+
+2023-06-09 14:24:48	PANIC	common/logger.go:28	PROTO_UNMARSHAL_ERROR
+goroutine 24 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0xc000522a00?}, {0xc0002c76e0?, 0x200?, 0x15faf40?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel(0x1473fc0?)
+	D:/GoProgram/hdyx/net/route.go:64 +0x29a
+github.com/gin-gonic/gin.(*Context).Next(...)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.7.7/context.go:168
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1(0xc0001da300)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.7.7/recovery.go:99 +0x82
+github.com/gin-gonic/gin.(*Context).Next(...)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.7.7/context.go:168
+github.com/gin-gonic/gin.LoggerWithConfig.func1(0xc0001da300)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.7.7/logger.go:241 +0xe7
+github.com/gin-gonic/gin.(*Context).Next(...)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.7.7/context.go:168
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest(0xc0006849c0, 0xc0001da300)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.7.7/gin.go:555 +0x66b
+github.com/gin-gonic/gin.(*Engine).ServeHTTP(0xc0006849c0, {0x1601a70?, 0xc0004f80e0}, 0xc0001da200)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.7.7/gin.go:511 +0x1d2
+net/http.serverHandler.ServeHTTP({0xc0003504e0?}, {0x1601a70, 0xc0004f80e0}, 0xc0001da200)
+	D:/golang/go1.20.2/src/net/http/server.go:2936 +0x316
+net/http.(*conn).serve(0xc00012e000, {0x1602458, 0xc000350450})
+	D:/golang/go1.20.2/src/net/http/server.go:1995 +0x612
+created by net/http.(*Server).Serve
+	D:/golang/go1.20.2/src/net/http/server.go:3089 +0x5ed
+
+2023-06-09 15:42:08	PANIC	common/logger.go:28	Sdk_SendGameMsgBySdk_error： 游戏场不存在
+goroutine 60 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0xc000618648?}, {0xc00050b550?, 0xcb51ee?, 0xc0000b2280?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/model.(*Act1Model).TurnTimeOut(0xc00062a1c8, 0xc2ed08?)
+	D:/GoProgram/hdyx/model/act1Model.go:816 +0xa10
+hdyx/control.TurnTimeOut(0x0?, 0x0)
+	D:/GoProgram/hdyx/control/act1.go:129 +0x4c
+hdyx/api.TurnTimeOut(0x0?, {0x0, 0x0, 0x0})
+	D:/GoProgram/hdyx/api/act1.go:41 +0x6d
+reflect.Value.call({0x9a6b60?, 0xb53d98?, 0xc000169e98?}, {0xaee350, 0x4}, {0xc000169ef8, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0x9a6b60?, 0xb53d98?, 0x0?}, {0xc000169ef8?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00061e1b8, 0xc0004054d0?)
+	D:/GoProgram/hdyx/net/route.go:110 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:82 +0x125
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:73 +0x15a
+
+2023-06-09 15:42:08	PANIC	common/logger.go:28	PANIC_ERROR: Sdk_SendGameMsgBySdk_error： 游戏场不存在
+goroutine 60 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0xc000618648?}, {0xc00050b550?, 0xcb51ee?, 0xc0000b2280?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/model.(*Act1Model).TurnTimeOut(0xc00062a1c8, 0xc2ed08?)
+	D:/GoProgram/hdyx/model/act1Model.go:816 +0xa10
+hdyx/control.TurnTimeOut(0x0?, 0x0)
+	D:/GoProgram/hdyx/control/act1.go:129 +0x4c
+hdyx/api.TurnTimeOut(0x0?, {0x0, 0x0, 0x0})
+	D:/GoProgram/hdyx/api/act1.go:41 +0x6d
+reflect.Value.call({0x9a6b60?, 0xb53d98?, 0xc000169e98?}, {0xaee350, 0x4}, {0xc000169ef8, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0x9a6b60?, 0xb53d98?, 0x0?}, {0xc000169ef8?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00061e1b8, 0xc0004054d0?)
+	D:/GoProgram/hdyx/net/route.go:110 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:82 +0x125
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:73 +0x15a
+
+goroutine 60 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0xddfc8?}, {0xc00050b0a8?, 0x200?, 0xc00050b150?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel.func1.1()
+	D:/GoProgram/hdyx/net/route.go:76 +0x77
+panic({0x99a9a0, 0xc0002f6200})
+	D:/golang/go1.20.2/src/runtime/panic.go:884 +0x213
+go.uber.org/zap/zapcore.(*CheckedEntry).Write(0xc0000be600, {0x0, 0x0, 0x0})
+	D:/GoProgram/pkg/mod/go.uber.org/zap@v1.21.0/zapcore/entry.go:232 +0x44c
+go.uber.org/zap.(*Logger).Panic(0xc00050b550?, {0xc0000dc900?, 0x416?}, {0x0, 0x0, 0x0})
+	D:/GoProgram/pkg/mod/go.uber.org/zap@v1.21.0/logger.go:230 +0x59
+hdyx/common.tLogger.SystemErrorLog({0xc000618648?}, {0xc00050b550?, 0xcb51ee?, 0xc0000b2280?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x85
+hdyx/model.(*Act1Model).TurnTimeOut(0xc00062a1c8, 0xc2ed08?)
+	D:/GoProgram/hdyx/model/act1Model.go:816 +0xa10
+hdyx/control.TurnTimeOut(0x0?, 0x0)
+	D:/GoProgram/hdyx/control/act1.go:129 +0x4c
+hdyx/api.TurnTimeOut(0x0?, {0x0, 0x0, 0x0})
+	D:/GoProgram/hdyx/api/act1.go:41 +0x6d
+reflect.Value.call({0x9a6b60?, 0xb53d98?, 0xc000169e98?}, {0xaee350, 0x4}, {0xc000169ef8, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0x9a6b60?, 0xb53d98?, 0x0?}, {0xc000169ef8?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00061e1b8, 0xc0004054d0?)
+	D:/GoProgram/hdyx/net/route.go:110 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:82 +0x125
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:73 +0x15a
+
+2023-06-09 15:44:27	PANIC	common/logger.go:28	Sdk_SendGameMsgBySdk_error： 游戏场不存在
+goroutine 16 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0xc000030288?}, {0xc0005b3550?, 0x1e5b?, 0xc0000b2280?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/model.(*Act1Model).TurnTimeOut(0xc000008618, 0x144ed08?)
+	D:/GoProgram/hdyx/model/act1Model.go:816 +0xa10
+hdyx/control.TurnTimeOut(0x0?, 0x0)
+	D:/GoProgram/hdyx/control/act1.go:129 +0x4c
+hdyx/api.TurnTimeOut(0x0?, {0x0, 0x0, 0x0})
+	D:/GoProgram/hdyx/api/act1.go:41 +0x6d
+reflect.Value.call({0x11c6b60?, 0x1373d98?, 0xc00008de98?}, {0x130e350, 0x4}, {0xc00008def8, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0x11c6b60?, 0x1373d98?, 0x0?}, {0xc00008def8?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00003a258, 0xc0004054d0?)
+	D:/GoProgram/hdyx/net/route.go:110 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:82 +0x125
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:73 +0x15a
+
+2023-06-09 15:44:27	PANIC	common/logger.go:28	PANIC_ERROR: Sdk_SendGameMsgBySdk_error： 游戏场不存在
+goroutine 16 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0xc000030288?}, {0xc0005b3550?, 0x1e5b?, 0xc0000b2280?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/model.(*Act1Model).TurnTimeOut(0xc000008618, 0x144ed08?)
+	D:/GoProgram/hdyx/model/act1Model.go:816 +0xa10
+hdyx/control.TurnTimeOut(0x0?, 0x0)
+	D:/GoProgram/hdyx/control/act1.go:129 +0x4c
+hdyx/api.TurnTimeOut(0x0?, {0x0, 0x0, 0x0})
+	D:/GoProgram/hdyx/api/act1.go:41 +0x6d
+reflect.Value.call({0x11c6b60?, 0x1373d98?, 0xc00008de98?}, {0x130e350, 0x4}, {0xc00008def8, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0x11c6b60?, 0x1373d98?, 0x0?}, {0xc00008def8?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00003a258, 0xc0004054d0?)
+	D:/GoProgram/hdyx/net/route.go:110 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:82 +0x125
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:73 +0x15a
+
+goroutine 16 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0x144da20?}, {0xc0005b30a8?, 0x19ed990?, 0xc0005b3150?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel.func1.1()
+	D:/GoProgram/hdyx/net/route.go:76 +0x77
+panic({0x11ba9a0, 0xc000449a30})
+	D:/golang/go1.20.2/src/runtime/panic.go:884 +0x213
+go.uber.org/zap/zapcore.(*CheckedEntry).Write(0xc000380180, {0x0, 0x0, 0x0})
+	D:/GoProgram/pkg/mod/go.uber.org/zap@v1.21.0/zapcore/entry.go:232 +0x44c
+go.uber.org/zap.(*Logger).Panic(0xc0005b3550?, {0xc0000dc900?, 0x41a?}, {0x0, 0x0, 0x0})
+	D:/GoProgram/pkg/mod/go.uber.org/zap@v1.21.0/logger.go:230 +0x59
+hdyx/common.tLogger.SystemErrorLog({0xc000030288?}, {0xc0005b3550?, 0x1e5b?, 0xc0000b2280?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x85
+hdyx/model.(*Act1Model).TurnTimeOut(0xc000008618, 0x144ed08?)
+	D:/GoProgram/hdyx/model/act1Model.go:816 +0xa10
+hdyx/control.TurnTimeOut(0x0?, 0x0)
+	D:/GoProgram/hdyx/control/act1.go:129 +0x4c
+hdyx/api.TurnTimeOut(0x0?, {0x0, 0x0, 0x0})
+	D:/GoProgram/hdyx/api/act1.go:41 +0x6d
+reflect.Value.call({0x11c6b60?, 0x1373d98?, 0xc00008de98?}, {0x130e350, 0x4}, {0xc00008def8, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0x11c6b60?, 0x1373d98?, 0x0?}, {0xc00008def8?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00003a258, 0xc0004054d0?)
+	D:/GoProgram/hdyx/net/route.go:110 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:82 +0x125
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:73 +0x15a
+

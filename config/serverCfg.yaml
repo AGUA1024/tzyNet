@@ -1,0 +1,11 @@
+server:
+  release:
+    node1: 123.207.49.151
+    # node2: 114.132.213.154
+    # node3: 175.178.175.73
+
+logger:
+  maxSize: 40960              # 文件大小限制,单位MB
+  maxBackups: 100             # 最大保留日志文件数量
+  maxKeepDay: 30              # 日志文件保留天数
+  isCompress: false           # 是否压缩处理

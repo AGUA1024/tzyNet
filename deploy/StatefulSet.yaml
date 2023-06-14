@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hdyx
+spec:
+  serviceName: hdyx
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hdyx
+  template:
+    metadata:
+      labels:
+        app: hdyx
+    spec:
+      containers:
+        - name: hdyx
+          image: agua1024/hdyx:v1.0.0.1
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /app/log
+              name: hdyx-data
+          ports:
+            - containerPort: 80
+      volumes:
+        - name: hdyx-data
+          persistentVolumeClaim:
+            claimName: hdyx-pvc # 指定用于存储数据的 PVC 名称
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hdyx
+spec:
+  selector:
+    app: hdyx
+  type: NodePort
+  ports:
+    - port: 8000
+      nodePort: 8000
+      targetPort: 80
+      protocol: TCP
