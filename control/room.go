@@ -1,6 +1,7 @@
 package control
 
 import (
+	"fmt"
 	api "hdyx/api/protobuf"
 	"hdyx/common"
 	"hdyx/model"
@@ -73,7 +74,10 @@ func JoinRoom(ctx *common.ConContext, roomId uint64) *api.JoinRoom_OutObj {
 	model.RoomModelSave(ctx, roomModel)
 
 	// 返回数据
-	return &api.JoinRoom_OutObj{Ok: true}
+	var mpRet = model.BackGameRoomInfo(roomModel.PosIdToPlayer)
+	return &api.JoinRoom_OutObj{
+		Players: mpRet,
+	}
 }
 
 func JoinGame(ctx *common.ConContext, postionId uint32) *api.JoinGame_OutObj {
@@ -123,7 +127,13 @@ func JoinGame(ctx *common.ConContext, postionId uint32) *api.JoinGame_OutObj {
 
 	var isMaster = false
 	// 游戏房间如果没人则成为房主
-	if len(gamePlayers) == 0 {
+	playerNum := 0
+	for _, player := range gamePlayers {
+		if !player.IsRobot {
+			playerNum++
+		}
+	}
+	if playerNum == 0 {
 		isMaster = true
 	}
 
@@ -208,7 +218,7 @@ func LeaveGame(ctx *common.ConContext) *api.LeaveGame_OutObj {
 	if isMaster := roomInfo[index].IsMaster; isMaster {
 		// 房主转移
 		for i, player := range roomInfo {
-			if i == index {
+			if i == index || player.IsRobot {
 				continue
 			}
 
@@ -283,11 +293,11 @@ func GameStart(ctx *common.ConContext) *api.GameStart_OutObj {
 		common.Logger.GameErrorLog(ctx, common.ERR_IS_NOT_ROOM_MASATER, "不是房主，无法开启游戏")
 	}
 
-	// 是否达到游戏开启人数
-	actCfg := model.GetActCfg(roomModel.ActId)
-	if len(roomInfo) < actCfg.MinPlayerNum {
-		common.Logger.GameErrorLog(ctx, common.ERR_PLAYERNUM_NOT_ENOUGH, "开启游戏人数不足")
-	}
+	//// 是否达到游戏开启人数
+	//actCfg := model.GetActCfg(roomModel.ActId)
+	//if len(roomInfo) < actCfg.MinPlayerNum {
+	//	common.Logger.GameErrorLog(ctx, common.ERR_PLAYERNUM_NOT_ENOUGH, "开启游戏人数不足")
+	//}
 
 	// 是否全部准备好开始游戏
 	for _, player := range roomInfo {
@@ -296,7 +306,129 @@ func GameStart(ctx *common.ConContext) *api.GameStart_OutObj {
 		}
 	}
 
+	// 开始游戏
+	roomModel.IsGame = true
+
+	//写入数据
+	model.RoomModelSave(ctx, roomModel)
+
 	return &api.GameStart_OutObj{Ok: true}
+}
+
+func AddRobot(ctx *common.ConContext, robotHead string, robotName string) *api.AddRobot_OutObj {
+	roomId := ctx.GetConGlobalObj().RoomId
+	// 房间不存在
+	roomModel, err := model.GetGameRoomInfo(ctx, roomId)
+	if roomModel == nil || err != nil {
+		common.Logger.GameErrorLog(ctx, common.ERR_NO_ROOMID_EXIST, "游戏房间不存在，无法创建机器人")
+	}
+
+	// 是否在游戏房间中
+	ok, index := model.GetGameIndex(ctx, roomModel)
+	if !ok {
+		common.Logger.GameErrorLog(ctx, common.ERR_IS_NOT_IN_GAMEROOM, "不在游戏房间中，无法创建机器人")
+	}
+
+	// 是否是房主
+	roomInfo := roomModel.PosIdToPlayer
+	if isMaster := roomInfo[index].IsMaster; !isMaster {
+		common.Logger.GameErrorLog(ctx, common.ERR_IS_NOT_ROOM_MASATER, "不是房主，无法创建机器人")
+	}
+
+	// 游戏配置
+	actCfg := model.GetActCfg(roomModel.ActId)
+
+	// 游戏房玩家数据
+	gamePlayers := roomModel.PosIdToPlayer
+	// 房间人已满
+	if len(gamePlayers) == actCfg.MaxPlayerNum {
+		common.Logger.GameErrorLog(ctx, common.ERR_ROOM_PLAYERNUM_FULL, "游戏房人已满，无法加入")
+	}
+
+	// 加入房间
+	for pos := uint32(0); pos < uint32(actCfg.MaxPlayerNum); pos++ {
+		if _, ok := gamePlayers[pos]; !ok {
+			strRobotUid := fmt.Sprintf("%d%d", ctx.GetConGlobalObj().RoomId, pos)
+			robotUid, _ := strconv.ParseUint(strRobotUid, 10, 64)
+
+			player := &model.PlayerModel{
+				Uid:      robotUid,
+				IsMaster: false,
+				State:    true,
+				Head:     robotHead,
+				Name:     robotName,
+				IsRobot:  true,
+			}
+
+			gamePlayers[pos] = player
+			break
+		}
+	}
+
+	// 写入redis
+	roomModel.PosIdToPlayer = gamePlayers
+	model.RoomModelSave(ctx, roomModel)
+
+	// 返回数据
+	var mpRet = model.BackGameRoomInfo(gamePlayers)
+
+	return &api.AddRobot_OutObj{Players: mpRet}
+}
+
+func DelRobot(ctx *common.ConContext, robotPos uint32) *api.DelRobot_OutObj {
+	roomId := ctx.GetConGlobalObj().RoomId
+	// 房间不存在
+	roomModel, err := model.GetGameRoomInfo(ctx, roomId)
+	if roomModel == nil || err != nil {
+		common.Logger.GameErrorLog(ctx, common.ERR_NO_ROOMID_EXIST, "游戏房间不存在，无法删除机器人")
+	}
+
+	// 是否在游戏房间中
+	ok, index := model.GetGameIndex(ctx, roomModel)
+	if !ok {
+		common.Logger.GameErrorLog(ctx, common.ERR_IS_NOT_IN_GAMEROOM, "不在游戏房间中，无法删除机器人")
+	}
+
+	// 是否是房主
+	roomInfo := roomModel.PosIdToPlayer
+	if isMaster := roomInfo[index].IsMaster; !isMaster {
+		common.Logger.GameErrorLog(ctx, common.ERR_IS_NOT_ROOM_MASATER, "不是房主，无法删除机器人")
+	}
+
+	if _, ok = roomModel.PosIdToPlayer[robotPos]; !ok {
+		common.Logger.GameErrorLog(ctx, common.ERR_PLAYER_ISNIT_EXIST, "该位置不是不存在玩家，无法执行删除机器人操作")
+	}
+
+	// 游戏房玩家数据
+	if !roomModel.PosIdToPlayer[robotPos].IsRobot {
+		common.Logger.GameErrorLog(ctx, common.ERR_PLAYER_ISNOT_ROBOT, "该位置不是机器人，无法删除")
+	}
+
+	// 踢出机器人
+	delete(roomModel.PosIdToPlayer, robotPos)
+
+	// 写入redis
+	model.RoomModelSave(ctx, roomModel)
+
+	// 返回数据
+	gamePlayers := roomModel.PosIdToPlayer
+	var mpRet = model.BackGameRoomInfo(gamePlayers)
+
+	return &api.DelRobot_OutObj{Players: mpRet}
+}
+
+func GetRoomInfo(ctx *common.ConContext) *api.GetRoomInfo_OutObj {
+	roomId := ctx.GetConGlobalObj().RoomId
+	// 房间不存在
+	roomModel, err := model.GetGameRoomInfo(ctx, roomId)
+	if roomModel == nil || err != nil {
+		common.Logger.GameErrorLog(ctx, common.ERR_NO_ROOMID_EXIST, "游戏房间不存在，无法创建机器人")
+	}
+
+	gamePlayers := roomModel.PosIdToPlayer
+	var mpRet = model.BackGameRoomInfo(gamePlayers)
+
+	return &api.GetRoomInfo_OutObj{Players: mpRet}
 }
 
 //// 销毁房间

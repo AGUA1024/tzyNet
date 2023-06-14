@@ -40,7 +40,7 @@ func (this tLogger) GameErrorLog(conCtx *ConContext, errId uint32, message ...an
 		Data:           nil,
 	}
 
-	OutPutStream[*ioBuf.OutPutBuf](conCtx, &out)
+	OutPutStream[*ioBuf.OutPutBuf](conCtx, &out, errId)
 	runtime.Goexit()
 }
 

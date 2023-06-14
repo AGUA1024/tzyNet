@@ -8,20 +8,28 @@ import (
 	"os"
 )
 
+const (
+	CONST_RESPONSE_STATUS_OK      = 0
+	const_CMD_CODE_HEART_BEAT     = 0
+	const_CMD_CODE_GAME           = 1
+	const_PROTO_SWITCH_NOTENCRYPT = 0
+	const_PROTO_SWITCH_ISENCRYPT  = 1
+)
+
 func GetParamObj[T proto.Message](params []byte, obj T) T {
 	proto.Unmarshal(params, obj)
 	return obj
 }
 
-func OutPutStream[T proto.Message](ctx *ConContext, obj T) {
+func OutPutStream[T proto.Message](ctx *ConContext, obj T, errId uint32) {
 	data, _ := proto.Marshal(obj)
 
 	out := ioBuf.OutPutBuf{
 		Uid:            ctx.GetConGlobalObj().Uid,
-		CmdCode:        0,
-		ProtocolSwitch: 0,
+		CmdCode:        const_CMD_CODE_GAME,
+		ProtocolSwitch: const_PROTO_SWITCH_NOTENCRYPT,
 		CmdMerge:       ctx.GetConGlobalObj().Cmd,
-		ResponseStatus: 0,
+		ResponseStatus: errId,
 		Data:           data,
 	}
 

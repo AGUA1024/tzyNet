@@ -27,6 +27,7 @@ func init() {
 	redisCfgIni()
 	// redis初始化
 	redisPoolInit()
+	fmt.Println("--Redis初始化完成")
 }
 
 func redisCfgIni() {

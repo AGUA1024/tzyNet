@@ -1,8 +1,11 @@
 package common
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/gorilla/websocket"
+	"runtime"
+	"strconv"
 )
 
 // connectGorutine局部空间
@@ -63,7 +66,7 @@ func (ctx *ConContext) PlayerRedisEventPush(playerRedisEvent CacheEvent) bool {
 
 func (ctx *ConContext) RoomRedisEventPush(roomRedisEvent CacheEvent) bool {
 	global := ctx.GetConGlobalObj()
-	if global == nil || global.EventStorage.playerCache == nil || global.EventStorage.playerCache == nil {
+	if global == nil || global.EventStorage == nil || global.EventStorage.playerCache == nil || global.EventStorage.playerCache == nil {
 		return false
 	}
 	global.EventStorage.roomCache = append(global.EventStorage.roomCache, roomRedisEvent)
@@ -78,6 +81,8 @@ func (ctx *ConContext) AllCacheSave(playerCacheOp, RoomCacheOp CacheOperator) er
 	roomCache := ctx.GetConGlobalObj().EventStorage.roomCache
 	playerCache := ctx.GetConGlobalObj().EventStorage.playerCache
 
+	fmt.Println("roomCache:")
+	fmt.Println(roomCache)
 	// 本地内存落地redis
 	err := playerCacheOp.CacheSave(roomCache)
 	err = RoomCacheOp.CacheSave(playerCache)
@@ -169,4 +174,38 @@ func (ctx *ConContext) RegisterUserForStorage() bool {
 	}
 
 	return true
+}
+
+func newConContext() *ConContext {
+	return &ConContext{
+		ConnectId: getGoroutineID(),
+	}
+}
+
+// 注册connectGorutine全局空间
+func RegisterConGlobal() *ConContext {
+	ctx := newConContext()
+	conId := ctx.GetConnectId()
+	//if _, ok := MpConRoutineStorage[conId]; ok {
+	//Logger.SystemErrorLog("RoutineStorage_MEM_OVERWRITE")
+	//}
+
+	MpConRoutineStorage[conId] = &ConGlobalStorage{
+		WsCon:        nil,
+		Uid:          0,
+		Cmd:          0,
+		RoomId:       0,
+		EventStorage: nil,
+	}
+
+	return ctx
+}
+
+func getGoroutineID() uint64 {
+	arrByte := make([]byte, 64)
+	arrByte = arrByte[:runtime.Stack(arrByte, false)]
+	arrByte = bytes.TrimPrefix(arrByte, []byte("goroutine "))
+	arrByte = arrByte[:bytes.IndexByte(arrByte, ' ')]
+	GoroutineID, _ := strconv.ParseUint(string(arrByte), 10, 64)
+	return GoroutineID
 }

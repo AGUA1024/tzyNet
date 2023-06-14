@@ -7,6 +7,32 @@ import (
 	ioBuf2 "hdyx/net/ioBuf"
 )
 
+func IsRoomExist(roomId uint64) ([]byte, string) {
+	buf := IsRoomExist_InObj{
+		state:         protoimpl.MessageState{},
+		sizeCache:     0,
+		unknownFields: nil,
+		RoomId:        roomId,
+	}
+	cendBuf, _ := proto.Marshal(&buf)
+
+	// 发送消息
+	message := &ioBuf2.ClientBuf{
+		ProtocolSwitch: 1,
+		CmdMerge:       0x20001,
+		Data:           cendBuf,
+	}
+	data, err := proto.Marshal(message)
+	if err != nil {
+		panic(err)
+	}
+
+	// 将 byte 装换为 2进制的字符串
+	binaryString := hex.EncodeToString(data)
+
+	return data, binaryString
+}
+
 func CreateRoomBuf(roomId uint64) ([]byte, string) {
 	buf := CreateRoom_InObj{
 		state:         protoimpl.MessageState{},
@@ -178,6 +204,59 @@ func GameStart() ([]byte, string) {
 		ProtocolSwitch: 1,
 		CmdMerge:       0x20008,
 		Data:           nil,
+	}
+	data, err := proto.Marshal(message)
+	if err != nil {
+		panic(err)
+	}
+
+	// 将 byte 装换为 2进制的字符串
+	binaryString := hex.EncodeToString(data)
+
+	return data, binaryString
+}
+
+func AddRobot(head string, name string) ([]byte, string) {
+	buf := AddRobot_InObj{
+		state:         protoimpl.MessageState{},
+		sizeCache:     0,
+		unknownFields: nil,
+		RobotHead:     head,
+		RobotName:     name,
+	}
+	cendBuf, _ := proto.Marshal(&buf)
+
+	// 发送消息
+	message := &ioBuf2.ClientBuf{
+		ProtocolSwitch: 1,
+		CmdMerge:       0x20009,
+		Data:           cendBuf,
+	}
+	data, err := proto.Marshal(message)
+	if err != nil {
+		panic(err)
+	}
+
+	// 将 byte 装换为 2进制的字符串
+	binaryString := hex.EncodeToString(data)
+
+	return data, binaryString
+}
+
+func DelRobot(pos uint32) ([]byte, string) {
+	buf := DelRobot_InObj{
+		state:         protoimpl.MessageState{},
+		sizeCache:     0,
+		unknownFields: nil,
+		PosId:         pos,
+	}
+	cendBuf, _ := proto.Marshal(&buf)
+
+	// 发送消息
+	message := &ioBuf2.ClientBuf{
+		ProtocolSwitch: 1,
+		CmdMerge:       0x20010,
+		Data:           cendBuf,
 	}
 	data, err := proto.Marshal(message)
 	if err != nil {

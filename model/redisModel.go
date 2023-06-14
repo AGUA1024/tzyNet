@@ -53,8 +53,6 @@ func (this *RedisOperator) CacheSave(arrCacheEvent []common.CacheEvent) error {
 	}
 
 	for _, event := range arrCacheEvent {
-		fmt.Println("saveing")
-		fmt.Println(event.GetCommand(), event.GetArgs())
 		err = conn.Send(event.GetCommand(), event.GetArgs()...)
 		if err != nil {
 			return err
@@ -62,7 +60,7 @@ func (this *RedisOperator) CacheSave(arrCacheEvent []common.CacheEvent) error {
 	}
 
 	conn.Do("EXEC")
-
+	fmt.Println("cache save")
 	return err
 }
 
@@ -78,7 +76,6 @@ func (this *RedisOperator) RedisQuery(command string, args ...interface{}) (any,
 	conn := this.pool.Get()
 	defer conn.Close()
 
-	fmt.Println(command, args)
 	data, err := conn.Do(command, args...)
 	if err != nil {
 		return nil, err
@@ -101,6 +98,6 @@ func (this *RedisOperator) RedisWrite(ctx *common.ConContext, typeId int, comman
 	case REDIS_ROOM:
 		ok = ctx.RoomRedisEventPush(event)
 	}
-	
+
 	return ok
 }

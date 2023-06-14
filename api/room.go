@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	api "hdyx/api/protobuf"
 	"hdyx/common"
 	"hdyx/control"
@@ -13,7 +14,8 @@ func IsRoomExist(ctx *common.ConContext, params []byte) {
 
 	outObj := control.IsRoomExist(ctx, parmObj.RoomId)
 
-	common.OutPutStream[*api.IsRoomExist_OutObj](ctx, outObj)
+	fmt.Println(outObj.Ok)
+	common.OutPutStream[*api.IsRoomExist_OutObj](ctx, outObj, common.CONST_RESPONSE_STATUS_OK)
 }
 
 // 创建游戏房、观众房
@@ -25,7 +27,7 @@ func CreateRoom(ctx *common.ConContext, params []byte) {
 	gameLv := parmObj.GameLv
 	outObj := control.CreateRoom(ctx, roomId, actId, gameLv)
 
-	common.OutPutStream[*api.CreateRoom_OutObj](ctx, outObj)
+	common.OutPutStream[*api.CreateRoom_OutObj](ctx, outObj, common.CONST_RESPONSE_STATUS_OK)
 }
 
 // 加入观众房
@@ -35,7 +37,7 @@ func JoinRoom(ctx *common.ConContext, params []byte) {
 	roomId := parmObj.RoomId
 	outObj := control.JoinRoom(ctx, roomId)
 
-	common.OutPutStream[*api.JoinRoom_OutObj](ctx, outObj)
+	common.OutPutStream[*api.JoinRoom_OutObj](ctx, outObj, common.CONST_RESPONSE_STATUS_OK)
 }
 
 // 加入游戏位次
@@ -77,6 +79,31 @@ func GameStart(ctx *common.ConContext, params []byte) {
 	outObj := control.GameStart(ctx)
 
 	model.MsgRoomBroadcast[*api.GameStart_OutObj](ctx, outObj)
+}
+
+// 添加机器人
+func AddRobot(ctx *common.ConContext, params []byte) {
+	parmObj := common.GetParamObj[*api.AddRobot_InObj](params, &api.AddRobot_InObj{})
+
+	outObj := control.AddRobot(ctx, parmObj.GetRobotHead(), parmObj.GetRobotName())
+
+	model.MsgRoomBroadcast[*api.AddRobot_OutObj](ctx, outObj)
+}
+
+// 删除机器人
+func DelRobot(ctx *common.ConContext, params []byte) {
+	parmObj := common.GetParamObj[*api.DelRobot_InObj](params, &api.DelRobot_InObj{})
+
+	outObj := control.DelRobot(ctx, parmObj.PosId)
+
+	model.MsgRoomBroadcast[*api.DelRobot_OutObj](ctx, outObj)
+}
+
+// 获取当前游戏房信息
+func GetRoomInfo(ctx *common.ConContext, params []byte) {
+	outObj := control.GetRoomInfo(ctx)
+
+	model.MsgRoomBroadcast[*api.GetRoomInfo_OutObj](ctx, outObj)
 }
 
 //// 销毁房间

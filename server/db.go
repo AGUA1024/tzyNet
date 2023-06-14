@@ -49,6 +49,7 @@ func init() {
 	//dbCfgIni()
 	//// 数据库初始化
 	//dbPoolInit()
+	fmt.Println("--Mysql初始化完成")
 }
 
 func GetDb(uid uint64, database string) DbOperator {

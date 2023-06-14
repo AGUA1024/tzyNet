@@ -12,7 +12,7 @@ func GetGateWay(ctx *common.ConContext, params []byte) {
 
 	outObj := control.GetGateWay(ctx, parmObj.GetRoomId())
 
-	common.OutPutStream[*api.GetGateWay_OutObj](ctx, outObj)
+	common.OutPutStream[*api.GetGateWay_OutObj](ctx, outObj, common.CONST_RESPONSE_STATUS_OK)
 }
 
 // 连接全局变量初始化
@@ -21,5 +21,5 @@ func ConGlobalObjInit(ctx *common.ConContext, params []byte) {
 
 	outObj := control.ConGlobalObjInit(ctx, parmObj)
 
-	common.OutPutStream[*api.ConGlobalObjInit_OutObj](ctx, outObj)
+	common.OutPutStream[*api.ConGlobalObjInit_OutObj](ctx, outObj, common.CONST_RESPONSE_STATUS_OK)
 }

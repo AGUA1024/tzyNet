@@ -8,7 +8,7 @@ message IsRoomExist_InObj {
 }
 
 message IsRoomExist_OutObj {
-  bool ok=1;
+  bool ok = 1 ;
 }
 
 
@@ -29,7 +29,7 @@ message JoinRoom_InObj {
 }
 
 message JoinRoom_OutObj {
-  bool ok = 1;  //房间内的玩家uid,准备情况
+  map<uint32,playerInfo> players = 1;  //游戏位次=>玩家信息情况
 }
 
 // 加入游戏
@@ -47,6 +47,7 @@ message playerInfo{
   bool isMaster=3;
   string head=4;
   string name=5;
+  bool isRobot=6;
 }
 
 // 更改游戏位次
@@ -82,4 +83,31 @@ message SetOrCancelPrepare_OutObj {
 
 message GameStart_OutObj {
   bool ok=1;
+}
+
+// 添加机器人
+message AddRobot_InObj {
+  string robotHead=1;
+  string robotName=2;
+}
+
+message AddRobot_OutObj {
+  map<uint32,playerInfo> players = 1;  //游戏位次=>玩家信息情况
+}
+
+// 删除机器人
+message DelRobot_InObj {
+  uint32 posId=1;
+}
+
+message DelRobot_OutObj {
+  map<uint32,playerInfo> players = 1;  //游戏位次=>玩家信息情况
+}
+
+// 获取当前游戏房信息
+//message GetRoomInfo_InObj {
+//}
+
+message GetRoomInfo_OutObj {
+  map<uint32,playerInfo> players = 1;  //游戏位次=>玩家信息情况
 }

@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"fmt"
 	"google.golang.org/protobuf/proto"
 	api "hdyx/api/protobuf"
 	"hdyx/common"
@@ -18,6 +19,7 @@ const (
 type roomModel struct {
 	ActId          uint32                  `json:"ActId"`
 	GameLv         uint32                  `json:"GameLv"`
+	IsGame         bool                    `json:"IsGame"`
 	PosIdToPlayer  map[uint32]*PlayerModel `json:"PosIdToPlayer"`
 	ArrUidAudience []uint64                `json:"ArrUidAudience"`
 }
@@ -28,6 +30,7 @@ type PlayerModel struct {
 	State    bool // 是否准备
 	Head     string
 	Name     string
+	IsRobot  bool
 }
 
 func getRoomIdToInfoKey(ctx *common.ConContext) string {
@@ -82,12 +85,14 @@ func LeaveRoomAndBroadcast(ctx *common.ConContext) bool {
 	// 房间不存在
 	roomInfo, err := GetGameRoomInfo(ctx, roomId)
 	if roomInfo == nil || err != nil {
+		fmt.Println("房间不存在")
 		return false
 	}
 
 	// 是否在观众席中
 	ok, roomIndex := GetRoomIndex(ctx, roomInfo)
 	if ok {
+		fmt.Println("离开观众席")
 		// 离开观众席位
 		roomInfo.ArrUidAudience = append(roomInfo.ArrUidAudience[:roomIndex], roomInfo.ArrUidAudience[roomIndex+1:]...)
 	} else {
@@ -101,7 +106,7 @@ func LeaveRoomAndBroadcast(ctx *common.ConContext) bool {
 		if isMaster := playerInfo[gameIndex].IsMaster; isMaster {
 			// 房主转移
 			for i, player := range playerInfo {
-				if i == gameIndex {
+				if i == gameIndex || player.IsRobot {
 					continue
 				}
 
@@ -117,11 +122,49 @@ func LeaveRoomAndBroadcast(ctx *common.ConContext) bool {
 		delete(playerInfo, gameIndex)
 		roomInfo.PosIdToPlayer = playerInfo
 	}
-
+	fmt.Println("roomInfo.ArrUidAudience:", roomInfo.ArrUidAudience)
+	fmt.Println("roomInfo.PosIdToPlayer:", roomInfo.PosIdToPlayer)
 	// 离开后如果没有玩家，则销毁房间
-	if len(roomInfo.PosIdToPlayer) == 0 && len(roomInfo.ArrUidAudience) == 0 {
-		DestroyRoom(ctx, roomId)
-		return true
+	if len(roomInfo.ArrUidAudience) == 0 {
+		// 如果房间一个人都没有了，销毁房间、销毁游戏
+		if len(roomInfo.PosIdToPlayer) == 0 {
+			act1 := GetActModel(ctx, roomInfo.ActId)
+			if act1 != nil {
+				Destory(ctx, act1)
+			}
+
+			DestroyRoom(ctx, roomId)
+			return true
+		} else {
+			isDel := true
+			for _, player := range roomInfo.PosIdToPlayer {
+				if !player.IsRobot {
+					isDel = false
+					break
+				}
+			}
+			// 如果房间只有机器人,销毁房间、销毁游戏
+			if isDel {
+				act1 := GetActModel(ctx, roomInfo.ActId)
+				if act1 != nil {
+					Destory(ctx, act1)
+				}
+				DestroyRoom(ctx, roomId)
+				return true
+			}
+		}
+	}
+
+	// 是否在游戏中
+	actModel := GetActModel(ctx, 1)
+	if actModel != nil {
+		// 获取对局信息
+		act1Model := actModel.(*Act1Model)
+
+		// 是否需要断线重连
+		if act1Model.IsPlayer(ctx) {
+			act1Model.PlayerLoseConn(ctx)
+		}
 	}
 
 	// 更新房间数据写入redis
@@ -261,6 +304,7 @@ func BackGameRoomInfo(roomInfo map[uint32]*PlayerModel) map[uint32]*api.PlayerIn
 			IsMaster: playerInfo.IsMaster,
 			Head:     playerInfo.Head,
 			Name:     playerInfo.Name,
+			IsRobot:  playerInfo.IsRobot,
 		}
 	}
 

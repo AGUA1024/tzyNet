@@ -7,36 +7,32 @@ import (
 
 const newFuncName = "NewActModel"
 
-var actModelRegister = map[uint32]ActBaseInterface{
+var actModelRegister = map[uint32]ActModelInterface{
 	1: &Act1Model{},
 }
 
-func NewActModel(ctx *common.ConContext, actId uint32) ActBaseInterface {
+func NewActModel(ctx *common.ConContext, actId uint32) ActModelInterface {
 	model, ok := actModelRegister[actId]
 	if !ok {
 		return nil
 	}
 
 	// 获取结构体类型的反射值
-	modelType := reflect.TypeOf(model)
-	modelPtr := reflect.New(modelType)
-	elem := modelPtr.Elem()
-
-	// 获取方法的反射值
-	method := elem.MethodByName(newFuncName)
+	value := reflect.ValueOf(model)
+	newActFunc := value.MethodByName(newFuncName)
 
 	argsValues := []reflect.Value{
 		reflect.ValueOf(ctx),
 	}
 	// 调用方法
-	results := method.Call(argsValues)
+	results := newActFunc.Call(argsValues)
 
 	// 处理返回值
-	var ret ActBaseInterface
+	var ret ActModelInterface
 	if len(results) > 0 {
 		retValue := results[0]
 		iface := retValue.Interface()
-		if ret, ok = iface.(ActBaseInterface); !ok {
+		if ret, ok = iface.(ActModelInterface); !ok {
 			return nil
 		}
 	}

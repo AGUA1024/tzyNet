@@ -19,6 +19,13 @@ func ServerInit() {
 	// 将 GOMAXPROCS 设置为 4
 	runtime.GOMAXPROCS(4)
 
+	// 服务器注册etcd
+	etcdRegisterService()
+	fmt.Println("--服务注册完成")
+}
+
+// 服务器注册etcd
+func etcdRegisterService() {
 	// 获取节点公网ip
 	resp, err := http.Get("http://myexternalip.com/raw")
 	if err != nil {
@@ -51,10 +58,10 @@ func ServerInit() {
 			if err != nil {
 				common.Logger.SystemErrorLog("ETCD_REGISTER_ERROR: ", err)
 			}
+
 			break
 		}
 	}
-
 }
 
 // registerService 向etcd注册服务信息

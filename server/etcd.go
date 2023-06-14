@@ -21,6 +21,7 @@ func init() {
 		Endpoints:   []string{endPoint},
 		DialTimeout: 5 * time.Second,
 	})
+	fmt.Println("--Etcd初始化完成")
 }
 
 // discoverService 从etcd中发现指定服务实例的地址

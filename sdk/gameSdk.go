@@ -4,7 +4,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -52,9 +51,9 @@ type UserInfo struct {
 }
 
 type SendGameMsgInBuf struct {
-	GameType    int            `json:"gameType"`
-	GameLv      int            `json:"gameLv"`
-	RoomId      int            `json:"roomId"`
+	GameType    uint32         `json:"gameType"`
+	GameLv      uint32         `json:"gameLv"`
+	RoomId      uint64         `json:"roomId"`
 	UserRankMap map[uint64]int `json:"userRankMap"`
 	Timestamp   int64          `json:"timestamp"`
 	Sign        string         `json:"sign"`
@@ -114,7 +113,7 @@ func (this *Sdk) SendGameMsgBySdk(result *SendGameMsgInBuf) *SendGameMsgOutBuf {
 
 	bytesReq, err := json.Marshal(result)
 	if err != nil {
-		fmt.Println("error")
+		return nil
 	}
 
 	jsonBack := SdkRequest(SendGameRusultTestSdk, bytesReq)

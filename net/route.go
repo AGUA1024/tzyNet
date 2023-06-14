@@ -1,7 +1,6 @@
 package net
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/protobuf/proto"
@@ -9,37 +8,11 @@ import (
 	"hdyx/common"
 	"hdyx/model"
 	"hdyx/net/ioBuf"
+	"log"
 	"reflect"
-	"runtime"
-	"strconv"
 )
 
 var GinEngine *gin.Engine = gin.Default()
-
-func newConContext() *common.ConContext {
-	return &common.ConContext{
-		ConnectId: getGoroutineID(),
-	}
-}
-
-// 注册connectGorutine全局空间
-func registerConGlobal() *common.ConContext {
-	ctx := newConContext()
-	conId := ctx.GetConnectId()
-	if _, ok := common.MpConRoutineStorage[conId]; ok {
-		common.Logger.SystemErrorLog("RoutineStorage_MEM_OVERWRITE")
-	}
-
-	common.MpConRoutineStorage[conId] = &common.ConGlobalStorage{
-		WsCon:        nil,
-		Uid:          0,
-		Cmd:          0,
-		RoomId:       0,
-		EventStorage: nil,
-	}
-
-	return ctx
-}
 
 // 连接断开;空间回收
 // 断开连接,退出游戏房间
@@ -60,15 +33,6 @@ func destroyConGlobalObj(conCtx *common.ConContext) {
 	delete(common.MpConRoutineStorage, conCtx.ConnectId)
 }
 
-func getGoroutineID() uint64 {
-	arrByte := make([]byte, 64)
-	arrByte = arrByte[:runtime.Stack(arrByte, false)]
-	arrByte = bytes.TrimPrefix(arrByte, []byte("goroutine "))
-	arrByte = arrByte[:bytes.IndexByte(arrByte, ' ')]
-	GoroutineID, _ := strconv.ParseUint(string(arrByte), 10, 64)
-	return GoroutineID
-}
-
 func init() {
 	GinEngine.GET("", ListenAndHandel)
 }
@@ -80,7 +44,7 @@ func ListenAndHandel(ginCtx *gin.Context) {
 	}
 
 	// 注册connectGorutine全局空间
-	conCtx := registerConGlobal()
+	conCtx := common.RegisterConGlobal()
 	// 注册ws连接管道
 	conCtx.SetConGlobalWsCon(ws)
 	// 延迟注销connectGorutine全局空间,关闭ws连接
@@ -104,8 +68,13 @@ func ListenAndHandel(ginCtx *gin.Context) {
 		fmt.Println("clientBuf：")
 		fmt.Println(clientBuf)
 
+		// 协程顺序执行
+		done := make(chan bool, 1)
+
 		go func() {
 			defer func() {
+				log.Println("断开")
+				done <- true
 				if r := recover(); r != nil {
 					common.Logger.SystemErrorLog("PANIC_ERROR:", r)
 				}
@@ -114,12 +83,13 @@ func ListenAndHandel(ginCtx *gin.Context) {
 			conCtx.EventStorageInit(clientBuf.CmdMerge)
 			routeHandel(conCtx, clientBuf)
 
-			fmt.Println("conGlobalObj:")
-			fmt.Println(common.MpConRoutineStorage)
-			fmt.Println(conCtx.GetConGlobalObj())
-			//fmt.Println(conCtx.GetConGlobalObj().EventStorage)
+			fmt.Println("uid:")
+			fmt.Println(conCtx.GetConGlobalObj().Uid)
+
 			model.AllRedisSave(conCtx)
 		}()
+
+		<-done
 	}
 }
 
