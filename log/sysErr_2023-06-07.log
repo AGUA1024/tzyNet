@@ -1,0 +1,88 @@
+2023-06-07 16:20:04	PANIC	common/logger.go:28	Invalid node tag
+goroutine 1 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0xc0000480c0?}, {0xc00059df58?, 0x1da45b0?, 0x16dd23e?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+main.main()
+	D:/GoProgram/hdyx/gateway.go:20 +0x113
+
+2023-06-07 20:55:49	PANIC	common/logger.go:28	PANIC_ERROR: reflect.Value.Call: call of nil function
+goroutine 83 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0xc000784fe8?}, {0xc00015f6b0?, 0xc000784fc0?, 0xc00078bc10?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel.func1.1()
+	D:/GoProgram/hdyx/net/route.go:73 +0x6c
+panic({0xfa84a0, 0x1212540})
+	D:/golang/go1.20.2/src/runtime/panic.go:884 +0x213
+reflect.Value.call({0xfb2e20?, 0x0?, 0x1987ebf87f8?}, {0x10de9b6, 0x4}, {0xc00015ff10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:408 +0x1b65
+reflect.Value.Call({0xfb2e20?, 0x0?, 0x10?}, {0xc00015ff10?, 0xc000784d80?, 0xc00015fe20?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00049c3a8, 0xc0003ff4a0?)
+	D:/GoProgram/hdyx/net/route.go:103 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:78 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:70 +0x15a
+
+2023-06-07 22:07:05	PANIC	common/logger.go:28	PANIC_ERROR: runtime error: invalid memory address or nil pointer dereference
+goroutine 32 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0x0?}, {0xc0005f1438?, 0x0?, 0x0?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel.func1.1()
+	D:/GoProgram/hdyx/net/route.go:73 +0x6c
+panic({0x139cd60, 0x1b3d0d0})
+	D:/golang/go1.20.2/src/runtime/panic.go:884 +0x213
+hdyx/model.nextTurn(0xc00068a018)
+	D:/GoProgram/hdyx/model/act1Model.go:571 +0x10a
+hdyx/model.(*Act1Model).GetCardFromPool(0xc00068a018, 0xc0002b2060)
+	D:/GoProgram/hdyx/model/act1Model.go:198 +0x23c
+hdyx/control.GetCardFromPool(0x2?)
+	D:/GoProgram/hdyx/control/act1.go:77 +0x34
+hdyx/api.GetCardFromPool(0x0?, {0x0?, 0x0?, 0xb737d9?})
+	D:/GoProgram/hdyx/api/act1.go:33 +0x1e
+reflect.Value.call({0x1363ea0?, 0x14f43b8?, 0xc000139eb0?}, {0x148fdbd, 0x4}, {0xc000139f10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0x1363ea0?, 0x14f43b8?, 0x0?}, {0xc000139f10?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc0002b2060, 0xc0004014a0?)
+	D:/GoProgram/hdyx/net/route.go:103 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:78 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:70 +0x15a
+
+2023-06-07 22:07:56	PANIC	common/logger.go:28	PANIC_ERROR: runtime error: invalid memory address or nil pointer dereference
+goroutine 50 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0x0?}, {0xc0004ed438?, 0x0?, 0x0?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel.func1.1()
+	D:/GoProgram/hdyx/net/route.go:73 +0x6c
+panic({0x137cd60, 0x1b1d0d0})
+	D:/golang/go1.20.2/src/runtime/panic.go:884 +0x213
+hdyx/model.nextTurn(0xc0000081c8)
+	D:/GoProgram/hdyx/model/act1Model.go:571 +0x10a
+hdyx/model.(*Act1Model).GetCardFromPool(0xc0000081c8, 0xc00003a378)
+	D:/GoProgram/hdyx/model/act1Model.go:198 +0x23c
+hdyx/control.GetCardFromPool(0x2?)
+	D:/GoProgram/hdyx/control/act1.go:77 +0x34
+hdyx/api.GetCardFromPool(0x0?, {0x0?, 0x0?, 0xb537d9?})
+	D:/GoProgram/hdyx/api/act1.go:33 +0x1e
+reflect.Value.call({0x1343ea0?, 0x14d43b8?, 0xc000531eb0?}, {0x146fdbd, 0x4}, {0xc000531f10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0x1343ea0?, 0x14d43b8?, 0x0?}, {0xc000531f10?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00003a378, 0xc000431470?)
+	D:/GoProgram/hdyx/net/route.go:103 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:78 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:70 +0x15a
+

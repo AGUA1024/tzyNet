@@ -1,0 +1,23 @@
+syntax="proto3"; //版本号
+package api;  //包名
+option go_package = "./;api";
+
+// 获取游戏服务器网关
+message GetGateWay_InObj {
+  uint64 roomId=1;
+}
+
+message GetGateWay_OutObj {
+  string host=1;
+  string port=2;
+}
+
+// 连接游戏服务器
+message ConGlobalObjInit_InObj {
+  uint64 uid=1;
+  uint64 roomId=2;
+}
+
+message ConGlobalObjInit_OutObj {
+  bool ok=1;
+}

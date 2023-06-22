@@ -1,0 +1,216 @@
+2023-06-02 21:04:16	PANIC	common/logger.go:28	PANIC_ERROR: runtime error: invalid memory address or nil pointer dereference
+goroutine 42 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0x0?}, {0xc000525448?, 0x0?, 0x0?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel.func1.1()
+	D:/GoProgram/hdyx/net/route.go:141 +0x6c
+panic({0x17f5740, 0x1fa5f50})
+	D:/golang/go1.20.2/src/runtime/panic.go:884 +0x213
+hdyx/model.CreateRoom(0x2710?, 0xc000525730?, 0x1, 0x0)
+	D:/GoProgram/hdyx/model/roomModel.go:54 +0x171
+hdyx/control.CreateRoom(0xc000700578?, 0x5?, 0x8?, 0x0?)
+	D:/GoProgram/hdyx/control/room.go:32 +0xcd
+hdyx/api.CreateRoom(0x0?, {0xc000700578, 0x5, 0x8})
+	D:/GoProgram/hdyx/api/room.go:26 +0x76
+reflect.Value.call({0x17bc960?, 0x1951450?, 0x16cfd5526c8?}, {0x18ebcaa, 0x4}, {0xc00001df10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0x17bc960?, 0x1951450?, 0x8?}, {0xc00001df10?, 0x0?, 0x16cfd62d658?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc000700240, 0xc0003ff200?)
+	D:/GoProgram/hdyx/net/route.go:171 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:146 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:138 +0x15a
+
+2023-06-02 21:05:21	PANIC	common/logger.go:28	PANIC_ERROR: runtime error: invalid memory address or nil pointer dereference
+goroutine 69 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0x0?}, {0xc000549430?, 0x0?, 0x0?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel.func1.1()
+	D:/GoProgram/hdyx/net/route.go:141 +0x6c
+panic({0x9f5740, 0x11a5f50})
+	D:/golang/go1.20.2/src/runtime/panic.go:884 +0x213
+hdyx/model.CreateRoom(0x2710?, 0xc000549730?, 0x1, 0x0)
+	D:/GoProgram/hdyx/model/roomModel.go:56 +0x1cc
+hdyx/control.CreateRoom(0xc0002b2310?, 0x5?, 0x8?, 0x0?)
+	D:/GoProgram/hdyx/control/room.go:32 +0xcd
+hdyx/api.CreateRoom(0x0?, {0xc0002b2310, 0x5, 0x8})
+	D:/GoProgram/hdyx/api/room.go:26 +0x76
+reflect.Value.call({0x9bc960?, 0xb51450?, 0x157b05c4e58?}, {0xaebcaa, 0x4}, {0xc000537f10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0x9bc960?, 0xb51450?, 0x8?}, {0xc000537f10?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc0002b2218, 0xc000401200?)
+	D:/GoProgram/hdyx/net/route.go:171 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:146 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:138 +0x15a
+
+2023-06-02 21:06:15	PANIC	common/logger.go:28	PANIC_ERROR: runtime error: invalid memory address or nil pointer dereference
+goroutine 58 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0x0?}, {0xc000533420?, 0xf1eca6?, 0xc000533028?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel.func1.1()
+	D:/GoProgram/hdyx/net/route.go:141 +0x6c
+panic({0xfd5740, 0x1785f50})
+	D:/golang/go1.20.2/src/runtime/panic.go:884 +0x213
+hdyx/model.CreateRoom(0x2710?, 0xc000533730?, 0x1, 0x0)
+	D:/GoProgram/hdyx/model/roomModel.go:57 +0x226
+hdyx/control.CreateRoom(0xc000133440?, 0x5?, 0x8?, 0x0?)
+	D:/GoProgram/hdyx/control/room.go:32 +0xcd
+hdyx/api.CreateRoom(0x0?, {0xc000133440, 0x5, 0x8})
+	D:/GoProgram/hdyx/api/room.go:26 +0x76
+reflect.Value.call({0xf9c960?, 0x1131450?, 0x294bbbb2e48?}, {0x10cbcaa, 0x4}, {0xc0004c7f10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0xf9c960?, 0x1131450?, 0x8?}, {0xc0004c7f10?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc000263998, 0xc000401200?)
+	D:/GoProgram/hdyx/net/route.go:171 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:146 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:138 +0x15a
+
+2023-06-02 21:10:44	PANIC	common/logger.go:28	PANIC_ERROR: runtime error: invalid memory address or nil pointer dereference
+goroutine 43 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0x0?}, {0xc0004bb448?, 0x0?, 0x0?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel.func1.1()
+	D:/GoProgram/hdyx/net/route.go:141 +0x6c
+panic({0xb25740, 0x12d5f50})
+	D:/golang/go1.20.2/src/runtime/panic.go:884 +0x213
+hdyx/model.CreateRoom(0x2710?, 0xc0004bb730?, 0x1, 0x0)
+	D:/GoProgram/hdyx/model/roomModel.go:55 +0x171
+hdyx/control.CreateRoom(0xc000223400?, 0x5?, 0x8?, 0x0?)
+	D:/GoProgram/hdyx/control/room.go:32 +0xcd
+hdyx/api.CreateRoom(0x0?, {0xc000223400, 0x5, 0x8})
+	D:/GoProgram/hdyx/api/room.go:26 +0x76
+reflect.Value.call({0xaec960?, 0xc81450?, 0x2334bdd9358?}, {0xc1bcaa, 0x4}, {0xc000123f10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0xaec960?, 0xc81450?, 0x8?}, {0xc000123f10?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc000222778, 0xc000401200?)
+	D:/GoProgram/hdyx/net/route.go:171 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:146 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:138 +0x15a
+
+2023-06-02 21:27:15	PANIC	common/logger.go:28	Invalid node tag
+goroutine 1 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0xc0000480c0?}, {0xc00051df58?, 0x1cb1880?, 0x15db8d1?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+main.main()
+	D:/GoProgram/hdyx/gateway.go:20 +0x113
+
+2023-06-02 21:49:28	PANIC	common/logger.go:28	OUT_STREAM_ERROR write tcp 127.0.0.1:80->127.0.0.1:10801: wsasend: An existing connection was forcibly closed by the remote host.
+goroutine 52 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0xc000598000?}, {0xc000547300?, 0xc00012a288?, 0x13?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/common.OutPutStream[...](0xc000704188?, 0x34)
+	D:/GoProgram/hdyx/common/commonFunc.go:35 +0x28d
+hdyx/common.tLogger.GameErrorLog({0x8ed880?}, 0xc000704188, 0x8, {0xc0005474e8?, 0x34?, 0x3?})
+	D:/GoProgram/hdyx/common/logger.go:43 +0x1a7
+hdyx/control.LeaveGame(0xc000704188)
+	D:/GoProgram/hdyx/control/room.go:147 +0x1ac
+hdyx/net.destroyConGlobalObj(0xc000704188)
+	D:/GoProgram/hdyx/net/route.go:68 +0x2d6
+hdyx/net.ListenAndHandel(0xc000547760?)
+	D:/GoProgram/hdyx/net/route.go:155 +0x38e
+github.com/gin-gonic/gin.(*Context).Next(...)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/context.go:174
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1(0xc0001d8200)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/recovery.go:102 +0x82
+github.com/gin-gonic/gin.(*Context).Next(...)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/context.go:174
+github.com/gin-gonic/gin.LoggerWithConfig.func1(0xc0001d8200)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/logger.go:240 +0xe7
+github.com/gin-gonic/gin.(*Context).Next(...)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/context.go:174
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest(0xc000584680, 0xc0001d8200)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/gin.go:620 +0x66b
+github.com/gin-gonic/gin.(*Engine).ServeHTTP(0xc000584680, {0xb2a5f0?, 0xc000594000}, 0xc0001d8100)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/gin.go:576 +0x1dd
+net/http.serverHandler.ServeHTTP({0xc00047aab0?}, {0xb2a5f0, 0xc000594000}, 0xc0001d8100)
+	D:/golang/go1.20.2/src/net/http/server.go:2936 +0x316
+net/http.(*conn).serve(0xc00071acf0, {0xb2afd8, 0xc0000e2f00})
+	D:/golang/go1.20.2/src/net/http/server.go:1995 +0x612
+created by net/http.(*Server).Serve
+	D:/golang/go1.20.2/src/net/http/server.go:3089 +0x5ed
+
+2023-06-02 21:50:25	PANIC	common/logger.go:28	OUT_STREAM_ERROR write tcp 127.0.0.1:80->127.0.0.1:10853: wsasend: An existing connection was forcibly closed by the remote host.
+goroutine 84 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0xc0002fd080?}, {0xc00054b300?, 0xc0002e6ee8?, 0x13?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/common.OutPutStream[...](0xc0006102f8?, 0x54)
+	D:/GoProgram/hdyx/common/commonFunc.go:35 +0x28d
+hdyx/common.tLogger.GameErrorLog({0x8ed880?}, 0xc0006102f8, 0x8, {0xc00054b4e8?, 0x54?, 0x3?})
+	D:/GoProgram/hdyx/common/logger.go:43 +0x1a7
+hdyx/control.LeaveGame(0xc0006102f8)
+	D:/GoProgram/hdyx/control/room.go:147 +0x1ac
+hdyx/net.destroyConGlobalObj(0xc0006102f8)
+	D:/GoProgram/hdyx/net/route.go:68 +0x2d6
+hdyx/net.ListenAndHandel(0x9af7a0?)
+	D:/GoProgram/hdyx/net/route.go:155 +0x38e
+github.com/gin-gonic/gin.(*Context).Next(...)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/context.go:174
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1(0xc0001d8600)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/recovery.go:102 +0x82
+github.com/gin-gonic/gin.(*Context).Next(...)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/context.go:174
+github.com/gin-gonic/gin.LoggerWithConfig.func1(0xc0001d8600)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/logger.go:240 +0xe7
+github.com/gin-gonic/gin.(*Context).Next(...)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/context.go:174
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest(0xc000584680, 0xc0001d8600)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/gin.go:620 +0x66b
+github.com/gin-gonic/gin.(*Engine).ServeHTTP(0xc000584680, {0xb2a5f0?, 0xc0004aa0e0}, 0xc0001d8500)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/gin.go:576 +0x1dd
+net/http.serverHandler.ServeHTTP({0xc00037c2d0?}, {0xb2a5f0, 0xc0004aa0e0}, 0xc0001d8500)
+	D:/golang/go1.20.2/src/net/http/server.go:2936 +0x316
+net/http.(*conn).serve(0xc000538240, {0xb2afd8, 0xc0000e2f00})
+	D:/golang/go1.20.2/src/net/http/server.go:1995 +0x612
+created by net/http.(*Server).Serve
+	D:/golang/go1.20.2/src/net/http/server.go:3089 +0x5ed
+
+2023-06-02 22:01:07	PANIC	common/logger.go:28	PANIC_ERROR: runtime error: slice bounds out of range [:999] with capacity 4
+goroutine 72 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0xc000329ef0?}, {0xc00053f478?, 0xc0003d09f0?, 0x2ebcff70598?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel.func1.1()
+	D:/GoProgram/hdyx/net/route.go:141 +0x6c
+panic({0x14fc700, 0xc0002b6ac8})
+	D:/golang/go1.20.2/src/runtime/panic.go:884 +0x213
+hdyx/control.JoinGame(0xc0007022c0, 0x2)
+	D:/GoProgram/hdyx/control/room.go:129 +0x8a5
+hdyx/api.JoinGame(0x0?, {0xc0007029c0, 0x2, 0x8})
+	D:/GoProgram/hdyx/api/room.go:46 +0x6d
+reflect.Value.call({0x142c960?, 0x15c1490?, 0x2ebf5a97ed8?}, {0x155bcaa, 0x4}, {0xc0002cbf10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0x142c960?, 0x15c1490?, 0x8?}, {0xc0002cbf10?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc0007022c0, 0xc0003ff200?)
+	D:/GoProgram/hdyx/net/route.go:171 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:146 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:138 +0x15a
+

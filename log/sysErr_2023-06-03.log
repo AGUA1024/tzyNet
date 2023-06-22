@@ -1,0 +1,29 @@
+2023-06-03 12:17:35	PANIC	common/logger.go:28	PROTO_UNMARSHAL_ERROR
+goroutine 51 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.SystemErrorLog({0xc000532400?}, {0xc00013b6e0?, 0x200?, 0x1393760?})
+	D:/GoProgram/hdyx/common/logger.go:28 +0x45
+hdyx/net.ListenAndHandel(0x121f7a0?)
+	D:/GoProgram/hdyx/net/route.go:132 +0x29a
+github.com/gin-gonic/gin.(*Context).Next(...)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/context.go:174
+github.com/gin-gonic/gin.CustomRecoveryWithWriter.func1(0xc000132100)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/recovery.go:102 +0x82
+github.com/gin-gonic/gin.(*Context).Next(...)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/context.go:174
+github.com/gin-gonic/gin.LoggerWithConfig.func1(0xc000132100)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/logger.go:240 +0xe7
+github.com/gin-gonic/gin.(*Context).Next(...)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/context.go:174
+github.com/gin-gonic/gin.(*Engine).handleHTTPRequest(0xc0001051e0, 0xc000132100)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/gin.go:620 +0x66b
+github.com/gin-gonic/gin.(*Engine).ServeHTTP(0xc0001051e0, {0x139a510?, 0xc00013e000}, 0xc000132000)
+	D:/GoProgram/pkg/mod/github.com/gin-gonic/gin@v1.9.0/gin.go:576 +0x1dd
+net/http.serverHandler.ServeHTTP({0xc0007604b0?}, {0x139a510, 0xc00013e000}, 0xc000132000)
+	D:/golang/go1.20.2/src/net/http/server.go:2936 +0x316
+net/http.(*conn).serve(0xc000210d80, {0x139aef8, 0xc0004fbb00})
+	D:/golang/go1.20.2/src/net/http/server.go:1995 +0x612
+created by net/http.(*Server).Serve
+	D:/golang/go1.20.2/src/net/http/server.go:3089 +0x5ed
+

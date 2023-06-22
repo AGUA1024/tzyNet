@@ -1,0 +1,216 @@
+2023-06-05 12:27:07	ERROR	common/logger.go:33	新位次已经被玩家占用，无法调整游戏位次
+goroutine 39 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.GameErrorLog({0xe31de0?}, 0xc00047d390, 0xc, {0xc0000936c0?, 0x2710?, 0xc00009ab70?})
+	D:/GoProgram/hdyx/common/logger.go:33 +0x5f
+hdyx/control.JoinGame(0xc00047d390, 0x0)
+	D:/GoProgram/hdyx/control/room.go:114 +0x488
+hdyx/api.JoinGame(0x0?, {0x0, 0x0, 0x0})
+	D:/GoProgram/hdyx/api/room.go:46 +0x6d
+reflect.Value.call({0xdffe40?, 0xf95900?, 0xc000483eb0?}, {0xf3006a, 0x4}, {0xc000483f10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0xdffe40?, 0xf95900?, 0x0?}, {0xc000483f10?, 0xe56ae0?, 0xd8837c?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00047d390, 0xc000401200?)
+	D:/GoProgram/hdyx/net/route.go:140 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:115 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:107 +0x15a
+
+2023-06-05 12:27:59	ERROR	common/logger.go:33	开启游戏人数不足
+goroutine 42 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.GameErrorLog({0xe32020?}, 0xc00047d378, 0xd, {0xc0005cd6d8?, 0x4?, 0x0?})
+	D:/GoProgram/hdyx/common/logger.go:33 +0x5f
+hdyx/control.GameStart(0xc00047d378)
+	D:/GoProgram/hdyx/control/room.go:289 +0x2a5
+hdyx/api.GameStart(0x0?, {0x0?, 0x0?, 0x6037d9?})
+	D:/GoProgram/hdyx/api/room.go:77 +0x1e
+reflect.Value.call({0xdffe40?, 0xf958e8?, 0xc0004b5eb0?}, {0xf3006a, 0x4}, {0xc0004b5f10, 0x2, 0x5e9754?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0xdffe40?, 0xf958e8?, 0x0?}, {0xc0004b5f10?, 0x0?, 0xffffffffffffffff?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00047d378, 0xc000401200?)
+	D:/GoProgram/hdyx/net/route.go:140 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:115 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:107 +0x15a
+
+2023-06-05 12:28:06	ERROR	common/logger.go:33	act1:房主还未开始游戏
+goroutine 83 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.GameErrorLog({0xe32140?}, 0xc00047d378, 0xf, {0xc0004bf738?, 0x20?, 0xc000074700?})
+	D:/GoProgram/hdyx/common/logger.go:33 +0x5f
+hdyx/control.Act1GameInit(0xc00047d378)
+	D:/GoProgram/hdyx/control/act1.go:19 +0xe6
+hdyx/api.Act1GameInit(0x0?, {0x0?, 0x0?, 0x6037d9?})
+	D:/GoProgram/hdyx/api/act1.go:11 +0x1e
+reflect.Value.call({0xdffe40?, 0xf958c8?, 0xc0004b5eb0?}, {0xf3006a, 0x4}, {0xc0004b5f10, 0x2, 0x5e9754?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0xdffe40?, 0xf958c8?, 0x0?}, {0xc0004b5f10?, 0x0?, 0xffffffffffffffff?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00047d378, 0xc000401200?)
+	D:/GoProgram/hdyx/net/route.go:140 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:115 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:107 +0x15a
+
+2023-06-05 14:08:16	ERROR	common/logger.go:33	调取Sdk获取用户数据失败
+goroutine 54 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.GameErrorLog({0xb12200?}, 0xc00047f398, 0x2712, {0xc0005a9720?, 0x1?, 0xc00068a3c0?})
+	D:/GoProgram/hdyx/common/logger.go:33 +0x5f
+hdyx/control.CreateRoom(0xc00047f398, 0x5?, 0x8?, 0x0?)
+	D:/GoProgram/hdyx/control/room.go:36 +0x17e
+hdyx/api.CreateRoom(0x0?, {0xc00047f4a8, 0x5, 0x8})
+	D:/GoProgram/hdyx/api/room.go:26 +0x76
+reflect.Value.call({0xadfe40?, 0xc758c0?, 0x193392e0008?}, {0xc1006a, 0x4}, {0xc0004e3f10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0xadfe40?, 0xc758c0?, 0x8?}, {0xc0004e3f10?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00047f398, 0xc000401200?)
+	D:/GoProgram/hdyx/net/route.go:140 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:115 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:107 +0x15a
+
+2023-06-05 14:08:31	ERROR	common/logger.go:33	不是房主，无法开启游戏
+goroutine 67 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.GameErrorLog({0xb11de0?}, 0xc00047f3b8, 0x5, {0xc0005a96d8?, 0x4?, 0x0?})
+	D:/GoProgram/hdyx/common/logger.go:33 +0x5f
+hdyx/control.GameStart(0xc00047f3b8)
+	D:/GoProgram/hdyx/control/room.go:283 +0x217
+hdyx/api.GameStart(0x0?, {0x0?, 0x0?, 0x2e37d9?})
+	D:/GoProgram/hdyx/api/room.go:77 +0x1e
+reflect.Value.call({0xadfe40?, 0xc758c8?, 0xc00057beb0?}, {0xc1006a, 0x4}, {0xc00057bf10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0xadfe40?, 0xc758c8?, 0x0?}, {0xc00057bf10?, 0x0?, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00047f3b8, 0xc000401200?)
+	D:/GoProgram/hdyx/net/route.go:140 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:115 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:107 +0x15a
+
+2023-06-05 17:05:10	ERROR	common/logger.go:33	已经在房间中，无法重复加入房间
+goroutine 56 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.GameErrorLog({0x10c20e0?}, 0xc000222338, 0x6, {0xc00012f6c0?, 0x8?, 0x890000?})
+	D:/GoProgram/hdyx/common/logger.go:33 +0x5f
+hdyx/control.JoinRoom(0xc000222338, 0x3?)
+	D:/GoProgram/hdyx/control/room.go:58 +0x17e
+hdyx/api.JoinRoom(0x0?, {0xc00052cb58, 0x3, 0x8})
+	D:/GoProgram/hdyx/api/room.go:36 +0x6e
+reflect.Value.call({0x108fde0?, 0x12257c8?, 0x175fbf135b8?}, {0x11bff4a, 0x4}, {0xc00007bf10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0x108fde0?, 0x12257c8?, 0x8?}, {0xc00007bf10?, 0x50?, 0x115d9c0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc000222338, 0xc0003ff200?)
+	D:/GoProgram/hdyx/net/route.go:140 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:115 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:107 +0x15a
+
+2023-06-05 17:23:50	ERROR	common/logger.go:33	操作的房间不存在
+goroutine 32 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.GameErrorLog({0xf91fc0?}, 0xc00061d540, 0x4, {0xc00048f698?, 0x11cbc48?, 0xc0000a8510?})
+	D:/GoProgram/hdyx/common/logger.go:33 +0x5f
+hdyx/control.GetAct1Model(0xc00061d540)
+	D:/GoProgram/hdyx/control/act1.go:128 +0x9a
+hdyx/control.PlayMyselfEffectCard(0x0?, 0x0)
+	D:/GoProgram/hdyx/control/act1.go:37 +0x29
+hdyx/api.PlayMyselfEffectCard(0x0?, {0x0, 0x0, 0x0})
+	D:/GoProgram/hdyx/api/act1.go:18 +0x6d
+reflect.Value.call({0xf5fd20?, 0x10f56c0?, 0xc000143eb0?}, {0x108fe2a, 0x4}, {0xc000143f10, 0x2, 0x5?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0xf5fd20?, 0x10f56c0?, 0x0?}, {0xc000143f10?, 0x50?, 0x102d8a0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00061d540, 0xc000401200?)
+	D:/GoProgram/hdyx/net/route.go:140 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:115 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:107 +0x15a
+
+2023-06-05 17:23:56	ERROR	common/logger.go:33	操作的房间不存在
+goroutine 68 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.GameErrorLog({0xf91fc0?}, 0xc00061d540, 0x4, {0xc000555698?, 0x11cbc48?, 0xc0000a8510?})
+	D:/GoProgram/hdyx/common/logger.go:33 +0x5f
+hdyx/control.GetAct1Model(0xc00061d540)
+	D:/GoProgram/hdyx/control/act1.go:128 +0x9a
+hdyx/control.PlayMyselfEffectCard(0x0?, 0x0)
+	D:/GoProgram/hdyx/control/act1.go:37 +0x29
+hdyx/api.PlayMyselfEffectCard(0x0?, {0x0, 0x0, 0x0})
+	D:/GoProgram/hdyx/api/act1.go:18 +0x6d
+reflect.Value.call({0xf5fd20?, 0x10f56c0?, 0xc000143eb0?}, {0x108fe2a, 0x4}, {0xc000143f10, 0x2, 0x5?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0xf5fd20?, 0x10f56c0?, 0x0?}, {0xc000143f10?, 0x50?, 0x102d8a0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00061d540, 0xc000401200?)
+	D:/GoProgram/hdyx/net/route.go:140 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:115 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:107 +0x15a
+
+2023-06-05 17:24:04	ERROR	common/logger.go:33	未到出牌阶段，无法出牌
+goroutine 69 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.GameErrorLog({0xf91c00?}, 0xc00061d540, 0x1e, {0xc000555698?, 0x11cbc48?, 0xc0000a8510?})
+	D:/GoProgram/hdyx/common/logger.go:33 +0x5f
+hdyx/control.GetAct1Model(0xc00061d540)
+	D:/GoProgram/hdyx/control/act1.go:148 +0x213
+hdyx/control.PlayMyselfEffectCard(0x0?, 0x0)
+	D:/GoProgram/hdyx/control/act1.go:37 +0x29
+hdyx/api.PlayMyselfEffectCard(0x0?, {0x0, 0x0, 0x0})
+	D:/GoProgram/hdyx/api/act1.go:18 +0x6d
+reflect.Value.call({0xf5fd20?, 0x10f56c0?, 0xc000143eb0?}, {0x108fe2a, 0x4}, {0xc000143f10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0xf5fd20?, 0x10f56c0?, 0x0?}, {0xc000143f10?, 0x50?, 0x102d8a0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00061d540, 0xc000401200?)
+	D:/GoProgram/hdyx/net/route.go:140 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:115 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:107 +0x15a
+
+2023-06-05 17:55:51	ERROR	common/logger.go:33	act1:出牌时参数错误
+goroutine 70 [running]:
+runtime/debug.Stack()
+	D:/golang/go1.20.2/src/runtime/debug/stack.go:24 +0x65
+hdyx/common.tLogger.GameErrorLog({0xc000008b40?}, 0xc00047e3a8, 0x20, {0xc00001d720?, 0x0?, 0x829b05?})
+	D:/GoProgram/hdyx/common/logger.go:33 +0x5f
+hdyx/control.PlayCardEffectCard(0x0?, 0x0, 0x0?, 0x0)
+	D:/GoProgram/hdyx/control/act1.go:70 +0xad
+hdyx/api.PlayCardEffectCard(0x0?, {0x0, 0x0, 0x0})
+	D:/GoProgram/hdyx/api/act1.go:34 +0x75
+reflect.Value.call({0xf5fd20?, 0x10f56b8?, 0xc00051deb0?}, {0x108fe2a, 0x4}, {0xc00051df10, 0x2, 0x0?})
+	D:/golang/go1.20.2/src/reflect/value.go:586 +0xb07
+reflect.Value.Call({0xf5fd20?, 0x10f56b8?, 0x0?}, {0xc00051df10?, 0xc000536000?, 0xc00051deb0?})
+	D:/golang/go1.20.2/src/reflect/value.go:370 +0xbc
+hdyx/net.routeHandel(0xc00047e3a8, 0xc000401200?)
+	D:/GoProgram/hdyx/net/route.go:140 +0x2f9
+hdyx/net.ListenAndHandel.func1()
+	D:/GoProgram/hdyx/net/route.go:115 +0xf4
+created by hdyx/net.ListenAndHandel
+	D:/GoProgram/hdyx/net/route.go:107 +0x15a
+
