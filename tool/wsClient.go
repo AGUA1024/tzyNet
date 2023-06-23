@@ -57,15 +57,12 @@ func main() {
 				panic(err)
 			}
 			fmt.Printf("Received message: %+v\n", receivedMessage)
-<<<<<<< HEAD
-=======
 
 			fmt.Println("ResponseStatus:", receivedMessage.ResponseStatus)
 			data := &script.Act1Game_OutObj{}
 			proto.Unmarshal(receivedMessage.Data, data)
 
 			fmt.Println("is:", data)
->>>>>>> origin/main
 		}
 	}()
 
@@ -84,15 +81,9 @@ func main() {
 }
 
 func bufferShow() {
-<<<<<<< HEAD
-	roomId := uint64(6666)
-	//_, str1 := script.GetGateWayBuf()
-	//fmt.Println("GetGateWayBuf:", str1)
-=======
 	roomId := uint64(777)
 	_, str0 := script.IsRoomExist(roomId)
 	fmt.Println("IsRoomExist:", str0)
->>>>>>> origin/main
 
 	_, str1 := script.ConGlobalObjInitBuf(13324782, roomId)
 	fmt.Println("ConGlobalObjInitBuf1:", str1)
@@ -106,8 +97,6 @@ func bufferShow() {
 	_, str4 := script.JoinRoom(roomId)
 	fmt.Println("JoinRoom:", str4)
 
-<<<<<<< HEAD
-=======
 	_, str24 := script.AddRobot("head1", "robot1")
 	fmt.Println("AddRobot1:", str24)
 	_, str25 := script.AddRobot("head2", "robot2")
@@ -127,7 +116,6 @@ func bufferShow() {
 	_, str23 := script.DelRobot(5)
 	fmt.Println("DelRobot5:", str23)
 
->>>>>>> origin/main
 	_, str5 := script.JoinGame(1)
 	fmt.Println("JoinGame1:", str5)
 	_, str6 := script.JoinGame(2)
@@ -152,10 +140,6 @@ func bufferShow() {
 	_, str15 := script.ChangePos(2)
 	fmt.Println("ChangePos4:", str15)
 
-<<<<<<< HEAD
-	//_, str4 := script.DestroyRoom(roomId)
-	//fmt.Println("DestroyRoom：", str4)
-=======
 	_, str16 := script.Act1GameInitBuf()
 	fmt.Println("Act1GameInitBuf:", str16)
 
@@ -200,5 +184,4 @@ func bufferShow() {
 
 	_, str190 := script.GetCardFromPool()
 	fmt.Println("GetCardFromPool:", str190)
->>>>>>> origin/main
 }

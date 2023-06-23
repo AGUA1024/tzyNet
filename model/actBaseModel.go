@@ -45,14 +45,9 @@ func LoadModelInfo(ctx *common.ConContext, actId uint32, actModel ActModelInterf
 	roomId := ctx.GetConGlobalObj().RoomId
 	key := GetActKey(actId, roomId)
 	cache := GetCacheById(roomId)
-<<<<<<< HEAD
-	fmt.Println("key:", key)
-	fmt.Println("roomId:", roomId)
-=======
 
 	fmt.Println("HGET", key, roomId)
 
->>>>>>> origin/main
 	data, err := cache.RedisQuery("HGET", key, roomId)
 	if data == nil || err != nil {
 		return false

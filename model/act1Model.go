@@ -71,10 +71,7 @@ var (
 	EVENT_TYPE_PLAYER_LOSE   uint32 = 14    // 炸弹爆炸，玩家出局
 	EVENT_TYPE_GAME_OVER     uint32 = 15    // 游戏结束
 	EVENT_TYPE_GAME_INIT     uint32 = 16    // 游戏初始化
-<<<<<<< HEAD
-=======
 	EVENT_TYPE_BOMB_BACK 	 uint32 = 17 	//将炸弹放回牌堆事件
->>>>>>> origin/main
 )
 
 type Act1Model struct {
@@ -293,11 +290,6 @@ func (act *Act1Model) PlayCard(ctx *common.ConContext, cardIndex int) (uint32, [
 			return EVENT_TYPE_ERROR, nil
 		}
 		eventType = EVENT_TYPE_DISMANTLE
-<<<<<<< HEAD
-		act1Info.BombPlayer = nil
-		// 下一回合
-		nextTurn(act)
-=======
 		// 触发将炸弹放回牌堆事件
 		act1Info.EventPlayer = &EventPlayer{
 			PlayerIndex: act1Info.CurPlayerIndex,
@@ -306,7 +298,6 @@ func (act *Act1Model) PlayCard(ctx *common.ConContext, cardIndex int) (uint32, [
 		act1Info.BombPlayer = nil
 		// 如果玩家掉线或者是机器人
 		act.RotboToDo(act1Info.CurPlayerIndex)
->>>>>>> origin/main
 	case const_CARD_FORBID_1: //嫁祸
 		// 返回客户端事件
 		eventType = EVENT_TYPE_FORBID
@@ -342,11 +333,7 @@ func (act *Act1Model) PlayCard(ctx *common.ConContext, cardIndex int) (uint32, [
 		// 如果下一位玩家掉线或者是机器人
 		act.RotboToDo(act1Info.CurPlayerIndex)
 	case const_CARD_DEMAND: // 打出索要卡
-<<<<<<< HEAD
-		eventType = EVENT_TYPE_STOLEN_CARD
-=======
 		eventType = EVENT_TYPE_STOLEN_TARGET
->>>>>>> origin/main
 		// 被索人触发被索要事件
 		act1Info.EventPlayer = &EventPlayer{
 			PlayerIndex: act1Info.CurPlayerIndex,
@@ -462,8 +449,6 @@ func (act *Act1Model) EventHandler(ctx *common.ConContext, chooseIndex uint32) (
 		act1Info.EventPlayer = nil
 		// 下一回合
 		nextTurn(act)
-<<<<<<< HEAD
-=======
 	case EVENT_TYPE_BOMB_BACK: // 拆弹后将炸弹放回牌堆
 		// 删除事件
 		act1Info.EventPlayer = nil
@@ -486,7 +471,6 @@ func (act *Act1Model) EventHandler(ctx *common.ConContext, chooseIndex uint32) (
 			act1Info.CardPool = append(act1Info.CardPool[:bombIndex], const_CARD_BOMB)
 			act1Info.CardPool = append(act1Info.CardPool[:bombIndex], backCards...)
 		}
->>>>>>> origin/main
 	default:
 		return EVENT_TYPE_ERROR, nil
 	}
@@ -632,11 +616,8 @@ func nextTurn(act *Act1Model) {
 	case 1:
 		playerlist[curIndex].BameNum--
 	case 2: // 当前还是debuff还剩两回合的时候直接返回,不转到下一个玩家的回合
-<<<<<<< HEAD
-=======
 		// 如果玩家掉线或者是机器人
 		act.RotboToDo(curIndex)
->>>>>>> origin/main
 		playerlist[curIndex].BameNum--
 		return
 	}
@@ -829,22 +810,13 @@ func (act *Act1Model) TurnTimeOut(ctx *common.ConContext) (uint32, []uint32) {
 		playerNum := 0
 		// 检查是否只剩最后一人
 		for _, player := range act1Info.PlayerList {
-<<<<<<< HEAD
-=======
 			if player.IsDie == false {
 				playerNum++
 			}
->>>>>>> origin/main
 			if playerNum >= 2 {
 				isGameOver = false
 				break
 			}
-<<<<<<< HEAD
-			if player.IsDie == false {
-				playerNum++
-			}
-=======
->>>>>>> origin/main
 		}
 
 		// 游戏结束结算
@@ -891,15 +863,11 @@ func (act *Act1Model) TurnTimeOut(ctx *common.ConContext) (uint32, []uint32) {
 		eventType = EVENT_TYPE_PLAYER_LOSE
 		events = append(events, loserIndex)
 		act1Info.SeqId++
-<<<<<<< HEAD
-		nextTurn(act)
-=======
 		// 消除炸弹事件
 		act1Info.BombPlayer = nil
 		nextTurn(act)
 		// 数据落地
 		Save(ctx, act)
->>>>>>> origin/main
 		return eventType, events
 	} else if act1Info.EventPlayer != nil { // 超时事件处理
 		// 选牌事件
