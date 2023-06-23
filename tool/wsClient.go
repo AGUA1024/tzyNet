@@ -57,6 +57,15 @@ func main() {
 				panic(err)
 			}
 			fmt.Printf("Received message: %+v\n", receivedMessage)
+<<<<<<< HEAD
+=======
+
+			fmt.Println("ResponseStatus:", receivedMessage.ResponseStatus)
+			data := &script.Act1Game_OutObj{}
+			proto.Unmarshal(receivedMessage.Data, data)
+
+			fmt.Println("is:", data)
+>>>>>>> origin/main
 		}
 	}()
 
@@ -75,9 +84,15 @@ func main() {
 }
 
 func bufferShow() {
+<<<<<<< HEAD
 	roomId := uint64(6666)
 	//_, str1 := script.GetGateWayBuf()
 	//fmt.Println("GetGateWayBuf:", str1)
+=======
+	roomId := uint64(777)
+	_, str0 := script.IsRoomExist(roomId)
+	fmt.Println("IsRoomExist:", str0)
+>>>>>>> origin/main
 
 	_, str1 := script.ConGlobalObjInitBuf(13324782, roomId)
 	fmt.Println("ConGlobalObjInitBuf1:", str1)
@@ -91,6 +106,28 @@ func bufferShow() {
 	_, str4 := script.JoinRoom(roomId)
 	fmt.Println("JoinRoom:", str4)
 
+<<<<<<< HEAD
+=======
+	_, str24 := script.AddRobot("head1", "robot1")
+	fmt.Println("AddRobot1:", str24)
+	_, str25 := script.AddRobot("head2", "robot2")
+	fmt.Println("AddRobot2:", str25)
+
+	_, str27 := script.PlayerReCon()
+	fmt.Println("PlayerReCon:", str27)
+
+	_, str19 := script.DelRobot(1)
+	fmt.Println("DelRobot1:", str19)
+	_, str20 := script.DelRobot(2)
+	fmt.Println("DelRobot2:", str20)
+	_, str21 := script.DelRobot(3)
+	fmt.Println("DelRobot3:", str21)
+	_, str22 := script.DelRobot(4)
+	fmt.Println("DelRobot4:", str22)
+	_, str23 := script.DelRobot(5)
+	fmt.Println("DelRobot5:", str23)
+
+>>>>>>> origin/main
 	_, str5 := script.JoinGame(1)
 	fmt.Println("JoinGame1:", str5)
 	_, str6 := script.JoinGame(2)
@@ -115,6 +152,53 @@ func bufferShow() {
 	_, str15 := script.ChangePos(2)
 	fmt.Println("ChangePos4:", str15)
 
+<<<<<<< HEAD
 	//_, str4 := script.DestroyRoom(roomId)
 	//fmt.Println("DestroyRoom：", str4)
+=======
+	_, str16 := script.Act1GameInitBuf()
+	fmt.Println("Act1GameInitBuf:", str16)
+
+	_, str26 := script.TimeOut(0)
+	fmt.Println("TimeOut0:", str26)
+	_, str32 := script.TimeOut(1)
+	fmt.Println("TimeOut1:", str32)
+	_, str28 := script.TimeOut(2)
+	fmt.Println("TimeOut2:", str28)
+	_, str29 := script.TimeOut(3)
+	fmt.Println("TimeOut3:", str29)
+	_, str30 := script.TimeOut(4)
+	fmt.Println("TimeOut4:", str30)
+	_, str31 := script.TimeOut(5)
+	fmt.Println("TimeOut5:", str31)
+
+	_, str170 := script.PlayCard(0)
+	fmt.Println("PlayCard0:", str170)
+	_, str171 := script.PlayCard(1)
+	fmt.Println("PlayCard1:", str171)
+	_, str172 := script.PlayCard(2)
+	fmt.Println("PlayCard2:", str172)
+	_, str173 := script.PlayCard(3)
+	fmt.Println("PlayCard3:", str173)
+	_, str174 := script.PlayCard(4)
+	fmt.Println("PlayCard4:", str174)
+	_, str175 := script.PlayCard(5)
+	fmt.Println("PlayCard5:", str175)
+
+	_, str180 := script.EventHandle(0)
+	fmt.Println("EventHandle0:", str180)
+	_, str181 := script.EventHandle(1)
+	fmt.Println("EventHandle1:", str181)
+	_, str182 := script.EventHandle(2)
+	fmt.Println("EventHandle2:", str182)
+	_, str183 := script.EventHandle(3)
+	fmt.Println("EventHandle3:", str183)
+	_, str184 := script.EventHandle(4)
+	fmt.Println("EventHandle4:", str184)
+	_, str185 := script.EventHandle(5)
+	fmt.Println("EventHandle5:", str185)
+
+	_, str190 := script.GetCardFromPool()
+	fmt.Println("GetCardFromPool:", str190)
+>>>>>>> origin/main
 }

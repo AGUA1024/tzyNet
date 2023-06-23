@@ -50,6 +50,10 @@ func JoinGame(ctx *common.ConContext, params []byte) {
 	model.MsgRoomBroadcast[*api.JoinGame_OutObj](ctx, outObj)
 }
 
+<<<<<<< HEAD
+=======
+// 更换到其他游戏位次
+>>>>>>> origin/main
 func ChangePos(ctx *common.ConContext, params []byte) {
 	parmObj := common.GetParamObj[*api.ChangePos_InObj](params, &api.ChangePos_InObj{})
 

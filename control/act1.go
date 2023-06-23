@@ -34,7 +34,11 @@ func Act1GameInit(ctx *common.ConContext) *api.Act1Game_OutObj {
 }
 
 func PlayCard(ctx *common.ConContext, cardIndex uint32) *api.Act1Game_OutObj {
+<<<<<<< HEAD
 	act1Model := GetAct1Model(ctx)
+=======
+	act1Model := getAct1Model(ctx)
+>>>>>>> origin/main
 
 	eventType, events := act1Model.PlayCard(ctx, int(cardIndex))
 	if eventType == model.EVENT_TYPE_ERROR {
@@ -50,7 +54,11 @@ func PlayCard(ctx *common.ConContext, cardIndex uint32) *api.Act1Game_OutObj {
 }
 
 func EventHandle(ctx *common.ConContext, targetIndex uint32) *api.Act1Game_OutObj {
+<<<<<<< HEAD
 	act1Model := GetAct1Model(ctx)
+=======
+	act1Model := getAct1Model(ctx)
+>>>>>>> origin/main
 
 	// 权限判断
 	evenPlayerIndex := act1Model.ActInfo.EventPlayer.PlayerIndex
@@ -73,7 +81,11 @@ func EventHandle(ctx *common.ConContext, targetIndex uint32) *api.Act1Game_OutOb
 }
 
 func GetCardFromPool(ctx *common.ConContext) *api.Act1Game_OutObj {
+<<<<<<< HEAD
 	act1Model := GetAct1Model(ctx)
+=======
+	act1Model := getAct1Model(ctx)
+>>>>>>> origin/main
 	act1Info := act1Model.ActInfo
 	// 不是当前出牌人或者存在事件则报错
 	if act1Info.BombPlayer != nil || ctx.GetConGlobalObj().Uid != act1Info.PlayerList[act1Info.CurPlayerIndex].Uid || act1Info.EventPlayer != nil {
@@ -93,7 +105,12 @@ func GetCardFromPool(ctx *common.ConContext) *api.Act1Game_OutObj {
 	}
 }
 
+<<<<<<< HEAD
 func GetAct1Model(ctx *common.ConContext) *model.Act1Model {
+=======
+// 获取对局信息,并判断请求合法性
+func getAct1Model(ctx *common.ConContext) *model.Act1Model {
+>>>>>>> origin/main
 	// 获取房间信息
 	roomInfo, err := model.GetGameRoomInfo(ctx, ctx.GetConGlobalObj().RoomId)
 	if roomInfo == nil || err != nil {
@@ -125,7 +142,11 @@ func GetAct1Model(ctx *common.ConContext) *model.Act1Model {
 
 // 超时提醒，报错不回包
 func TurnTimeOut(ctx *common.ConContext, seqId uint32) *api.Act1Game_OutObj {
+<<<<<<< HEAD
 	act1Model := GetAct1Model(ctx)
+=======
+	act1Model := getAct1Model(ctx)
+>>>>>>> origin/main
 	act1Info := act1Model.ActInfo
 
 	if act1Info.SeqId != seqId {
