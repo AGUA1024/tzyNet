@@ -1,0 +1,210 @@
+2023-06-24 21:12:35	ERROR	tCommon/logger.go:33	调取Sdk获取用户数据失败
+goroutine 39 [running]:
+runtime/debug.Stack()
+	D:/GO_program/go1.20.3/src/runtime/debug/stack.go:24 +0x65
+tzyNet/tCommon.tLogger.GameErrorLog({0x14e4e00?}, 0xc000680270, 0x2712, {0xc0004e5728?, 0x1?, 0xc00007c800?})
+	D:/goprogram/hdyx/tCommon/logger.go:33 +0x5f
+tzyNet/tzyNet-demo/control.CreateRoom(0xc000680270, 0x8?, 0x8?, 0x0?)
+	D:/goprogram/hdyx/tzyNet-demo/control/room.go:37 +0x17e
+tzyNet/tzyNet-demo/api.CreateRoom(0x0?, {0xc0006802f8, 0x8, 0x8})
+	D:/goprogram/hdyx/tzyNet-demo/api/room.go:28 +0x76
+reflect.Value.call({0x14b2880?, 0x1656460?, 0x2a227b803c8?}, {0x15ee7fe, 0x4}, {0xc000011f10, 0x2, 0x0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:586 +0xb0b
+reflect.Value.Call({0x14b2880?, 0x1656460?, 0x8?}, {0xc000011f10?, 0x143639c?, 0x14fd7e0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:370 +0xbc
+tzyNet/tNet.wsRouteHandel(0xc000680270, 0xc0003afef0?)
+	D:/goprogram/hdyx/tNet/routeRegister.go:122 +0x2bf
+tzyNet/tNet.wsMsgHandler.func1()
+	D:/goprogram/hdyx/tNet/wsServer.go:79 +0x10a
+created by tzyNet/tNet.wsMsgHandler
+	D:/goprogram/hdyx/tNet/wsServer.go:69 +0x1b1
+
+2023-06-24 21:12:46	ERROR	tCommon/logger.go:33	调取Sdk获取用户数据失败
+goroutine 55 [running]:
+runtime/debug.Stack()
+	D:/GO_program/go1.20.3/src/runtime/debug/stack.go:24 +0x65
+tzyNet/tCommon.tLogger.GameErrorLog({0x14e4e00?}, 0xc000680270, 0x2712, {0xc0004e5728?, 0x1?, 0xc0003bca00?})
+	D:/goprogram/hdyx/tCommon/logger.go:33 +0x5f
+tzyNet/tzyNet-demo/control.CreateRoom(0xc000680270, 0x8?, 0x8?, 0x0?)
+	D:/goprogram/hdyx/tzyNet-demo/control/room.go:37 +0x17e
+tzyNet/tzyNet-demo/api.CreateRoom(0x0?, {0xc00040cb30, 0x8, 0x8})
+	D:/goprogram/hdyx/tzyNet-demo/api/room.go:28 +0x76
+reflect.Value.call({0x14b2880?, 0x1656460?, 0x2a201f39358?}, {0x15ee7fe, 0x4}, {0xc00027df10, 0x2, 0x0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:586 +0xb0b
+reflect.Value.Call({0x14b2880?, 0x1656460?, 0x8?}, {0xc00027df10?, 0x0?, 0x0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:370 +0xbc
+tzyNet/tNet.wsRouteHandel(0xc000680270, 0xc0003afef0?)
+	D:/goprogram/hdyx/tNet/routeRegister.go:122 +0x2bf
+tzyNet/tNet.wsMsgHandler.func1()
+	D:/goprogram/hdyx/tNet/wsServer.go:79 +0x10a
+created by tzyNet/tNet.wsMsgHandler
+	D:/goprogram/hdyx/tNet/wsServer.go:69 +0x1b1
+
+2023-06-24 21:12:54	ERROR	tCommon/logger.go:33	调取Sdk获取用户数据失败
+goroutine 48 [running]:
+runtime/debug.Stack()
+	D:/GO_program/go1.20.3/src/runtime/debug/stack.go:24 +0x65
+tzyNet/tCommon.tLogger.GameErrorLog({0x14e4e00?}, 0xc000680270, 0x2712, {0xc0004e5728?, 0x1?, 0xc00007cdc0?})
+	D:/goprogram/hdyx/tCommon/logger.go:33 +0x5f
+tzyNet/tzyNet-demo/control.CreateRoom(0xc000680270, 0x8?, 0x8?, 0x0?)
+	D:/goprogram/hdyx/tzyNet-demo/control/room.go:37 +0x17e
+tzyNet/tzyNet-demo/api.CreateRoom(0x0?, {0xc000680eb0, 0x8, 0x8})
+	D:/goprogram/hdyx/tzyNet-demo/api/room.go:28 +0x76
+reflect.Value.call({0x14b2880?, 0x1656460?, 0x2a227b803c8?}, {0x15ee7fe, 0x4}, {0xc000029f10, 0x2, 0x0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:586 +0xb0b
+reflect.Value.Call({0x14b2880?, 0x1656460?, 0x8?}, {0xc000029f10?, 0x0?, 0x0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:370 +0xbc
+tzyNet/tNet.wsRouteHandel(0xc000680270, 0xc0003afef0?)
+	D:/goprogram/hdyx/tNet/routeRegister.go:122 +0x2bf
+tzyNet/tNet.wsMsgHandler.func1()
+	D:/goprogram/hdyx/tNet/wsServer.go:79 +0x10a
+created by tzyNet/tNet.wsMsgHandler
+	D:/goprogram/hdyx/tNet/wsServer.go:69 +0x1b1
+
+2023-06-24 21:13:13	ERROR	tCommon/logger.go:33	调取Sdk获取用户数据失败
+goroutine 56 [running]:
+runtime/debug.Stack()
+	D:/GO_program/go1.20.3/src/runtime/debug/stack.go:24 +0x65
+tzyNet/tCommon.tLogger.GameErrorLog({0x14e4e00?}, 0xc000680270, 0x2712, {0xc0004e5728?, 0x1?, 0xc0003bcb40?})
+	D:/goprogram/hdyx/tCommon/logger.go:33 +0x5f
+tzyNet/tzyNet-demo/control.CreateRoom(0xc000680270, 0x8?, 0x8?, 0x0?)
+	D:/goprogram/hdyx/tzyNet-demo/control/room.go:37 +0x17e
+tzyNet/tzyNet-demo/api.CreateRoom(0x0?, {0xc00040cde0, 0x8, 0x8})
+	D:/goprogram/hdyx/tzyNet-demo/api/room.go:28 +0x76
+reflect.Value.call({0x14b2880?, 0x1656460?, 0x2a201f39358?}, {0x15ee7fe, 0x4}, {0xc00027df10, 0x2, 0x0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:586 +0xb0b
+reflect.Value.Call({0x14b2880?, 0x1656460?, 0x8?}, {0xc00027df10?, 0x0?, 0xaa?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:370 +0xbc
+tzyNet/tNet.wsRouteHandel(0xc000680270, 0xc0003afef0?)
+	D:/goprogram/hdyx/tNet/routeRegister.go:122 +0x2bf
+tzyNet/tNet.wsMsgHandler.func1()
+	D:/goprogram/hdyx/tNet/wsServer.go:79 +0x10a
+created by tzyNet/tNet.wsMsgHandler
+	D:/goprogram/hdyx/tNet/wsServer.go:69 +0x1b1
+
+2023-06-24 21:13:26	ERROR	tCommon/logger.go:33	调取Sdk获取用户数据失败
+goroutine 56 [running]:
+runtime/debug.Stack()
+	D:/GO_program/go1.20.3/src/runtime/debug/stack.go:24 +0x65
+tzyNet/tCommon.tLogger.GameErrorLog({0x8f4e00?}, 0xc000096100, 0x2712, {0xc000537728?, 0x1?, 0xc00043c800?})
+	D:/goprogram/hdyx/tCommon/logger.go:33 +0x5f
+tzyNet/tzyNet-demo/control.CreateRoom(0xc000096100, 0x8?, 0x8?, 0x0?)
+	D:/goprogram/hdyx/tzyNet-demo/control/room.go:37 +0x17e
+tzyNet/tzyNet-demo/api.CreateRoom(0x0?, {0xc000096148, 0x8, 0x8})
+	D:/goprogram/hdyx/tzyNet-demo/api/room.go:28 +0x76
+reflect.Value.call({0x8c2880?, 0xa66460?, 0x24c8a139358?}, {0x9fe7fe, 0x4}, {0xc0002fbf10, 0x2, 0x0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:586 +0xb0b
+reflect.Value.Call({0x8c2880?, 0xa66460?, 0x8?}, {0xc0002fbf10?, 0x84639c?, 0x90d7e0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:370 +0xbc
+tzyNet/tNet.wsRouteHandel(0xc000096100, 0xc000431ef0?)
+	D:/goprogram/hdyx/tNet/routeRegister.go:122 +0x2bf
+tzyNet/tNet.wsMsgHandler.func1()
+	D:/goprogram/hdyx/tNet/wsServer.go:79 +0x10a
+created by tzyNet/tNet.wsMsgHandler
+	D:/goprogram/hdyx/tNet/wsServer.go:69 +0x1b1
+
+2023-06-24 21:14:51	ERROR	tCommon/logger.go:33	调取Sdk获取用户数据失败
+goroutine 67 [running]:
+runtime/debug.Stack()
+	D:/GO_program/go1.20.3/src/runtime/debug/stack.go:24 +0x65
+tzyNet/tCommon.tLogger.GameErrorLog({0x8f4e00?}, 0xc000096100, 0x2712, {0xc0000e9728?, 0x1?, 0xc0000a46c0?})
+	D:/goprogram/hdyx/tCommon/logger.go:33 +0x5f
+tzyNet/tzyNet-demo/control.CreateRoom(0xc000096100, 0x8?, 0x8?, 0x0?)
+	D:/goprogram/hdyx/tzyNet-demo/control/room.go:37 +0x17e
+tzyNet/tzyNet-demo/api.CreateRoom(0x0?, {0xc000039cf0, 0x8, 0x8})
+	D:/goprogram/hdyx/tzyNet-demo/api/room.go:28 +0x76
+reflect.Value.call({0x8c2880?, 0xa66460?, 0x24c8a1a1408?}, {0x9fe7fe, 0x4}, {0xc0002f7f10, 0x2, 0x0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:586 +0xb0b
+reflect.Value.Call({0x8c2880?, 0xa66460?, 0x8?}, {0xc0002f7f10?, 0x0?, 0x0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:370 +0xbc
+tzyNet/tNet.wsRouteHandel(0xc000096100, 0xc000431ef0?)
+	D:/goprogram/hdyx/tNet/routeRegister.go:122 +0x2bf
+tzyNet/tNet.wsMsgHandler.func1()
+	D:/goprogram/hdyx/tNet/wsServer.go:79 +0x10a
+created by tzyNet/tNet.wsMsgHandler
+	D:/goprogram/hdyx/tNet/wsServer.go:69 +0x1b1
+
+2023-06-24 23:13:24	ERROR	tCommon/logger.go:33	调取Sdk获取用户数据失败
+goroutine 27 [running]:
+runtime/debug.Stack()
+	D:/GO_program/go1.20.3/src/runtime/debug/stack.go:24 +0x65
+tzyNet/tCommon.tLogger.GameErrorLog({0x1274e00?}, 0xc0002783c0, 0x2712, {0xc000097728?, 0x1?, 0xc000438b40?})
+	D:/goprogram/hdyx/tCommon/logger.go:33 +0x5f
+tzyNet/tzyNet-demo/control.CreateRoom(0xc0002783c0, 0x8?, 0x8?, 0x0?)
+	D:/goprogram/hdyx/tzyNet-demo/control/room.go:37 +0x17e
+tzyNet/tzyNet-demo/api.CreateRoom(0x0?, {0xc000278d48, 0x8, 0x8})
+	D:/goprogram/hdyx/tzyNet-demo/api/room.go:28 +0x76
+reflect.Value.call({0x1242880?, 0x13e6460?, 0x2b2467114a8?}, {0x137e7fe, 0x4}, {0xc0005d5f10, 0x2, 0x0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:586 +0xb0b
+reflect.Value.Call({0x1242880?, 0x13e6460?, 0x8?}, {0xc0005d5f10?, 0x11c639c?, 0x128d7e0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:370 +0xbc
+tzyNet/tNet.wsRouteHandel(0xc0002783c0, 0xc00042def0?)
+	D:/goprogram/hdyx/tNet/routeRegister.go:122 +0x2bf
+tzyNet/tNet.wsMsgHandler.func1()
+	D:/goprogram/hdyx/tNet/wsServer.go:79 +0x10a
+created by tzyNet/tNet.wsMsgHandler
+	D:/goprogram/hdyx/tNet/wsServer.go:69 +0x1b1
+
+2023-06-24 23:14:10	ERROR	tCommon/logger.go:33	调取Sdk获取用户数据失败
+goroutine 69 [running]:
+runtime/debug.Stack()
+	D:/GO_program/go1.20.3/src/runtime/debug/stack.go:24 +0x65
+tzyNet/tCommon.tLogger.GameErrorLog({0x16a4e00?}, 0xc000038b90, 0x2712, {0xc00049b728?, 0x1?, 0xc0002b2440?})
+	D:/goprogram/hdyx/tCommon/logger.go:33 +0x5f
+tzyNet/tzyNet-demo/control.CreateRoom(0xc000038b90, 0x8?, 0x8?, 0x0?)
+	D:/goprogram/hdyx/tzyNet-demo/control/room.go:37 +0x17e
+tzyNet/tzyNet-demo/api.CreateRoom(0x0?, {0xc000038c38, 0x8, 0x8})
+	D:/goprogram/hdyx/tzyNet-demo/api/room.go:28 +0x76
+reflect.Value.call({0x1672880?, 0x1816480?, 0x21643f89358?}, {0x17ae7fe, 0x4}, {0xc00059ff10, 0x2, 0x0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:586 +0xb0b
+reflect.Value.Call({0x1672880?, 0x1816480?, 0x8?}, {0xc00059ff10?, 0x15f639c?, 0x16bd7e0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:370 +0xbc
+tzyNet/tNet.wsRouteHandel(0xc000038b90, 0xc000431ef0?)
+	D:/goprogram/hdyx/tNet/routeRegister.go:122 +0x2bf
+tzyNet/tNet.wsMsgHandler.func1()
+	D:/goprogram/hdyx/tNet/wsServer.go:79 +0x10a
+created by tzyNet/tNet.wsMsgHandler
+	D:/goprogram/hdyx/tNet/wsServer.go:69 +0x1b1
+
+2023-06-24 23:14:48	ERROR	tCommon/logger.go:33	调取Sdk获取用户数据失败
+goroutine 38 [running]:
+runtime/debug.Stack()
+	D:/GO_program/go1.20.3/src/runtime/debug/stack.go:24 +0x65
+tzyNet/tCommon.tLogger.GameErrorLog({0x14f4e00?}, 0xc000710068, 0x2712, {0xc00080f728?, 0x1?, 0xc0003bca00?})
+	D:/goprogram/hdyx/tCommon/logger.go:33 +0x5f
+tzyNet/tzyNet-demo/control.CreateRoom(0xc000710068, 0x8?, 0x8?, 0x0?)
+	D:/goprogram/hdyx/tzyNet-demo/control/room.go:37 +0x17e
+tzyNet/tzyNet-demo/api.CreateRoom(0x0?, {0xc0007100d0, 0x8, 0x8})
+	D:/goprogram/hdyx/tzyNet-demo/api/room.go:28 +0x76
+reflect.Value.call({0x14c2880?, 0x1666480?, 0x1c58dfb9358?}, {0x15fe7fe, 0x4}, {0xc0004e5f10, 0x2, 0x0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:586 +0xb0b
+reflect.Value.Call({0x14c2880?, 0x1666480?, 0x8?}, {0xc0004e5f10?, 0x144639c?, 0xaa?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:370 +0xbc
+tzyNet/tNet.wsRouteHandel(0xc000710068, 0xc0003abef0?)
+	D:/goprogram/hdyx/tNet/routeRegister.go:123 +0x2bf
+tzyNet/tNet.wsMsgHandler.func1()
+	D:/goprogram/hdyx/tNet/wsServer.go:79 +0x10a
+created by tzyNet/tNet.wsMsgHandler
+	D:/goprogram/hdyx/tNet/wsServer.go:69 +0x1b1
+
+2023-06-24 23:15:47	ERROR	tCommon/logger.go:33	调取Sdk获取用户数据失败
+goroutine 85 [running]:
+runtime/debug.Stack()
+	D:/GO_program/go1.20.3/src/runtime/debug/stack.go:24 +0x65
+tzyNet/tCommon.tLogger.GameErrorLog({0xb74e00?}, 0xc0003f6360, 0x2712, {0xc000087728?, 0x1?, 0xc0003ba9c0?})
+	D:/goprogram/hdyx/tCommon/logger.go:33 +0x5f
+tzyNet/tzyNet-demo/control.CreateRoom(0xc0003f6360, 0x8?, 0x8?, 0x0?)
+	D:/goprogram/hdyx/tzyNet-demo/control/room.go:37 +0x17e
+tzyNet/tzyNet-demo/api.CreateRoom(0x0?, {0xc0003f63b8, 0x8, 0x8})
+	D:/goprogram/hdyx/tzyNet-demo/api/room.go:28 +0x76
+reflect.Value.call({0xb42880?, 0xce6480?, 0x289faa80f08?}, {0xc7e7fe, 0x4}, {0xc000087f10, 0x2, 0x0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:586 +0xb0b
+reflect.Value.Call({0xb42880?, 0xce6480?, 0x8?}, {0xc000087f10?, 0xac639c?, 0xb8d7e0?})
+	D:/GO_program/go1.20.3/src/reflect/value.go:370 +0xbc
+tzyNet/tNet.wsRouteHandel(0xc0003f6360, 0xc0003b1ef0?)
+	D:/goprogram/hdyx/tNet/routeRegister.go:124 +0x2bf
+tzyNet/tNet.wsMsgHandler.func1()
+	D:/goprogram/hdyx/tNet/wsServer.go:79 +0x10a
+created by tzyNet/tNet.wsMsgHandler
+	D:/goprogram/hdyx/tNet/wsServer.go:69 +0x1b1
+
