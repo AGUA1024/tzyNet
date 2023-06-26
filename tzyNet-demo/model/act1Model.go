@@ -5,9 +5,10 @@ import (
 	"math/rand"
 	"strconv"
 	"time"
+	"tzyNet/tCommon"
+	"tzyNet/tNet"
 	api "tzyNet/tzyNet-demo/api/protobuf"
 	"tzyNet/tzyNet-demo/sdk"
-	"tzyNet/tCommon"
 )
 
 // 游戏基础配置设置
@@ -1075,7 +1076,7 @@ func (act *Act1Model) RotboToDo(playerIndex uint32) {
 		go func() {
 			time.Sleep(3 * time.Second)
 			fmt.Println("唤醒机器人")
-			tCommon.GlobalSysEventChan <- RobotEvent{
+			tNet.GlobalSysEventChan <- RobotEvent{
 				fun:  RobotHandle,
 				args: funArgs,
 			}

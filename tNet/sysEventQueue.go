@@ -1,4 +1,4 @@
-package tCommon
+package tNet
 
 var GlobalSysEventChan = make(chan SysEventValInterface)
 

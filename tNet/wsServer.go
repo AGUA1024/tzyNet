@@ -7,27 +7,36 @@ import (
 	"log"
 	"net/http"
 	"tzyNet/tCommon"
+	"tzyNet/tINet"
 	"tzyNet/tNet/ioBuf"
 	"tzyNet/tzyNet-demo/model"
 )
 
+const (
+	SevType_TcpServer uint16 = iota
+	SevType_HttpServer
+	SevType_WebSocketServer
+)
+
 type WsServer struct {
-	RouteMaster
-	Host    string
-	Port    uint32
-	PodName string
-	Ws      *websocket.Upgrader
+	SeverBase
+	RoutePathMaster
+	Ws *websocket.Upgrader
 }
 
 var WsServerObj *WsServer = nil
 
-func NewWsServer(host string, port uint32, podName string) *WsServer {
+func newWsServer(host string, port uint32, podName string) tINet.IServer {
 	WsServerObj = &WsServer{
-		Host:    host,
-		Port:    port,
-		PodName: podName,
-		Ws:      &websocket.Upgrader{},
+		SeverBase: SeverBase{
+			host:    host,
+			port:    port,
+			podName: podName,
+		},
+		RoutePathMaster: RoutePathMaster{},
+		Ws:              &websocket.Upgrader{},
 	}
+
 	return WsServerObj
 }
 
@@ -62,7 +71,7 @@ func wsMsgHandler(respRw http.ResponseWriter, req *http.Request) {
 
 		fmt.Println("clientBuf：")
 		fmt.Println(clientBuf)
-		fmt.Println("cmd:",clientBuf.CmdMerge)
+		fmt.Println("cmd:", clientBuf.CmdMerge)
 		// 协程顺序执行
 		done := make(chan bool, 1)
 
@@ -76,7 +85,8 @@ func wsMsgHandler(respRw http.ResponseWriter, req *http.Request) {
 			}()
 
 			conCtx.EventStorageInit(clientBuf.CmdMerge)
-			wsRouteHandel(conCtx, clientBuf)
+
+			RouteHandel(conCtx, clientBuf)
 
 			fmt.Println("uid:")
 			fmt.Println(conCtx.GetConGlobalObj().Uid)
@@ -89,16 +99,19 @@ func wsMsgHandler(respRw http.ResponseWriter, req *http.Request) {
 }
 
 func (this *WsServer) Start() {
+	// 服务器服务注册
+	etcdRegisterService(this)
+
 	// 注册访问路径
 	http.HandleFunc(this.reqPath, wsMsgHandler)
 
 	// 持续监听客户端连接
-	serverAddr := fmt.Sprintf("%s:%d", this.Host, this.Port)
+	serverAddr := fmt.Sprintf("%s:%d", this.GetHost(), this.GetPort())
 	fmt.Println("[tzyNet] Server started successfully.")
-	fmt.Printf("[tzyNet] Listen:%s:%d%s\n",this.Host, this.Port,this.reqPath)
+	fmt.Printf("[tzyNet] Listen:%s:%d%s\n", this.GetHost(), this.GetPort(), this.reqPath)
 	err := http.ListenAndServe(serverAddr, nil)
 	if err != nil {
-		panic(err)
+		tCommon.Logger.SystemErrorLog(err)
 	}
 }
 
