@@ -79,7 +79,7 @@ func RouteHandel(conCtx *tCommon.ConContext, cbuf *ioBuf.ClientBuf) {
 	cmd := cbuf.CmdMerge
 	byteApiBuf := cbuf.Data
 
-	apiFunc := WsServerObj.GetFuncByrouteCmd(cmd)
+	apiFunc := Server.GetFuncByrouteCmd(cmd)
 
 	fValue := reflect.ValueOf(apiFunc)
 	if fValue.Kind() == reflect.Func {

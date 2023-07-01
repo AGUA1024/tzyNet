@@ -1,6 +1,9 @@
 package tINet
 
-import "tzyNet/tCommon"
+import (
+	"net/http"
+	"tzyNet/tCommon"
+)
 
 type IServer interface {
 	// 启动服务器
@@ -8,6 +11,17 @@ type IServer interface {
 
 	// 注册服务器请求路径
 	RoutePath(routePath string) IServerRouteGroup
+
+	// 获取服务器路由方法
+	GetFuncByrouteCmd(cmd uint32) func(*tCommon.ConContext, []byte)
+
+	// 服务器客户端连接初始化
+	ConRegister(respRw http.ResponseWriter, req *http.Request) ICon
+
+	// 设置断线处理函数
+	SetLoseConFunc(fun func(ctx *tCommon.ConContext))
+	// 执行断线处理函数
+	RunLoseConFunc(ctx *tCommon.ConContext)
 
 	// 获取服务器属性参数
 	GetHost() string
