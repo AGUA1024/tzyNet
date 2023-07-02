@@ -4,6 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"tzyNet/tCommon"
+	"tzyNet/tModel"
+)
+
+const (
+	ACT_EXPIRE_TIME = 300
 )
 
 type GameCfg struct {
@@ -27,7 +32,7 @@ type ActModelInterface interface {
 }
 
 func GetActKey(actId uint32, roomId uint64) string {
-	return GetRedisPreKey(roomId) + "act_" + fmt.Sprintf("%d", actId)
+	return fmt.Sprintf("act_%d_roomId_%d", actId, roomId)
 }
 
 // 加载游戏信息
@@ -44,11 +49,11 @@ func GetActModel(ctx *tCommon.ConContext, actId uint32) ActModelInterface {
 func LoadModelInfo(ctx *tCommon.ConContext, actId uint32, actModel ActModelInterface) bool {
 	roomId := ctx.GetConGlobalObj().RoomId
 	key := GetActKey(actId, roomId)
-	cache := GetCacheById(roomId)
+	cache := tModel.GetCacheById(roomId)
 
-	fmt.Println("HGET", key, roomId)
+	fmt.Println("GET", key)
 
-	data, err := cache.RedisQuery("HGET", key, roomId)
+	data, err := cache.RedisQuery("GET", key)
 	if data == nil || err != nil {
 		return false
 	}
@@ -63,14 +68,14 @@ func Save(ctx *tCommon.ConContext, actModel ActModelInterface) (bool, error) {
 	roomId := actModel.GetRoomId()
 
 	key := GetActKey(modelActId, roomId)
-	cache := GetCacheById(roomId)
+	cache := tModel.GetCacheById(roomId)
 
 	arrByte, err := json.Marshal(actModel)
 	if err != nil {
 		return false, err
 	}
 
-	ok := cache.RedisWrite(ctx, REDIS_ROOM, "HSET", key, roomId, string(arrByte))
+	ok := cache.RedisWrite(ctx, tModel.REDIS_ROOM, "SETEX",  key, ACT_EXPIRE_TIME, string(arrByte))
 	return ok, nil
 }
 
@@ -78,10 +83,9 @@ func Destory(ctx *tCommon.ConContext, actModel ActModelInterface) bool {
 	modelActId := actModel.GetActId()
 	roomId := actModel.GetRoomId()
 
-	key := GetActKey(modelActId, roomId)
-	cache := GetCacheById(roomId)
+	cache := tModel.GetCacheById(roomId)
 
-	ok := cache.RedisWrite(ctx, REDIS_ROOM, "HDEL", key, roomId)
+	ok := cache.RedisWrite(ctx, tModel.REDIS_ROOM, "DEL", GetActKey(modelActId, roomId))
 	return ok
 }
 

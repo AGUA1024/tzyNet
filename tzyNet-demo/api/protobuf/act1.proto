@@ -43,14 +43,13 @@ message act1Info{
   eventPlayerInfo eventPlayer=8;
   uint32 seqId=9;
   uint32 bombNum=10;  // 卡池内炸弹数量
-  repeated uint32 arrRank=11; // 玩家排名
 }
 
 message act1PlayerInfo{
-  uint64 uid=1;
-  repeated uint32 cards=2;
-  uint32 bameNum=3;
-  bool isDie=4;
+  uint64 uid = 1;
+  repeated uint32 cards = 2;
+  uint32 bameNum = 3;
+  bool isDie = 4;
 }
 
 message eventPlayerInfo{
@@ -62,3 +61,4 @@ message eventPlayerInfo{
 message GetAct1Info_OutObj {
   act1Info gameInfo=1;
 }
+

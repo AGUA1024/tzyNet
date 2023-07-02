@@ -5,7 +5,6 @@ import (
 	"tzyNet/tCommon"
 	"tzyNet/tServer"
 	api "tzyNet/tzyNet-demo/api/protobuf"
-	"tzyNet/tzyNet-demo/net"
 )
 
 // 获取游戏服网关
@@ -13,7 +12,7 @@ func GetGateWay(ctx *tCommon.ConContext, roomId uint64) *api.GetGateWay_OutObj {
 	// 发现服务
 	addrs, err := tServer.DiscoverService(tServer.Etcd_Client, "")
 	if err != nil {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_NO_GATEWAY, "无可用网关")
+		tCommon.Logger.GameErrorLog(ctx, ERR_NO_GATEWAY, "无可用网关")
 	}
 
 	// 网关选择
@@ -23,10 +22,10 @@ func GetGateWay(ctx *tCommon.ConContext, roomId uint64) *api.GetGateWay_OutObj {
 	// port
 	resp, err := tServer.Etcd_Client.Get(context.Background(), tServer.Etcd_sevPort_Key)
 	if err != nil {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_ETCD_GET_PORT, "从获取ETCD获取端口出错")
+		tCommon.Logger.GameErrorLog(ctx, ERR_ETCD_GET_PORT, "从获取ETCD获取端口出错")
 	}
 	if len(resp.Kvs) == 0 {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_NO_GATEWAY_PORT, "找不到网关端口")
+		tCommon.Logger.GameErrorLog(ctx, ERR_NO_GATEWAY_PORT, "找不到网关端口")
 	}
 
 	port := string(resp.Kvs[0].Value)
@@ -40,15 +39,15 @@ func GetGateWay(ctx *tCommon.ConContext, roomId uint64) *api.GetGateWay_OutObj {
 func ConGlobalObjInit(ctx *tCommon.ConContext, cin *api.ConGlobalObjInit_InObj) *api.ConGlobalObjInit_OutObj {
 	ok := ctx.SetConGlobalUid(cin.GetUid())
 	if !ok {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_NO_CONNECT_EXIST, "与服务器的连接不存在")
+		tCommon.Logger.GameErrorLog(ctx, ERR_NO_CONNECT_EXIST, "与服务器的连接不存在")
 	}
 
 	if ok = ctx.SetConGlobalRoomId(cin.GetRoomId()); !ok {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_NO_CONNECT_EXIST, "与服务器的连接不存在")
+		tCommon.Logger.GameErrorLog(ctx, ERR_NO_CONNECT_EXIST, "与服务器的连接不存在")
 	}
 
 	if !ctx.RegisterUserForStorage() {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_NO_CONNECT_EXIST, "与服务器的连接不存在")
+		tCommon.Logger.GameErrorLog(ctx, ERR_NO_CONNECT_EXIST, "与服务器的连接不存在")
 	}
 
 	return &api.ConGlobalObjInit_OutObj{Ok: true}

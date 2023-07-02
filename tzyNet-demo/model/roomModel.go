@@ -4,16 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"google.golang.org/protobuf/proto"
-	"strconv"
+	"tzyNet/tCommon"
+	"tzyNet/tModel"
+	"tzyNet/tNet/ioBuf"
 	api "tzyNet/tzyNet-demo/api/protobuf"
 	"tzyNet/tzyNet-demo/sdk"
-	"tzyNet/tCommon"
-	"tzyNet/tNet/ioBuf"
 )
 
 const (
-	KEY_UIDTOROOM    = "uidToRoomId"
-	KEY_ROOMIDTOINFO = "roomIdToRoomInfo"
+	KEY_EXPIRE_TIME = 3600 // reids3600秒过期
 )
 
 type roomModel struct {
@@ -33,13 +32,12 @@ type PlayerModel struct {
 	IsRobot  bool
 }
 
-func getRoomIdToInfoKey(ctx *tCommon.ConContext) string {
-	return GetRedisPreKey(ctx.GetConGlobalObj().RoomId) + KEY_ROOMIDTOINFO
+func getRoomModelKey(roomId uint64, actId uint32) string {
+	return fmt.Sprintf("room_%d", roomId)
 }
 
 func CreateRoom(ctx *tCommon.ConContext, user *sdk.UserInfo, roomId uint64, actId uint32, gameLv uint32) *api.CreateRoom_OutObj {
-	redis := GetCacheById(roomId)
-	strRoomId := strconv.FormatUint(roomId, 10)
+	redis := tModel.GetCacheById(roomId)
 
 	uid := ctx.GetConGlobalObj().Uid
 
@@ -60,7 +58,7 @@ func CreateRoom(ctx *tCommon.ConContext, user *sdk.UserInfo, roomId uint64, actI
 
 	data, _ := json.Marshal(roomData)
 
-	ok := redis.RedisWrite(ctx, REDIS_ROOM, "HSET", getRoomIdToInfoKey(ctx), strRoomId, string(data))
+	ok := redis.RedisWrite(ctx, tModel.REDIS_ROOM, "SETEX", getRoomModelKey(roomId, actId), KEY_EXPIRE_TIME, string(data))
 	if !ok {
 		return nil
 	}
@@ -80,13 +78,14 @@ func CreateRoom(ctx *tCommon.ConContext, user *sdk.UserInfo, roomId uint64, actI
 	return ret
 }
 
-func LeaveRoomAndBroadcast(ctx *tCommon.ConContext) bool {
+func LoseConnectHandle(ctx *tCommon.ConContext) {
+	fmt.Printf("uid:%d,断开连接",ctx.GetConGlobalObj().Uid)
 	roomId := ctx.GetConGlobalObj().RoomId
 	// 房间不存在
 	roomInfo, err := GetGameRoomInfo(ctx, roomId)
 	if roomInfo == nil || err != nil {
 		fmt.Println("房间不存在")
-		return false
+		return
 	}
 
 	// 是否在观众席中
@@ -96,11 +95,12 @@ func LeaveRoomAndBroadcast(ctx *tCommon.ConContext) bool {
 		// 离开观众席位
 		roomInfo.ArrUidAudience = append(roomInfo.ArrUidAudience[:roomIndex], roomInfo.ArrUidAudience[roomIndex+1:]...)
 	} else {
+		fmt.Println("离开游戏坑位")
 		playerInfo := roomInfo.PosIdToPlayer
 		// 是否在房间
 		ok, gameIndex := GetGameIndex(ctx, roomInfo)
 		if !ok {
-			return true
+			return
 		}
 
 		if isMaster := playerInfo[gameIndex].IsMaster; isMaster {
@@ -134,7 +134,7 @@ func LeaveRoomAndBroadcast(ctx *tCommon.ConContext) bool {
 			}
 
 			DestroyRoom(ctx, roomId)
-			return true
+			return
 		} else {
 			isDel := true
 			for _, player := range roomInfo.PosIdToPlayer {
@@ -147,10 +147,12 @@ func LeaveRoomAndBroadcast(ctx *tCommon.ConContext) bool {
 			if isDel {
 				act1 := GetActModel(ctx, roomInfo.ActId)
 				if act1 != nil {
+					fmt.Println("销毁游戏")
 					Destory(ctx, act1)
 				}
+				fmt.Println("销毁房间")
 				DestroyRoom(ctx, roomId)
-				return true
+				return
 			}
 		}
 	}
@@ -161,7 +163,7 @@ func LeaveRoomAndBroadcast(ctx *tCommon.ConContext) bool {
 		// 获取对局信息
 		act1Model := actModel.(*Act1Model)
 
-		// 是否需要断线重连
+		// 如果是玩家，则设置掉线托管
 		if act1Model.IsPlayer(ctx) {
 			act1Model.PlayerLoseConn(ctx)
 		}
@@ -174,15 +176,12 @@ func LeaveRoomAndBroadcast(ctx *tCommon.ConContext) bool {
 	var mpRet = BackGameRoomInfo(roomInfo.PosIdToPlayer)
 	broadCastInfo := &api.LeaveGame_OutObj{Players: mpRet}
 	MsgRoomBroadcast[*api.LeaveGame_OutObj](ctx, broadCastInfo)
-
-	return true
 }
 
 func IsRoomExits(ctx *tCommon.ConContext, roomId uint64) (bool, error) {
-	redis := GetCacheById(roomId)
-	strRoomId := strconv.FormatUint(roomId, 10)
+	redis := tModel.GetCacheById(roomId)
 
-	data, err := redis.RedisQuery("HGET", getRoomIdToInfoKey(ctx), strRoomId)
+	data, err := redis.RedisQuery("GET", getRoomModelKey(roomId, actId))
 	if err != nil {
 		return false, err
 	}
@@ -211,10 +210,9 @@ func GetGameIndex(ctx *tCommon.ConContext, GameRoomInfo *roomModel) (bool, uint3
 }
 
 func GetGameRoomInfo(ctx *tCommon.ConContext, roomId uint64) (*roomModel, error) {
-	redis := GetCacheById(roomId)
-	strRoomId := strconv.FormatUint(roomId, 10)
+	redis := tModel.GetCacheById(roomId)
 
-	data, err := redis.RedisQuery("HGET", getRoomIdToInfoKey(ctx), strRoomId)
+	data, err := redis.RedisQuery("GET", getRoomModelKey(roomId, actId))
 	if err != nil || data == nil {
 		return nil, err
 	}
@@ -226,10 +224,9 @@ func GetGameRoomInfo(ctx *tCommon.ConContext, roomId uint64) (*roomModel, error)
 }
 
 func DestroyRoom(ctx *tCommon.ConContext, roomId uint64) bool {
-	redis := GetCacheById(roomId)
-	strRoomId := strconv.FormatUint(roomId, 10)
+	redis := tModel.GetCacheById(roomId)
 
-	ok := redis.RedisWrite(ctx, REDIS_ROOM, "HDEL", getRoomIdToInfoKey(ctx), strRoomId)
+	ok := redis.RedisWrite(ctx, tModel.REDIS_ROOM, "HDEL", getRoomModelKey(roomId, actId))
 	return ok
 }
 
@@ -284,12 +281,11 @@ func MsgRoomBroadcast[T proto.Message](ctx *tCommon.ConContext, obj T) (any, err
 
 func RoomModelSave(ctx *tCommon.ConContext, model *roomModel) bool {
 	roomId := ctx.GetConGlobalObj().RoomId
-	redis := GetCacheById(roomId)
-	strRoomId := strconv.FormatUint(roomId, 10)
+	redis := tModel.GetCacheById(roomId)
 
 	data, _ := json.Marshal(model)
 
-	ok := redis.RedisWrite(ctx, REDIS_ROOM, "HSET", getRoomIdToInfoKey(ctx), strRoomId, string(data))
+	ok := redis.RedisWrite(ctx, tModel.REDIS_ROOM, "SETEX", getRoomModelKey(roomId, actId), KEY_EXPIRE_TIME, string(data))
 
 	return ok
 }

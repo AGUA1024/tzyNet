@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 	"tzyNet/tCommon"
+	"tzyNet/tModel"
 	"tzyNet/tNet"
 	api "tzyNet/tzyNet-demo/api/protobuf"
 	"tzyNet/tzyNet-demo/sdk"
@@ -428,9 +429,13 @@ func (act *Act1Model) EventHandler(ctx *tCommon.ConContext, chooseIndex uint32) 
 		if len(act1Info.PlayerList) <= int(chooseIndex) || act1Info.PlayerList[eventPlayerIndex].IsDie {
 			return EVENT_TYPE_ERROR, nil
 		}
-		if !eventStolenCard(act1Info, eventPlayerIndex, int(chooseIndex)) {
+		// 给出索要卡
+		card, ok := eventStolenCard(act1Info, eventPlayerIndex, int(chooseIndex))
+		if !ok {
 			return EVENT_TYPE_ERROR, nil
 		}
+
+		events = append(events, uint32(card), act1Info.CurPlayerIndex)
 		// 下一回合
 		nextTurn(act)
 		// 删除事件
@@ -459,18 +464,19 @@ func (act *Act1Model) EventHandler(ctx *tCommon.ConContext, chooseIndex uint32) 
 		// 传参0~4为将炸弹放回第1张~第5张
 		if 0 <= chooseIndex && chooseIndex <= 4 {
 			// 炸弹插入牌堆
-			backCards := act1Info.CardPool[chooseIndex:]
+			backCards := append([]int{}, act1Info.CardPool[chooseIndex:]...)
 			act1Info.CardPool = append(act1Info.CardPool[:chooseIndex], const_CARD_BOMB)
-			act1Info.CardPool = append(act1Info.CardPool[:chooseIndex], backCards...)
+			act1Info.CardPool = append(act1Info.CardPool, backCards...)
 		} else if chooseIndex == 5 {
 			// 炸弹放回牌底
 			act1Info.CardPool = append(act1Info.CardPool, const_CARD_BOMB)
 		} else if chooseIndex == 6 {
 			// 炸弹随机插入牌堆
 			bombIndex := rand.Intn(len(act1Info.CardPool))
-			backCards := act1Info.CardPool[bombIndex:]
-			act1Info.CardPool = append(act1Info.CardPool[:bombIndex], const_CARD_BOMB)
-			act1Info.CardPool = append(act1Info.CardPool[:bombIndex], backCards...)
+
+			backCards := append([]int{}, act1Info.CardPool[bombIndex:]...)
+			frontCards := append(act1Info.CardPool[:bombIndex], const_CARD_BOMB)
+			act1Info.CardPool = append(frontCards, backCards...)
 		}
 	default:
 		return EVENT_TYPE_ERROR, nil
@@ -582,7 +588,7 @@ func (act *Act1Model) playCard(ctx *tCommon.ConContext, cardIndex int) int {
 
 	// 打出的手牌进入弃卡池
 	act.addDiscard(card)
-
+	fmt.Println("出牌:", card)
 	return card
 }
 
@@ -710,14 +716,14 @@ func eventStolenTarget(act *Act1Model, eventPlayerIndex uint32) bool {
 }
 
 // 玩家索要另一个玩家的手牌
-func eventStolenCard(actInfo *Act1Info, eventPlayerIndex uint32, cardIndex int) bool {
+func eventStolenCard(actInfo *Act1Info, eventPlayerIndex uint32, cardIndex int) (int, bool) {
 	// 被索要玩家
 	eventPlayer := actInfo.PlayerList[eventPlayerIndex]
 	// 获得卡牌的玩家
 	curPlayer := actInfo.PlayerList[actInfo.CurPlayerIndex]
 	// 给出的卡
 	if len(eventPlayer.Cards) <= cardIndex || eventPlayer.IsDie {
-		return false
+		return 0, false
 	}
 
 	card := eventPlayer.Cards[cardIndex]
@@ -728,7 +734,7 @@ func eventStolenCard(actInfo *Act1Info, eventPlayerIndex uint32, cardIndex int) 
 	// 增加自己的手牌
 	curPlayer.Cards = append(curPlayer.Cards, card) // 将被索要的卡牌加入到自己的手牌中
 
-	return true
+	return card, true
 }
 
 // 预测下一张炸弹
@@ -797,12 +803,18 @@ func (act *Act1Model) TurnTimeOut(ctx *tCommon.ConContext) (uint32, []uint32) {
 	var eventType = EVENT_TYPE_ERROR
 	var events []uint32
 
+	// 超时序列号+1
+	act1Info.SeqId++
+
 	// 是否是拆弹超时
 	if act1Info.BombPlayer != nil {
+		fmt.Println("被淘汰: ", act1Info.BombPlayer.Uid)
 		// 炸弹减少
 		act1Info.BombNumb--
 		// 玩家出局
-		act1Info.BombPlayer.IsDie = true
+		loserIndex := act1Info.MpUidToIndex[act1Info.BombPlayer.Uid]
+		act1Info.PlayerList[loserIndex].IsDie = true
+
 		if !act1Info.BombPlayer.IsRobot {
 			act1Info.Rank = append(act1Info.Rank, act1Info.BombPlayer.Uid)
 		}
@@ -828,7 +840,7 @@ func (act *Act1Model) TurnTimeOut(ctx *tCommon.ConContext) (uint32, []uint32) {
 
 			// 幸存者进入排行
 			for _, player := range act1Info.PlayerList {
-				if player.IsDie == false {
+				if player.IsDie == false && !player.IsRobot {
 					act1Info.Rank = append(act1Info.Rank, player.Uid)
 				}
 			}
@@ -850,7 +862,7 @@ func (act *Act1Model) TurnTimeOut(ctx *tCommon.ConContext) (uint32, []uint32) {
 			}
 			back := sdk.SendGameRusultTestSdk.SendGameMsgBySdk(result)
 			if back.Code != 200 {
-				fmt.Println(back.Msg)
+				fmt.Println("数据上报SDK失败:", back.Msg)
 				//tCommon.Logger.SystemErrorLog("Sdk_SendGameMsgBySdk_error：", back.Msg)
 			}
 
@@ -860,7 +872,6 @@ func (act *Act1Model) TurnTimeOut(ctx *tCommon.ConContext) (uint32, []uint32) {
 		}
 
 		// 玩家淘汰
-		loserIndex := act1Info.MpUidToIndex[act1Info.BombPlayer.Uid]
 		eventType = EVENT_TYPE_PLAYER_LOSE
 		events = append(events, loserIndex)
 		act1Info.SeqId++
@@ -868,16 +879,24 @@ func (act *Act1Model) TurnTimeOut(ctx *tCommon.ConContext) (uint32, []uint32) {
 		act1Info.BombPlayer = nil
 		nextTurn(act)
 		// 数据落地
+		act.ActInfo = act1Info
 		Save(ctx, act)
 		return eventType, events
 	} else if act1Info.EventPlayer != nil { // 超时事件处理
-		// 选牌事件
-		if act1Info.EventPlayer.EventType == EVENT_TYPE_STOLEN_CARD {
+		fmt.Println("EventPlaye.EventType:", act1Info.EventPlayer.EventType)
+		switch act1Info.EventPlayer.EventType {
+		case EVENT_TYPE_STOLEN_CARD: // 索要选牌事件
 			var cardIndex uint32 = 0
 			eventType, events = act.EventHandler(ctx, cardIndex)
 			fmt.Println("人机处理选牌事件,选择:", cardIndex, "张牌")
-		} else {
-			// 选人事件
+			return eventType, events
+
+		case EVENT_TYPE_BOMB_BACK: // 放回炸弹事件
+			// 放回随机位置
+			eventType, events = act.EventHandler(ctx, 6)
+			return eventType, events
+
+		default: // 选人事件
 			for key, player := range act1Info.PlayerList {
 				if !player.IsDie {
 					fmt.Println("人机处理选人事件,选择:", key, "玩家")
@@ -886,8 +905,9 @@ func (act *Act1Model) TurnTimeOut(ctx *tCommon.ConContext) (uint32, []uint32) {
 				}
 			}
 		}
-		act1Info.SeqId++
+
 	}
+
 	fmt.Println("超时摸牌")
 	// 摸牌
 	act1Info.SeqId++
@@ -903,7 +923,7 @@ func RobotHandle(args []any) {
 	roomId := args[2].(uint64)
 	robotIndex := args[3].(uint32)
 	// 创建ctx并初始化
-	ctx := tCommon.RegisterConGlobal()
+	ctx := tCommon.RegisterConGlobal(9999999)
 	if ok := ctx.SetConGlobalUid(uid); !ok {
 		return
 	}
@@ -939,15 +959,35 @@ func RobotHandle(args []any) {
 			fmt.Println("人机被炸弹淘汰")
 			ctx.EventStorageInit(const_ROBOTCMD_TIME_OUT)
 			eventType, events = act.TurnTimeOut(ctx)
+			if eventType == EVENT_TYPE_GAME_OVER {
+				// 数据落地
+				tModel.AllRedisSave(ctx)
+
+				// 广播
+				outGameInfo := Act1InfoToOutObj(act)
+
+				out := &api.Act1Game_OutObj{
+					GameInfo:  outGameInfo,
+					EventType: eventType,
+					EventData: events,
+				}
+
+				MsgRoomBroadcast[*api.Act1Game_OutObj](ctx, out)
+				return
+			}
 		}
 	} else if act1Info.EventPlayer != nil && act1Info.EventPlayer.PlayerIndex == robotIndex {
 		ctx.EventStorageInit(const_ROBOTCMD_EVENT_HANDLE)
 		// 选牌事件
-		if act1Info.EventPlayer.EventType == EVENT_TYPE_STOLEN_CARD {
+		switch act1Info.EventPlayer.EventType {
+		case EVENT_TYPE_STOLEN_CARD:
 			var cardIndex uint32 = 0
 			eventType, events = act.EventHandler(ctx, cardIndex)
 			fmt.Println("人机处理选牌事件,选择:", cardIndex, "张牌")
-		} else {
+		case EVENT_TYPE_BOMB_BACK:
+			// 放回随机位置
+			eventType, events = act.EventHandler(ctx, 6)
+		default:
 			// 选人事件
 			for key, player := range act1Info.PlayerList {
 				if !player.IsDie && player.Uid != robot.Uid {
@@ -962,9 +1002,21 @@ func RobotHandle(args []any) {
 		rand.Seed(time.Now().UnixNano())
 		robotAct := rand.Intn(2)
 
-		// 如果没牌了，则只能摸牌
-		if len(robot.Cards) == 0 || (len(robot.Cards) == 1 && robot.Cards[0] == const_CARD_DISMANTLE) {
+		if len(robot.Cards) == 0 {
+			// 如果没牌了，则只能摸牌
 			robotAct = 0
+		} else {
+			// 如果没牌可出，则只能摸牌
+			canPlayCard := false
+			for _, card := range robot.Cards {
+				if card != const_CARD_DISMANTLE {
+					canPlayCard = true
+					break
+				}
+			}
+			if canPlayCard == false {
+				robotAct = 0
+			}
 		}
 
 		switch robotAct {
@@ -993,7 +1045,7 @@ func RobotHandle(args []any) {
 	Save(ctx, act)
 
 	// 数据落地
-	AllRedisSave(ctx)
+	tModel.AllRedisSave(ctx)
 
 	// 广播
 	outGameInfo := Act1InfoToOutObj(act)
@@ -1055,6 +1107,8 @@ func Act1InfoToOutObj(act1Model *Act1Model) *api.Act1Info {
 		}
 	}
 
+	// 排名
+
 	return &api.Act1Info{
 		PlayerList:     playerList,
 		CurPlayerIndex: actInfo.CurPlayerIndex,
@@ -1088,10 +1142,9 @@ func (act *Act1Model) DelAct(ctx *tCommon.ConContext) {
 	modelActId := act.GetActId()
 	roomId := act.GetRoomId()
 
-	key := GetActKey(modelActId, roomId)
-	cache := GetCacheById(roomId)
+	cache := tModel.GetCacheById(roomId)
 
-	cache.RedisWrite(ctx, REDIS_ROOM, "HDEL", key, roomId)
+	cache.RedisWrite(ctx, tModel.REDIS_ROOM, "DEL", GetActKey(modelActId, roomId))
 }
 
 func (act *Act1Model) PlayerLoseConn(ctx *tCommon.ConContext) {

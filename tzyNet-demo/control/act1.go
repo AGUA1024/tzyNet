@@ -5,25 +5,24 @@ import (
 	"tzyNet/tCommon"
 	api "tzyNet/tzyNet-demo/api/protobuf"
 	"tzyNet/tzyNet-demo/model"
-	"tzyNet/tzyNet-demo/net"
 )
 
 func Act1GameInit(ctx *tCommon.ConContext) *api.Act1Game_OutObj {
 	// 获取房间信息
 	roomInfo, err := model.GetGameRoomInfo(ctx, ctx.GetConGlobalObj().RoomId)
 	if roomInfo == nil || err != nil {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_NO_ROOMID_EXIST, "act1:操作的房间不存在")
+		tCommon.Logger.GameErrorLog(ctx, ERR_NO_ROOMID_EXIST, "act1:操作的房间不存在")
 	}
 
 	// 房主是否开始游戏
 	if roomInfo.IsGame == false {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_GAME_IS_NOT_STARTED, "act1:房主还未开始游戏")
+		tCommon.Logger.GameErrorLog(ctx, ERR_GAME_IS_NOT_STARTED, "act1:房主还未开始游戏")
 	}
 
 	// 游戏初始化
 	act1model := model.NewActModel(ctx, 1)
 	if act1model == nil {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_ACTID_IS_NOT_EXIST, "act1:获取model时参数错误，actId:"+strconv.Itoa(1))
+		tCommon.Logger.GameErrorLog(ctx, ERR_ACTID_IS_NOT_EXIST, "act1:获取model时参数错误，actId:"+strconv.Itoa(1))
 	}
 
 	outGameInfo := model.Act1InfoToOutObj(act1model.(*model.Act1Model))
@@ -39,7 +38,7 @@ func PlayCard(ctx *tCommon.ConContext, cardIndex uint32) *api.Act1Game_OutObj {
 
 	eventType, events := act1Model.PlayCard(ctx, int(cardIndex))
 	if eventType == model.EVENT_TYPE_ERROR {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_ACT1_PLAYCARD_PARAM, "act1:出牌时参数错误")
+		tCommon.Logger.GameErrorLog(ctx, ERR_ACT1_PLAYCARD_PARAM, "act1:出牌时参数错误")
 	}
 
 	outGameInfo := model.Act1InfoToOutObj(act1Model)
@@ -57,12 +56,12 @@ func EventHandle(ctx *tCommon.ConContext, targetIndex uint32) *api.Act1Game_OutO
 	evenPlayerIndex := act1Model.ActInfo.EventPlayer.PlayerIndex
 	evenPlayer := act1Model.ActInfo.PlayerList[evenPlayerIndex]
 	if evenPlayer.Uid != ctx.GetConGlobalObj().Uid {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_ACT1_CANT_PLAY, "act1:没有出牌权限")
+		tCommon.Logger.GameErrorLog(ctx, ERR_ACT1_CANT_PLAY, "act1:没有出牌权限")
 	}
 
 	eventType, events := act1Model.EventHandler(ctx, targetIndex)
 	if eventType == model.EVENT_TYPE_ERROR {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_ACT1_PLAYCARD_PARAM, "act1:出牌时参数错误")
+		tCommon.Logger.GameErrorLog(ctx, ERR_ACT1_PLAYCARD_PARAM, "act1:出牌时参数错误")
 	}
 
 	outGameInfo := model.Act1InfoToOutObj(act1Model)
@@ -78,12 +77,12 @@ func GetCardFromPool(ctx *tCommon.ConContext) *api.Act1Game_OutObj {
 	act1Info := act1Model.ActInfo
 	// 不是当前出牌人或者存在事件则报错
 	if act1Info.BombPlayer != nil || ctx.GetConGlobalObj().Uid != act1Info.PlayerList[act1Info.CurPlayerIndex].Uid || act1Info.EventPlayer != nil {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_ACT1_PLAYCARD_PARAM, "act1:无法摸牌")
+		tCommon.Logger.GameErrorLog(ctx, ERR_ACT1_PLAYCARD_PARAM, "act1:无法摸牌")
 	}
 
 	eventType, events := act1Model.GetCardFromPool(ctx)
 	if eventType == model.EVENT_TYPE_ERROR {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_ACT1_PLAYCARD_PARAM, "act1:无法摸牌")
+		tCommon.Logger.GameErrorLog(ctx, ERR_ACT1_PLAYCARD_PARAM, "act1:无法摸牌")
 	}
 
 	outGameInfo := model.Act1InfoToOutObj(act1Model)
@@ -99,18 +98,18 @@ func getAct1Model(ctx *tCommon.ConContext) *model.Act1Model {
 	// 获取房间信息
 	roomInfo, err := model.GetGameRoomInfo(ctx, ctx.GetConGlobalObj().RoomId)
 	if roomInfo == nil || err != nil {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_NO_ROOMID_EXIST, "操作的房间不存在")
+		tCommon.Logger.GameErrorLog(ctx, ERR_NO_ROOMID_EXIST, "操作的房间不存在")
 	}
 
 	// 房主是否开始游戏
 	if roomInfo.IsGame == false {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_GAME_IS_NOT_STARTED, "房主还未开始游戏")
+		tCommon.Logger.GameErrorLog(ctx, ERR_GAME_IS_NOT_STARTED, "房主还未开始游戏")
 	}
 
 	// 是否可以出牌
 	actModel := model.GetActModel(ctx, 1)
 	if actModel == nil {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_REDIS_GET_ACTINFO, "查询游戏信息失败")
+		tCommon.Logger.GameErrorLog(ctx, ERR_REDIS_GET_ACTINFO, "查询游戏信息失败")
 	}
 
 	// 获取对局信息
@@ -119,7 +118,7 @@ func getAct1Model(ctx *tCommon.ConContext) *model.Act1Model {
 
 	// 是否已经出局
 	if act1Info.PlayerList[act1Info.CurPlayerIndex].IsDie {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_ACT1_PLAYER_IS_DIE, "已经出局，无法出牌")
+		tCommon.Logger.GameErrorLog(ctx, ERR_ACT1_PLAYER_IS_DIE, "已经出局，无法出牌")
 	}
 
 	return act1Model
@@ -137,7 +136,7 @@ func TurnTimeOut(ctx *tCommon.ConContext, seqId uint32) *api.Act1Game_OutObj {
 	eventType, events := act1Model.TurnTimeOut(ctx)
 
 	if eventType == model.EVENT_TYPE_ERROR {
-		tCommon.Logger.GameErrorLog(ctx, net.ERR_ACT1_PLAYCARD_PARAM, "act1:出牌时参数错误")
+		tCommon.Logger.GameErrorLog(ctx, ERR_ACT1_PLAYCARD_PARAM, "act1:出牌时参数错误")
 	}
 
 	outGameInfo := model.Act1InfoToOutObj(act1Model)
