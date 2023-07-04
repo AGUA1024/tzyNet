@@ -3,13 +3,11 @@ package model
 import (
 	"fmt"
 	"math/rand"
-	"strconv"
 	"time"
 	"tzyNet/tCommon"
 	"tzyNet/tModel"
 	"tzyNet/tNet"
 	api "tzyNet/tzyNet-demo/api/protobuf"
-	"tzyNet/tzyNet-demo/sdk"
 )
 
 // 游戏基础配置设置
@@ -173,6 +171,11 @@ func (this *Act1Model) NewActModel(ctx *tCommon.ConContext) ActModelInterface {
 	}
 
 	Save(ctx, act1Model)
+
+	curPlayerIndex := act1Model.ActInfo.CurPlayerIndex
+	if act1Model.ActInfo.PlayerList[curPlayerIndex].IsRobot{
+		act1Model.RotboToDo(curPlayerIndex)
+	}
 	return act1Model
 }
 
@@ -227,7 +230,7 @@ func (act *Act1Model) PlayCard(ctx *tCommon.ConContext, cardIndex int) (uint32, 
 
 	// 不是当前出牌人或者存在事件则报错
 	if ctx.GetConGlobalObj().Uid != act1Info.PlayerList[act1Info.CurPlayerIndex].Uid || act1Info.EventPlayer != nil {
-		fmt.Println("不是当前出牌人,无法出牌")
+		fmt.Println("不是当前出牌人,无法出牌,uid:",ctx.GetConGlobalObj().Uid,"curUid:",act1Info.PlayerList[act1Info.CurPlayerIndex].Uid)
 		return EVENT_TYPE_ERROR, nil
 	}
 
@@ -358,7 +361,7 @@ func (act *Act1Model) PlayCard(ctx *tCommon.ConContext, cardIndex int) (uint32, 
 func (act *Act1Model) EventHandler(ctx *tCommon.ConContext, chooseIndex uint32) (uint32, []uint32) {
 	// 获取游戏信息
 	act1Info := act.ActInfo
-
+	fmt.Println("EventHandler,chooseIndex:",chooseIndex)
 	// 事件玩家的信息
 	if act1Info.EventPlayer == nil {
 		fmt.Println("没有事件可以处理")
@@ -380,14 +383,14 @@ func (act *Act1Model) EventHandler(ctx *tCommon.ConContext, chooseIndex uint32) 
 	switch eventType {
 	case EVENT_TYPE_FORBID: // 嫁祸
 		// 非法的参数
-		if len(act1Info.PlayerList) <= int(chooseIndex) || act1Info.PlayerList[eventPlayerIndex].IsDie {
+		player,ok := act1Info.PlayerList[chooseIndex]
+		if !ok || player.IsDie {
 			fmt.Println("被嫁祸的玩家已经出局了或者被指定的玩家不存在")
 			return EVENT_TYPE_ERROR, nil
 		}
-		if !eventBlameTarget(act1Info, chooseIndex) {
-			fmt.Println("被嫁祸的玩家已经出局了或者被指定的玩家不存在")
-			return EVENT_TYPE_ERROR, nil
-		}
+		// 嫁祸
+		eventBlameTarget(act1Info, chooseIndex)
+
 		events = append(events, chooseIndex)
 		// 删除事件
 		act1Info.EventPlayer = nil
@@ -395,17 +398,19 @@ func (act *Act1Model) EventHandler(ctx *tCommon.ConContext, chooseIndex uint32) 
 		act.RotboToDo(chooseIndex)
 	case EVENT_TYPE_FORBID_THWICE: // 嫁祸*2
 		// 非法的参数
-		if len(act1Info.PlayerList) <= int(chooseIndex) || act1Info.PlayerList[eventPlayerIndex].IsDie {
+		eventPlayer,ok := act1Info.PlayerList[eventPlayerIndex]
+		if !ok || eventPlayer.IsDie {
 			fmt.Println("被嫁祸*2的玩家已经出局了或者被指定的玩家不存在")
 			return EVENT_TYPE_ERROR, nil
 		}
-		if !eventBlameTargetTwice(act1Info, chooseIndex) {
-			fmt.Println("被嫁祸*2的玩家已经出局了或者被指定的玩家不存在")
-			return EVENT_TYPE_ERROR, nil
-		}
+
+		// 嫁祸*2
+		eventBlameTargetTwice(act1Info, chooseIndex)
 		events = append(events, chooseIndex)
-		// 下一回合
-		nextTurn(act)
+
+		// 如果被嫁祸的是人机
+		act.RotboToDo(act1Info.CurPlayerIndex)
+
 		// 删除事件
 		act1Info.EventPlayer = nil
 	case EVENT_TYPE_STOLEN_TARGET: // 指定索要对象
@@ -425,10 +430,6 @@ func (act *Act1Model) EventHandler(ctx *tCommon.ConContext, chooseIndex uint32) 
 			return EVENT_TYPE_ERROR, nil
 		}
 	case EVENT_TYPE_STOLEN_CARD: // 给出索要手牌
-		// 非法的参数
-		if len(act1Info.PlayerList) <= int(chooseIndex) || act1Info.PlayerList[eventPlayerIndex].IsDie {
-			return EVENT_TYPE_ERROR, nil
-		}
 		// 给出索要卡
 		card, ok := eventStolenCard(act1Info, eventPlayerIndex, int(chooseIndex))
 		if !ok {
@@ -472,7 +473,12 @@ func (act *Act1Model) EventHandler(ctx *tCommon.ConContext, chooseIndex uint32) 
 			act1Info.CardPool = append(act1Info.CardPool, const_CARD_BOMB)
 		} else if chooseIndex == 6 {
 			// 炸弹随机插入牌堆
-			bombIndex := rand.Intn(len(act1Info.CardPool))
+			var bombIndex int
+			if len(act1Info.CardPool) == 0 {
+				bombIndex = 0
+			}else {
+				bombIndex = rand.Intn(len(act1Info.CardPool))
+			}
 
 			backCards := append([]int{}, act1Info.CardPool[bombIndex:]...)
 			frontCards := append(act1Info.CardPool[:bombIndex], const_CARD_BOMB)
@@ -629,6 +635,7 @@ func nextTurn(act *Act1Model) {
 		return
 	}
 
+	fmt.Println("playerList[curIndex].BameNum:",playerlist[curIndex].BameNum)
 	var maxPlayerIndex uint32 = 0
 	for index, _ := range actInfo.PlayerList {
 		if index > maxPlayerIndex {
@@ -671,26 +678,17 @@ func nextTurn(act *Act1Model) {
 }
 
 // 嫁祸卡
-func eventBlameTarget(actInfo *Act1Info, targetIndex uint32) bool {
-	playerList := actInfo.PlayerList
-	// 检查被嫁祸的玩家是否已经出局
-	if playerList[targetIndex].IsDie {
-		return false
-	}
+func eventBlameTarget(actInfo *Act1Info, targetIndex uint32) {
 	// 被嫁祸的玩家立即到该玩家的回合
 	actInfo.CurPlayerIndex = targetIndex
-
-	return true
 }
 
 // 嫁祸*2卡
-func eventBlameTargetTwice(actInfo *Act1Info, targetIndex uint32) bool {
+func eventBlameTargetTwice(actInfo *Act1Info, targetIndex uint32) {
 	// 嫁祸*2 debuff
 	actInfo.PlayerList[targetIndex].BameNum = 2
 	// 被嫁祸的玩家立即到该玩家的回合
 	actInfo.CurPlayerIndex = targetIndex
-
-	return true
 }
 
 // 玩家索要另一个玩家的手牌
@@ -815,9 +813,9 @@ func (act *Act1Model) TurnTimeOut(ctx *tCommon.ConContext) (uint32, []uint32) {
 		loserIndex := act1Info.MpUidToIndex[act1Info.BombPlayer.Uid]
 		act1Info.PlayerList[loserIndex].IsDie = true
 
-		if !act1Info.BombPlayer.IsRobot {
-			act1Info.Rank = append(act1Info.Rank, act1Info.BombPlayer.Uid)
-		}
+		// 出局玩家进入排行榜
+		act1Info.Rank = append(act1Info.Rank, act1Info.BombPlayer.Uid)
+
 		// 如果只剩最后一人,则结算
 		isGameOver := true
 		playerNum := 0
@@ -834,40 +832,19 @@ func (act *Act1Model) TurnTimeOut(ctx *tCommon.ConContext) (uint32, []uint32) {
 
 		// 游戏结束结算
 		if isGameOver {
-			timeUnix := time.Now().Unix()
-			sgin := sdk.SendGameRusultTestSdk.GetSign(strconv.Itoa(int(act.ActId)), strconv.FormatInt(timeUnix, 10))
-			rank := map[uint64]int{}
-
 			// 幸存者进入排行
 			for _, player := range act1Info.PlayerList {
-				if player.IsDie == false && !player.IsRobot {
+				if player.IsDie == false {
 					act1Info.Rank = append(act1Info.Rank, player.Uid)
 				}
 			}
 
-			// 排行信息上报
-			for key, uid := range act1Info.Rank {
-				playerNum = len(act1Info.PlayerList)
-				rank[uid] = playerNum - key
-				events = append(events, act1Info.MpUidToIndex[uid])
-			}
-
-			result := &sdk.SendGameMsgInBuf{
-				GameType:    act.ActId,
-				GameLv:      0,
-				RoomId:      act.ActBaseModel.RoomId,
-				UserRankMap: rank,
-				Timestamp:   timeUnix,
-				Sign:        sgin,
-			}
-			back := sdk.SendGameRusultTestSdk.SendGameMsgBySdk(result)
-			if back.Code != 200 {
-				fmt.Println("数据上报SDK失败:", back.Msg)
-				//tCommon.Logger.SystemErrorLog("Sdk_SendGameMsgBySdk_error：", back.Msg)
-			}
-
 			// 删除游戏数据
 			act.DelAct(ctx)
+
+			for _,playerUid := range act1Info.Rank{
+				events = append(events,act1Info.MpUidToIndex[playerUid])
+			}
 			return EVENT_TYPE_GAME_OVER, events
 		}
 

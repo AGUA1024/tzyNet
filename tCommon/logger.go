@@ -5,6 +5,7 @@ import (
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"log"
 	"os"
 	"runtime"
 	"runtime/debug"
@@ -25,7 +26,8 @@ func (this tLogger) InfoLog(message string) {
 }
 
 func (this tLogger) SystemErrorLog(message ...any) {
-	this.logger.Panic(fmt.Sprintln(message...) + string(debug.Stack()))
+	log.Println(fmt.Sprintln(message...) + string(debug.Stack()))
+	//this.logger.Panic(fmt.Sprintln(message...) + string(debug.Stack()))
 	runtime.Goexit()
 }
 

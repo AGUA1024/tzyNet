@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	KEY_EXPIRE_TIME = 3600 // reids3600秒过期
+	KEY_EXPIRE_TIME = 36000 // reids3600秒过期
 )
 
 type roomModel struct {
@@ -79,7 +79,7 @@ func CreateRoom(ctx *tCommon.ConContext, user *sdk.UserInfo, roomId uint64, actI
 }
 
 func LoseConnectHandle(ctx *tCommon.ConContext) {
-	fmt.Printf("uid:%d,断开连接",ctx.GetConGlobalObj().Uid)
+	fmt.Printf("uid:%d,断开连接", ctx.GetConGlobalObj().Uid)
 	roomId := ctx.GetConGlobalObj().RoomId
 	// 房间不存在
 	roomInfo, err := GetGameRoomInfo(ctx, roomId)
@@ -201,6 +201,7 @@ func GetRoomIndex(ctx *tCommon.ConContext, GameRoomInfo *roomModel) (bool, int) 
 
 func GetGameIndex(ctx *tCommon.ConContext, GameRoomInfo *roomModel) (bool, uint32) {
 	for index, player := range GameRoomInfo.PosIdToPlayer {
+		fmt.Println("player.uid,", player.Uid,"ctx.GetConGlobalObj().uid:",ctx.GetConGlobalObj().Uid)
 		if player.Uid == ctx.GetConGlobalObj().Uid {
 			return true, index
 		}
@@ -226,7 +227,7 @@ func GetGameRoomInfo(ctx *tCommon.ConContext, roomId uint64) (*roomModel, error)
 func DestroyRoom(ctx *tCommon.ConContext, roomId uint64) bool {
 	redis := tModel.GetCacheById(roomId)
 
-	ok := redis.RedisWrite(ctx, tModel.REDIS_ROOM, "HDEL", getRoomModelKey(roomId, actId))
+	ok := redis.RedisWrite(ctx, tModel.REDIS_ROOM, "DEL", getRoomModelKey(roomId, actId))
 	return ok
 }
 
@@ -251,7 +252,15 @@ func MsgRoomBroadcast[T proto.Message](ctx *tCommon.ConContext, obj T) (any, err
 	// 获取广播列表
 	roomInfo, err := GetGameRoomInfo(ctx, ctx.GetConGlobalObj().RoomId)
 
+	if roomInfo == nil || err != nil {
+		tCommon.Logger.SystemErrorLog("GetGameRoomInfo_ERR:",err)
+	}
 	// 玩家广播
+	fmt.Println("广播roomInfo.PosIdToPlayer,myuid:",ctx.GetConGlobalObj().Uid)
+	for _,player := range roomInfo.PosIdToPlayer{
+		fmt.Println("playeruid:",player.Uid)
+	}
+	fmt.Println("广播roomInfo.ArrUidAudience:", roomInfo.ArrUidAudience)
 	for _, player := range roomInfo.PosIdToPlayer {
 		uid := player.Uid
 		_, ok := tCommon.MpUserStorage[uid]

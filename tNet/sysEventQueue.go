@@ -1,5 +1,9 @@
 package tNet
 
+import (
+	"fmt"
+)
+
 var GlobalSysEventChan = make(chan SysEventValInterface)
 
 type SysEventValInterface interface {
@@ -15,7 +19,14 @@ func init() {
 			case event := <-GlobalSysEventChan:
 				fun := event.GetFunc()
 				args := event.GetArgs()
-				fun(args)
+				go func(){
+					defer func() {
+						if r := recover(); r != nil {
+							fmt.Println("PANIC_ERROR:", r)
+						}
+					}()
+					fun(args)
+				}()
 			}
 		}
 	}()
