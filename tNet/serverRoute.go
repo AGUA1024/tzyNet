@@ -5,12 +5,12 @@ import (
 	"reflect"
 	"tzyNet/tCommon"
 	"tzyNet/tINet"
-	"tzyNet/tNet/ioBuf"
 )
 
 type RoutePathMaster struct {
 	reqPath    string
 	routeGroup *RouteGroupMaster // 路由组
+	pkgParser tINet.IPkgParser // 路由解析器
 }
 
 type RouteGroupMaster struct {
@@ -19,6 +19,16 @@ type RouteGroupMaster struct {
 
 type RouteCmdMaster struct {
 	mpCmd map[uint32]func(ctx *tCommon.ConContext, params []byte)
+}
+
+// 绑定数据封包函数
+func (this *RoutePathMaster)BindPkgParser(parser tINet.IPkgParser){
+	this.pkgParser = parser
+}
+
+// 将流数据转化为封包数据
+func (this *RoutePathMaster)GetPkg(byteMsg []byte) (tINet.IPkg,error){
+	return this.pkgParser.UnMarshal(byteMsg)
 }
 
 // 请求路径
@@ -75,9 +85,8 @@ func (this *WsServer) GetFuncByrouteCmd(cmd uint32) func(*tCommon.ConContext, []
 }
 
 // 路由处理
-func RouteHandel(conCtx *tCommon.ConContext, cbuf *ioBuf.ClientBuf) {
-	cmd := cbuf.CmdMerge
-	byteApiBuf := cbuf.Data
+func RouteHandel(conCtx *tCommon.ConContext, cbuf []byte) {
+	cmd := conCtx.GetConGlobalObj().Cmd
 
 	apiFunc := Server.GetFuncByrouteCmd(cmd)
 
@@ -86,7 +95,7 @@ func RouteHandel(conCtx *tCommon.ConContext, cbuf *ioBuf.ClientBuf) {
 
 		argValues := []reflect.Value{
 			reflect.ValueOf(conCtx),
-			reflect.ValueOf(byteApiBuf),
+			reflect.ValueOf(cbuf),
 		}
 
 		resultValues := fValue.Call(argValues)

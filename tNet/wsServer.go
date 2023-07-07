@@ -3,13 +3,11 @@ package tNet
 import (
 	"fmt"
 	"github.com/gorilla/websocket"
-	"google.golang.org/protobuf/proto"
 	"net/http"
 	"sync/atomic"
 	"tzyNet/tCommon"
 	"tzyNet/tINet"
 	"tzyNet/tModel"
-	"tzyNet/tNet/ioBuf"
 )
 
 const (
@@ -19,10 +17,12 @@ const (
 )
 
 type WsServer struct {
-	Fun func(ctx *tCommon.ConContext)
+	OnLineFunc func(ctx *tCommon.ConContext)
+	OffLineFun func(ctx *tCommon.ConContext)
 	SeverBase
 	RoutePathMaster
 	ConMaster *WsConMaster
+	pkgParser tINet.IPkgParser
 }
 
 func newWsServer(host string, port uint32, podName string) tINet.IServer {
@@ -39,7 +39,8 @@ func newWsServer(host string, port uint32, podName string) tINet.IServer {
 					return true
 				},
 			},
-			mpCon: make(map[uint64]tINet.ICon),
+			mpCon:    make(map[uint64]tINet.ICon),
+			maxConId: 0,
 		},
 	}
 	return Server
@@ -72,14 +73,12 @@ func (this *WsServer) Start() {
 			}
 
 			fmt.Println(msgBuf)
-			clientBuf := &ioBuf.ClientBuf{}
 
-			if err = proto.Unmarshal(msgBuf, clientBuf); err != nil || len(msgBuf) == 0 {
+			pkg, err := Server.GetPkg(msgBuf)
+			if err != nil {
 				tCommon.Logger.SystemErrorLog("PROTO_UNMARSHAL_ERROR")
 			}
 
-			fmt.Println("clientBuf：", clientBuf)
-			fmt.Println("cmd:", clientBuf.CmdMerge)
 			// 协程顺序执行
 			done := make(chan bool, 1)
 
@@ -91,9 +90,8 @@ func (this *WsServer) Start() {
 					}
 				}()
 
-				conCtx.EventStorageInit(clientBuf.CmdMerge)
-
-				RouteHandel(conCtx, clientBuf)
+				conCtx.EventStorageInit(pkg.GetRouteCmd())
+				RouteHandel(conCtx, pkg.GetData())
 
 				fmt.Println("uid:", conCtx.GetConGlobalObj().Uid)
 
@@ -114,14 +112,34 @@ func (this *WsServer) Start() {
 	}
 }
 
-// 设置断线处理函数
-func (this *WsServer) SetLoseConFunc(fun func(ctx *tCommon.ConContext))  {
-	this.Fun = fun
+// 绑定数据封包函数
+func (this *WsServer) BindPkgParser(parser tINet.IPkgParser) {
+	this.pkgParser = parser
 }
 
-// 执行断线处理函数
-func (this *WsServer) RunLoseConFunc(ctx *tCommon.ConContext) {
-	this.Fun(ctx)
+// 将流数据转化为封包数据
+func (this *WsServer) GetPkg(byteMsg []byte) (tINet.IPkg, error) {
+	return this.pkgParser.UnMarshal(byteMsg)
+}
+
+// 设置上线处理函数
+func (this *WsServer) SetOnLineHookFunc(fun func(ctx *tCommon.ConContext)) {
+	this.OnLineFunc = fun
+}
+
+// 获取上线处理函数
+func (this *WsServer) GetOnLineHookFunc() func(ctx *tCommon.ConContext) {
+	return this.OnLineFunc
+}
+
+// 设置断线处理函数
+func (this *WsServer) SetOffLineHookFunc(fun func(ctx *tCommon.ConContext)) {
+	this.OffLineFun = fun
+}
+
+// 获取断线处理函数
+func (this *WsServer) GetOffLineHookFunc() func(ctx *tCommon.ConContext) {
+	return this.OffLineFun
 }
 
 // 连接注册
@@ -149,13 +167,15 @@ func (this *WsServer) ConRegister(respRw http.ResponseWriter, req *http.Request)
 		RoomId:       0,
 		EventStorage: nil,
 	}
+
 	return con
 }
 
 // 断开连接,退出游戏房间
 func destroyConGlobalObj(conCtx *tCommon.ConContext) {
 	// 如果在房间则离开房间，并广播
-	Server.RunLoseConFunc(conCtx)
+	offLineFunc := Server.GetOffLineHookFunc()
+	offLineFunc(conCtx)
 
 	// cache数据落地
 	tModel.AllRedisSave(conCtx)

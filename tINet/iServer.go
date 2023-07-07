@@ -15,13 +15,23 @@ type IServer interface {
 	// 获取服务器路由方法
 	GetFuncByrouteCmd(cmd uint32) func(*tCommon.ConContext, []byte)
 
-	// 服务器客户端连接初始化
+	// 服务器客户端连接初始化与注册
 	ConRegister(respRw http.ResponseWriter, req *http.Request) ICon
 
+	// 设置上线处理函数
+	SetOnLineHookFunc(fun func(ctx *tCommon.ConContext))
+	// 执行上线处理函数
+	GetOnLineHookFunc() func(ctx *tCommon.ConContext)
+
 	// 设置断线处理函数
-	SetLoseConFunc(fun func(ctx *tCommon.ConContext))
+	SetOffLineHookFunc(fun func(ctx *tCommon.ConContext))
 	// 执行断线处理函数
-	RunLoseConFunc(ctx *tCommon.ConContext)
+	GetOffLineHookFunc() func(ctx *tCommon.ConContext)
+
+	// 绑定数据封包函数
+	BindPkgParser(IPkgParser)
+	// 将流数据转化为封包数据
+	GetPkg(byteMsg []byte) (IPkg, error)
 
 	// 获取服务器属性参数
 	GetHost() string
