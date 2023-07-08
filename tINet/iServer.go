@@ -37,6 +37,9 @@ type IServer interface {
 	GetHost() string
 	GetPort() uint32
 	GetPodName() string
+
+	// 网络数据处理
+	MsgHandle(conCtx *tCommon.ConContext, pkg IPkg)
 }
 
 // 服务器路由组

@@ -8,15 +8,24 @@ import (
 )
 
 type DefaultPbPkgParser struct {
-	pkgBaseObj tINet.IPkg
+	PkgBaseObj tINet.IPkg
 }
 
 type DefaultPbPkg struct {
-	dataSrc *ioBuf.ClientBuf
+	DataSrc *ioBuf.ClientBuf
 }
 
-func (this *DefaultPbPkgParser) SetPkgObjBase(pkgBase tINet.IPkg) {
-	this.pkgBaseObj = pkgBase
+func (this *DefaultPbPkg) SetDataSrc(src any) {
+	iobuf, _ := src.(ioBuf.ClientBuf)
+	this.DataSrc = &iobuf
+}
+
+func (this *DefaultPbPkgParser) NewParser() tINet.IPkgParser {
+	return &DefaultPbPkgParser{PkgBaseObj: nil}
+}
+
+func (this *DefaultPbPkgParser) SetPkgObjBase() {
+	this.PkgBaseObj = &DefaultPbPkg{DataSrc: &ioBuf.ClientBuf{}}
 }
 
 func (this *DefaultPbPkgParser) Marshal(obj any) ([]byte, error) {
@@ -25,25 +34,26 @@ func (this *DefaultPbPkgParser) Marshal(obj any) ([]byte, error) {
 		return nil, errors.New("Marsahl_Error_invalid_ojb_type")
 	}
 
-	byteMsg, err := proto.Marshal(pbObj)
-	return byteMsg, err
+	return proto.Marshal(pbObj)
 }
 
 func (this *DefaultPbPkgParser) UnMarshal(byteMsg []byte) (tINet.IPkg, error) {
-	base := this.pkgBaseObj
-	pbBase := base.(proto.Message)
-	err := proto.Unmarshal(byteMsg, pbBase)
+	base := this.PkgBaseObj
+
+	pb := ioBuf.ClientBuf{}
+	err := proto.Unmarshal(byteMsg, &pb)
 	if err != nil {
 		return nil, err
 	}
 
-	return pbBase, nil
+	base.SetDataSrc(pb)
+	return base, nil
 }
 
 func (this *DefaultPbPkg) GetRouteCmd() uint32 {
-	return this.dataSrc.CmdMerge
+	return this.DataSrc.CmdMerge
 }
 
 func (this *DefaultPbPkg) GetData() []byte {
-	return this.dataSrc.Data
+	return this.DataSrc.Data
 }

@@ -19,7 +19,7 @@ func init() {
 	// 创建etcd客户端
 	Etcd_Client, _ = clientv3.New(clientv3.Config{
 		Endpoints:   []string{endPoint},
-		DialTimeout: 5 * time.Second,
+		DialTimeout: 5 * time.Second, //创建client的首次连接超时
 	})
 	fmt.Println("--Etcd初始化完成")
 }

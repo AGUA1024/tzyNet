@@ -10,7 +10,7 @@ import (
 type RoutePathMaster struct {
 	reqPath    string
 	routeGroup *RouteGroupMaster // 路由组
-	pkgParser tINet.IPkgParser // 路由解析器
+	pkgParser  tINet.IPkgParser  // 路由解析器
 }
 
 type RouteGroupMaster struct {
@@ -22,12 +22,13 @@ type RouteCmdMaster struct {
 }
 
 // 绑定数据封包函数
-func (this *RoutePathMaster)BindPkgParser(parser tINet.IPkgParser){
+func (this *RoutePathMaster) BindPkgParser(parser tINet.IPkgParser) {
 	this.pkgParser = parser
 }
 
 // 将流数据转化为封包数据
-func (this *RoutePathMaster)GetPkg(byteMsg []byte) (tINet.IPkg,error){
+func (this *RoutePathMaster) GetPkg(byteMsg []byte) (tINet.IPkg, error) {
+
 	return this.pkgParser.UnMarshal(byteMsg)
 }
 
@@ -85,7 +86,8 @@ func (this *WsServer) GetFuncByrouteCmd(cmd uint32) func(*tCommon.ConContext, []
 }
 
 // 路由处理
-func RouteHandel(conCtx *tCommon.ConContext, cbuf []byte) {
+func (this *WsServer) MsgHandle(conCtx *tCommon.ConContext, pkg tINet.IPkg) {
+	cbuf := pkg.GetData()
 	cmd := conCtx.GetConGlobalObj().Cmd
 
 	apiFunc := Server.GetFuncByrouteCmd(cmd)

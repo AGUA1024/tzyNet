@@ -55,51 +55,14 @@ func (this *WsServer) Start() {
 	http.HandleFunc(this.reqPath, func(respRw http.ResponseWriter, req *http.Request) {
 		con := this.ConRegister(respRw, req)
 		defer con.Close()
-		wsCon := con.GetCon()
 
 		// 注册connectGorutine全局空间
 		conCtx := tCommon.RegisterConGlobal(con.GetConId())
-		// 注册ws连接管道
-		conCtx.SetConGlobalWsCon(wsCon)
+
 		// 延迟注销connectGorutine全局空间,关闭ws连接
 		defer destroyConGlobalObj(conCtx)
 
-		for {
-			fmt.Println("reading-------------------")
-			// 读取ws中的数据
-			_, msgBuf, err := wsCon.ReadMessage()
-			if err != nil {
-				break
-			}
-
-			fmt.Println(msgBuf)
-
-			pkg, err := Server.GetPkg(msgBuf)
-			if err != nil {
-				tCommon.Logger.SystemErrorLog("PROTO_UNMARSHAL_ERROR")
-			}
-
-			// 协程顺序执行
-			done := make(chan bool, 1)
-
-			go func() {
-				defer func() {
-					done <- true
-					if r := recover(); r != nil {
-						tCommon.Logger.SystemErrorLog("PANIC_ERROR:", r)
-					}
-				}()
-
-				conCtx.EventStorageInit(pkg.GetRouteCmd())
-				RouteHandel(conCtx, pkg.GetData())
-
-				fmt.Println("uid:", conCtx.GetConGlobalObj().Uid)
-
-				tModel.AllRedisSave(conCtx)
-			}()
-
-			<-done
-		}
+		con.ListenAndHandle(conCtx)
 	})
 
 	// 持续监听客户端连接
