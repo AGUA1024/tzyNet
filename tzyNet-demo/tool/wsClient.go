@@ -19,7 +19,7 @@ func main() {
 	//header.Add("Origin", "http://localhost")
 
 	// 连接 WebSocket 服务器
-	conn, _, err := websocket.DefaultDialer.Dial("ws://127.0.0.1:80", header)
+	conn, _, err := websocket.DefaultDialer.Dial("ws://127.0.0.1:8000", header)
 	if err != nil {
 		panic(err)
 	}
@@ -37,9 +37,6 @@ func main() {
 					panic(err)
 				}
 				fmt.Println("write ok!")
-				//out := script.CreateRoom_OutObj{}
-				//proto.Unmarshal(receivedMessage.Data, &out)
-				//fmt.Println(out.Ok)
 			}
 		}
 	}()
@@ -62,7 +59,9 @@ func main() {
 			data := &script.Act1Game_OutObj{}
 			proto.Unmarshal(receivedMessage.Data, data)
 
-			fmt.Println("is:", data)
+			fmt.Println("EventData:", data.EventData)
+			fmt.Println("EventType:", data.EventType)
+			fmt.Println("GameInfo:", data.GameInfo)
 		}
 	}()
 
@@ -87,13 +86,16 @@ func bufferShow() {
 
 	_, str1 := script.ConGlobalObjInitBuf(13324782, roomId)
 	fmt.Println("ConGlobalObjInitBuf1:", str1)
-	_, str11 := script.ConGlobalObjInitBuf(11834295, roomId)
+	_, str11 := script.ConGlobalObjInitBuf(11834295, 666)
 	fmt.Println("ConGlobalObjInitBuf11:", str11)
 	_, str111 := script.ConGlobalObjInitBuf(11677176, roomId)
 	fmt.Println("ConGlobalObjInitBuf111:", str111)
 
 	_, str3 := script.CreateRoomBuf(roomId)
 	fmt.Println("CreateRoomBuf：", str3)
+	_, str3 = script.CreateRoomBuf(666)
+	fmt.Println("CreateRoomBuf：", str3)
+
 	_, str4 := script.JoinRoom(roomId)
 	fmt.Println("JoinRoom:", str4)
 

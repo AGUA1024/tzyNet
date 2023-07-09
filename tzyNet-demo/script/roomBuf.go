@@ -255,7 +255,7 @@ func DelRobot(pos uint32) ([]byte, string) {
 	// 发送消息
 	message := &ioBuf2.ClientBuf{
 		ProtocolSwitch: 1,
-		CmdMerge:       0x20010,
+		CmdMerge:       0x2000a,
 		Data:           cendBuf,
 	}
 	data, err := proto.Marshal(message)
