@@ -9,13 +9,21 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	"tzyNet/tCommon"
 	"tzyNet/tNet"
 	"tzyNet/tzyNet-demo/net"
 )
 
+const (
+	SevType_GateWay = iota
+)
+
 func main() {
-	// 创建webSokcet服务器对象
-	wsServer := tNet.NewServer(tNet.SevType_WebSocketServer, "0.0.0.0", 8000, "node1")
+	// 创建webSokcet服务
+	wsServer, err := tNet.NewService("0.0.0.0:8000", tNet.WebSocket, "GateWay")
+	if err != nil {
+		tCommon.Logger.SystemErrorLog(err)
+	}
 
 	// 路由注册
 	net.RouteRegister(wsServer)

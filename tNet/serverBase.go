@@ -2,11 +2,20 @@ package tNet
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go.etcd.io/etcd/clientv3"
+	"net"
+	"strconv"
 	"tzyNet/tCommon"
 	"tzyNet/tINet"
 	"tzyNet/tServer"
+)
+
+const (
+	Tcp uint16 = iota
+	Http
+	WebSocket
 )
 
 var Server tINet.IServer = nil
@@ -14,7 +23,7 @@ var Server tINet.IServer = nil
 type SeverBase struct {
 	host    string
 	port    uint32
-	podName string
+	sevName string
 }
 
 func (this *SeverBase) GetHost() string {
@@ -25,26 +34,50 @@ func (this *SeverBase) GetPort() uint32 {
 	return this.port
 }
 
-func (this *SeverBase) GetPodName() string {
-	return this.podName
+func (this *SeverBase) GetSevName() string {
+	return this.sevName
 }
 
-func NewServer(sevType uint16, host string, port uint32, podName string) tINet.IServer {
-	switch sevType {
-	case SevType_TcpServer:
-	case SevType_HttpServer:
+func NewService(hostAddr string, protocolType uint16, sevName string) (tINet.IServer, error) {
+	switch protocolType {
+	case Tcp:
+	case Http:
 		//return tServer.NewHttpServer(host, port, podName)
-	case SevType_WebSocketServer:
-		return newWsServer(host, port, podName)
+	case WebSocket:
+		server, err := newWsServer(hostAddr, sevName)
+		if err != nil {
+			return nil, err
+		}
+		return server, nil
 	}
-	return nil
+
+	return nil, errors.New("invalid_sev_type")
+}
+
+func ParseURL(urlStr string) (string, uint32, error) {
+	host, port, err := net.SplitHostPort(urlStr)
+	if err != nil {
+		return "", 0, err
+	}
+
+	ipAddr, err := net.ResolveIPAddr("ip", host)
+	if err != nil {
+		return "", 0, err
+	}
+
+	portNum, err := strconv.ParseUint(port, 10, 32)
+	if err != nil {
+		return "", 0, err
+	}
+
+	return ipAddr.IP.String(), uint32(portNum), nil
 }
 
 // 服务器注册etcd
 func etcdRegisterService(server tINet.IServer) {
 	// 创建租约
 	cli := tServer.Etcd_Client
-	podName,Host := server.GetPodName(), server.GetHost()
+	sevName, ip, port := server.GetSevName(), server.GetHost(), server.GetPort()
 
 	resp, err := cli.Grant(context.Background(), 10)
 	if err != nil {
@@ -52,8 +85,10 @@ func etcdRegisterService(server tINet.IServer) {
 	}
 
 	// 注册服务
-	key := fmt.Sprintf("/services/%s/%s", podName, Host)
-	_, err = cli.Put(context.Background(), key, Host, clientv3.WithLease(resp.ID))
+	key := fmt.Sprintf("/services/%s/%s", sevName, ip)
+	value := fmt.Sprintf("%s:%d",ip, port)
+
+	_, err = cli.Put(context.Background(), key, value, clientv3.WithLease(resp.ID))
 	if err != nil {
 		tCommon.Logger.SystemErrorLog(err)
 	}

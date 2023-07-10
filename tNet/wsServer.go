@@ -10,12 +10,6 @@ import (
 	"tzyNet/tModel"
 )
 
-const (
-	SevType_TcpServer uint16 = iota
-	SevType_HttpServer
-	SevType_WebSocketServer
-)
-
 type WsServer struct {
 	OnLineFunc func(ctx *tCommon.ConContext)
 	OffLineFun func(ctx *tCommon.ConContext)
@@ -25,12 +19,17 @@ type WsServer struct {
 	pkgParser tINet.IPkgParser
 }
 
-func newWsServer(host string, port uint32, podName string) tINet.IServer {
+func newWsServer(hostAddr string, sevName string) (tINet.IServer, error) {
+	ip, port, err := ParseURL(hostAddr)
+	if err != nil {
+		return nil, err
+	}
+
 	Server = &WsServer{
 		SeverBase: SeverBase{
-			host:    host,
-			port:    port,
-			podName: podName,
+			host: ip,
+			port: port,
+			sevName : sevName,
 		},
 		RoutePathMaster: RoutePathMaster{},
 		ConMaster: &WsConMaster{
@@ -43,7 +42,7 @@ func newWsServer(host string, port uint32, podName string) tINet.IServer {
 			maxConId: 0,
 		},
 	}
-	return Server
+	return Server, nil
 }
 
 // 启动服务器
@@ -116,8 +115,9 @@ func (this *WsServer) ConRegister(respRw http.ResponseWriter, req *http.Request)
 	// 生成连接Id
 	connectId := atomic.AddUint64(&this.ConMaster.maxConId, 1)
 	con := &WsCon{
-		conId: connectId,
-		conn:  wsCon,
+		conId:    connectId,
+		conn:     wsCon,
+		property: make(map[string]any),
 	}
 
 	// 注册连接

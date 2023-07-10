@@ -15,9 +15,17 @@ type WsConMaster struct {
 }
 
 type WsCon struct {
-	conId   uint64
-	conn    *websocket.Conn
-	Storage any
+	conId    uint64
+	conn     *websocket.Conn
+	property map[string]any
+}
+
+func (this *WsCon) SetProperty(key string, value any) {
+
+}
+
+func (this *WsCon) GetProperty(key string) (any, error) {
+	return nil, nil
 }
 
 func (this WsCon) ListenAndHandle(conCtx *tCommon.ConContext) {
