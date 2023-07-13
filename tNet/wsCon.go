@@ -2,10 +2,7 @@ package tNet
 
 import (
 	"github.com/gorilla/websocket"
-	"log"
-	"tzyNet/tCommon"
 	"tzyNet/tINet"
-	"tzyNet/tModel"
 )
 
 type WsConMaster struct {
@@ -15,9 +12,11 @@ type WsConMaster struct {
 }
 
 type WsCon struct {
-	conId    uint64
-	conn     *websocket.Conn
-	property map[string]any
+	conId      uint64
+	conn       *websocket.Conn
+	clientIp   string
+	clientPort uint32
+	property   map[string]any
 }
 
 func (this *WsCon) SetProperty(key string, value any) {
@@ -28,49 +27,20 @@ func (this *WsCon) GetProperty(key string) (any, error) {
 	return nil, nil
 }
 
-func (this WsCon) ListenAndHandle(conCtx *tCommon.ConContext) {
-	con := this.conn
-	for {
-		// 读取ws中的数据
-		msgType, msgBuf, err := con.ReadMessage()
-		if err != nil {
-			break
-		}
+func (this *WsCon) ReadMsg() (tINet.IMsg, error) {
+	_, p, err := this.conn.ReadMessage()
+	if err != nil {
+		return nil, err
+	}
 
-		switch msgType {
-		case websocket.TextMessage:
-			// 处理文本消息
-		case websocket.BinaryMessage:
-			// 处理二进制消息
-		case websocket.CloseMessage:
-			log.Println("Received close message from client")
-			// 处理关闭消息
-			break
-		}
+	pkgParser := Service.GetPkgParser()
+	return pkgParser.UnMarshal(p)
+}
 
-		pkg, err := Server.GetPkg(msgBuf)
-		if err != nil {
-			tCommon.Logger.SystemErrorLog("PROTO_UNMARSHAL_ERROR")
-		}
-
-		// 协程顺序执行
-		done := make(chan bool, 1)
-
-		go func() {
-			defer func() {
-				done <- true
-				if r := recover(); r != nil {
-					tCommon.Logger.SystemErrorLog("PANIC_ERROR:", r)
-				}
-			}()
-
-			conCtx.EventStorageInit(pkg.GetRouteCmd())
-			Server.MsgHandle(conCtx, pkg)
-
-			tModel.AllRedisSave(conCtx)
-		}()
-
-		<-done
+func (this *WsCon) GetRequest(msg tINet.IMsg) tINet.IRequest {
+	return &wsRequest{
+		msg: msg,
+		con: this,
 	}
 }
 
@@ -98,9 +68,4 @@ func (this *WsCon) Close() {
 // 数据输出
 func (this *WsCon) OutMsg(messageType int, data []byte) error {
 	return this.conn.WriteMessage(messageType, data)
-}
-
-// 数据读取
-func (this *WsCon) ReadMsg() (messageType int, p []byte, err error) {
-	return this.conn.ReadMessage()
 }

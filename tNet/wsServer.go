@@ -4,34 +4,35 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"net/http"
+	"reflect"
 	"sync/atomic"
 	"tzyNet/tCommon"
 	"tzyNet/tINet"
 	"tzyNet/tModel"
 )
 
-type WsServer struct {
+type WsService struct {
 	OnLineFunc func(ctx *tCommon.ConContext)
 	OffLineFun func(ctx *tCommon.ConContext)
-	SeverBase
-	RoutePathMaster
+	SevBase
+	RouteMaster
 	ConMaster *WsConMaster
-	pkgParser tINet.IPkgParser
+	pkgParser tINet.IMsgParser
 }
 
-func newWsServer(hostAddr string, sevName string) (tINet.IServer, error) {
+func newWsService(hostAddr string, sevName string) (tINet.IService, error) {
 	ip, port, err := ParseURL(hostAddr)
 	if err != nil {
 		return nil, err
 	}
 
-	Server = &WsServer{
-		SeverBase: SeverBase{
-			host: ip,
-			port: port,
-			sevName : sevName,
+	Service = &WsService{
+		SevBase: SevBase{
+			host:    ip,
+			port:    port,
+			sevName: sevName,
 		},
-		RoutePathMaster: RoutePathMaster{},
+		RouteMaster: RouteMaster{},
 		ConMaster: &WsConMaster{
 			wsUpgrader: &websocket.Upgrader{
 				CheckOrigin: func(r *http.Request) bool {
@@ -42,31 +43,28 @@ func newWsServer(hostAddr string, sevName string) (tINet.IServer, error) {
 			maxConId: 0,
 		},
 	}
-	return Server, nil
+	return Service, nil
 }
 
-// 启动服务器
-func (this *WsServer) Start() {
-	// 服务器服务注册
-	etcdRegisterService(this)
+// 启动服务
+func (this *WsService) Start() {
+	// 服务器初始化
+	this.ServerInit()
 
 	// 监听请求
 	http.HandleFunc(this.reqPath, func(respRw http.ResponseWriter, req *http.Request) {
-		con := this.ConRegister(respRw, req)
+		con, err := this.ConRegister(respRw, req)
+		if err != nil {
+
+		}
 		defer con.Close()
 
-		// 注册connectGorutine全局空间
-		conCtx := tCommon.RegisterConGlobal(con.GetConId())
-
-		// 延迟注销connectGorutine全局空间,关闭ws连接
-		defer destroyConGlobalObj(conCtx)
-
-		con.ListenAndHandle(conCtx)
+		this.ListenAndHandle(con)
 	})
 
 	// 持续监听客户端连接
 	serverAddr := fmt.Sprintf("%s:%d", this.GetHost(), this.GetPort())
-	fmt.Println("[tzyNet] Server started successfully.")
+	fmt.Println("[tzyNet] Service started successfully.")
 	fmt.Printf("[tzyNet] Listen:%s:%d%s\n", this.GetHost(), this.GetPort(), this.reqPath)
 	err := http.ListenAndServe(serverAddr, nil)
 	if err != nil {
@@ -74,70 +72,113 @@ func (this *WsServer) Start() {
 	}
 }
 
+// 服务器初始化
+func (this *WsService) ServerInit() {
+	// 服务器服务注册
+	etcdRegisterService(this)
+}
+
+func (this *WsService) ListenAndHandle(con tINet.ICon) {
+	for {
+		msg, err := con.ReadMsg()
+		if err != nil {
+
+		}
+
+		req := con.GetRequest(msg)
+		this.MsgHandle(req)
+	}
+}
+
+func (this *WsService) CallApiWithReq(req tINet.IRequest) {
+	msg := req.GetMsg()
+	cmd := msg.GetRouteCmd()
+
+	apiFunc := Service.GetFuncByrouteCmd(cmd)
+
+	fValue := reflect.ValueOf(apiFunc)
+	if fValue.Kind() == reflect.Func {
+		argValues := []reflect.Value{
+			reflect.ValueOf(req),
+		}
+
+		resultValues := fValue.Call(argValues)
+		if len(resultValues) > 0 {
+			//result := resultValues[0].Interface()
+			//fmt.Println(result) // 输出：3
+		} else {
+			// 处理错误：函数没有返回值
+		}
+	} else {
+		// 处理错误：f 不是一个函数类型
+	}
+}
+
 // 绑定数据封包函数
-func (this *WsServer) BindPkgParser(parser tINet.IPkgParser) {
+func (this *WsService) BindPkgParser(parser tINet.IMsgParser) {
 	this.pkgParser = parser
 }
 
 // 将流数据转化为封包数据
-func (this *WsServer) GetPkg(byteMsg []byte) (tINet.IPkg, error) {
-	return this.pkgParser.UnMarshal(byteMsg)
+func (this *WsService) GetPkgParser() tINet.IMsgParser {
+	return this.pkgParser
 }
 
 // 设置上线处理函数
-func (this *WsServer) SetOnLineHookFunc(fun func(ctx *tCommon.ConContext)) {
+func (this *WsService) SetOnLineHookFunc(fun func(ctx *tCommon.ConContext)) {
 	this.OnLineFunc = fun
 }
 
 // 获取上线处理函数
-func (this *WsServer) GetOnLineHookFunc() func(ctx *tCommon.ConContext) {
+func (this *WsService) GetOnLineHookFunc() func(ctx *tCommon.ConContext) {
 	return this.OnLineFunc
 }
 
 // 设置断线处理函数
-func (this *WsServer) SetOffLineHookFunc(fun func(ctx *tCommon.ConContext)) {
+func (this *WsService) SetOffLineHookFunc(fun func(ctx *tCommon.ConContext)) {
 	this.OffLineFun = fun
 }
 
 // 获取断线处理函数
-func (this *WsServer) GetOffLineHookFunc() func(ctx *tCommon.ConContext) {
+func (this *WsService) GetOffLineHookFunc() func(ctx *tCommon.ConContext) {
 	return this.OffLineFun
 }
 
 // 连接注册
-func (this *WsServer) ConRegister(respRw http.ResponseWriter, req *http.Request) tINet.ICon {
+func (this *WsService) ConRegister(respRw http.ResponseWriter, req *http.Request) (tINet.ICon, error) {
 	// 升级WebSocket通信管道
 	wsCon, err := this.ConMaster.wsUpgrader.Upgrade(respRw, req, nil)
 	if err != nil {
-		tCommon.Logger.SystemErrorLog(err)
+		return nil, err
+	}
+
+	ip, port, err := ParseURL(req.RemoteAddr)
+	if err != nil {
+		return nil, err
 	}
 
 	// 生成连接Id
 	connectId := atomic.AddUint64(&this.ConMaster.maxConId, 1)
 	con := &WsCon{
-		conId:    connectId,
-		conn:     wsCon,
-		property: make(map[string]any),
+		conId:      connectId,
+		conn:       wsCon,
+		clientIp:   ip,
+		clientPort: port,
+		property:   make(map[string]any),
 	}
 
 	// 注册连接
 	this.ConMaster.ConAdd(con)
 
-	tCommon.MpConRoutineStorage[connectId] = &tCommon.ConGlobalStorage{
-		WsCon:        nil,
-		Uid:          0,
-		Cmd:          0,
-		RoomId:       0,
-		EventStorage: nil,
-	}
+	tCommon.MpConRoutineStorage[connectId] = make(map[string]any)
 
-	return con
+	return con, nil
 }
 
 // 断开连接,退出游戏房间
 func destroyConGlobalObj(conCtx *tCommon.ConContext) {
 	// 如果在房间则离开房间，并广播
-	offLineFunc := Server.GetOffLineHookFunc()
+	offLineFunc := Service.GetOffLineHookFunc()
 	offLineFunc(conCtx)
 
 	// cache数据落地

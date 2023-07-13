@@ -11,6 +11,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"tzyNet/tCommon"
 	"tzyNet/tNet"
+	"tzyNet/tzyNet-demo/model"
 	"tzyNet/tzyNet-demo/net"
 )
 
@@ -25,8 +26,15 @@ func main() {
 		tCommon.Logger.SystemErrorLog(err)
 	}
 
+	// 注册断线处理函数
+	wsServer.SetOffLineHookFunc(model.LoseConnectFunc)
+
+	// 设置路由解析器
+	parser := tNet.NewPkgParser[*tNet.DefaultPbPkgParser]()
+	wsServer.BindPkgParser(parser)
+
 	// 路由注册
-	net.RouteRegister(wsServer)
+	net.GateRouteRegister(wsServer)
 
 	//redis数据初始化
 	rdb := redis.NewClient(&redis.Options{
