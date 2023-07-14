@@ -8,7 +8,7 @@ import (
 )
 
 type DefaultPbPkgParser struct {
-	PkgBaseObj tINet.IPkg
+	PkgBaseObj tINet.IMsg
 }
 
 type DefaultPbPkg struct {
@@ -20,7 +20,7 @@ func (this *DefaultPbPkg) SetDataSrc(src any) {
 	this.DataSrc = &iobuf
 }
 
-func (this *DefaultPbPkgParser) NewParser() tINet.IPkgParser {
+func (this *DefaultPbPkgParser) NewParser() tINet.IMsgParser {
 	return &DefaultPbPkgParser{PkgBaseObj: nil}
 }
 
@@ -37,7 +37,7 @@ func (this *DefaultPbPkgParser) Marshal(obj any) ([]byte, error) {
 	return proto.Marshal(pbObj)
 }
 
-func (this *DefaultPbPkgParser) UnMarshal(byteMsg []byte) (tINet.IPkg, error) {
+func (this *DefaultPbPkgParser) UnMarshal(byteMsg []byte) (tINet.IMsg, error) {
 	base := this.PkgBaseObj
 
 	pb := ioBuf.ClientBuf{}

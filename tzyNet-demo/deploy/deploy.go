@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"go.etcd.io/etcd/clientv3"
 	"golang.org/x/crypto/ssh"
-	"tzyNet/tCommon"
 	"log"
 	"os"
 	"time"
+	"tzyNet/tCommon"
 )
 
 // 正式服节点配置
@@ -18,17 +18,6 @@ var mpNodeTagToHost = map[string]string{}
 var nodePort = "8000"
 
 // 镜像版本
-<<<<<<< HEAD
-var imageVersion = "v1.0.0.2"
-var preVersion = "v1.0.0.1" //老版本名，用于删除老版本容器
-
-// 主机身份
-var hostUserName = "root"
-var hostPassWord = "123456"
-
-// etcd
-var etcdHost = "127.0.0.1:2381"
-=======
 var imageVersion = "v1.0.0.5"
 var preVersion = "v1.0.0.4" //老版本名，用于删除老版本容器
 
@@ -38,7 +27,6 @@ var hostPassWord = "5$vu7X9dCj&Zun9e"
 
 // etcd
 var etcdHost = "114.132.213.154:2381"
->>>>>>> origin/main
 
 func main() {
 	// 销毁旧版本
@@ -64,10 +52,7 @@ func init() {
 }
 
 func deployImage(arrNode map[string]string) {
-<<<<<<< HEAD
-=======
 	fmt.Println("docker run -d -p " + nodePort + ":80 -e  NODEMARK=" + "nodeTag" + " --name " + imageVersion + " agua1024/hdyx:" + imageVersion)
->>>>>>> origin/main
 	for nodeTag, nodeHost := range arrNode {
 		fmt.Printf("%s[%s]: %s\n", nodeTag, nodeHost, "Docker image updateing .....")
 
@@ -100,11 +85,7 @@ func deployImage(arrNode map[string]string) {
 		// 执行shell命令
 		err = session.Run("docker run -d -p " + nodePort + ":80 -e  NODEMARK=" + nodeTag + " --name " + imageVersion + " agua1024/hdyx:" + imageVersion)
 		if err != nil {
-<<<<<<< HEAD
-			log.Fatalf("Failed to run command: %s", err)
-=======
 			fmt.Println("Failed to run command: %s", err)
->>>>>>> origin/main
 		}
 
 		// 端口注册

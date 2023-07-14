@@ -2,7 +2,7 @@ package tNet
 
 import "tzyNet/tINet"
 
-func NewPkgParser[pType tINet.IPkgParser]() tINet.IPkgParser {
+func NewPkgParser[pType tINet.IMsgParser]() tINet.IMsgParser {
 	var p pType
 	parser := p.NewParser()
 	parser.SetPkgObjBase()

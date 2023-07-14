@@ -18,33 +18,33 @@ const (
 	WebSocket
 )
 
-var Server tINet.IServer = nil
+var Service tINet.IService = nil
 
-type SeverBase struct {
+type SevBase struct {
 	host    string
 	port    uint32
 	sevName string
 }
 
-func (this *SeverBase) GetHost() string {
+func (this *SevBase) GetHost() string {
 	return this.host
 }
 
-func (this *SeverBase) GetPort() uint32 {
+func (this *SevBase) GetPort() uint32 {
 	return this.port
 }
 
-func (this *SeverBase) GetSevName() string {
+func (this *SevBase) GetSevName() string {
 	return this.sevName
 }
 
-func NewService(hostAddr string, protocolType uint16, sevName string) (tINet.IServer, error) {
+func NewService(hostAddr string, protocolType uint16, sevName string) (tINet.IService, error) {
 	switch protocolType {
 	case Tcp:
 	case Http:
 		//return tServer.NewHttpServer(host, port, podName)
 	case WebSocket:
-		server, err := newWsServer(hostAddr, sevName)
+		server, err := newWsService(hostAddr, sevName)
 		if err != nil {
 			return nil, err
 		}
@@ -74,7 +74,7 @@ func ParseURL(urlStr string) (string, uint32, error) {
 }
 
 // 服务器注册etcd
-func etcdRegisterService(server tINet.IServer) {
+func etcdRegisterService(server tINet.IService) {
 	// 创建租约
 	cli := tServer.Etcd_Client
 	sevName, ip, port := server.GetSevName(), server.GetHost(), server.GetPort()
@@ -86,7 +86,7 @@ func etcdRegisterService(server tINet.IServer) {
 
 	// 注册服务
 	key := fmt.Sprintf("/services/%s/%s", sevName, ip)
-	value := fmt.Sprintf("%s:%d",ip, port)
+	value := fmt.Sprintf("%s:%d", ip, port)
 
 	_, err = cli.Put(context.Background(), key, value, clientv3.WithLease(resp.ID))
 	if err != nil {

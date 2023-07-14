@@ -1,13 +1,13 @@
 package tINet
 
-type IPkgParser interface {
-	NewParser() IPkgParser
+type IMsgParser interface {
+	NewParser() IMsgParser
 	SetPkgObjBase()
 	Marshal(obj any) ([]byte, error)
-	UnMarshal([]byte) (IPkg, error)
+	UnMarshal([]byte) (IMsg, error)
 }
 
-type IPkg interface {
+type IMsg interface {
 	GetRouteCmd() uint32
 	GetData() []byte
 	SetDataSrc(any)
