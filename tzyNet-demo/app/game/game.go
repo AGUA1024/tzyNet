@@ -11,7 +11,6 @@ import (
 	"github.com/go-redis/redis/v8"
 	"tzyNet/tCommon"
 	"tzyNet/tNet"
-	"tzyNet/tzyNet-demo/middleware"
 	"tzyNet/tzyNet-demo/model"
 	"tzyNet/tzyNet-demo/net"
 )
@@ -21,18 +20,11 @@ const (
 )
 
 func main() {
-	// 创建webSokcet网关
+	// 创建webSokcet服务
 	wsServer, err := tNet.NewGateWay("0.0.0.0:8000", tNet.WebSocket, "GateWay")
 	if err != nil {
 		tCommon.Logger.SystemErrorLog(err)
 	}
-
-	// 服务Mq实例初始化
-	middleware.SevMqInit(wsServer)
-	// 服务数据库实例初始化
-	middleware.SevDbInit(wsServer)
-	// 服务缓存中间件实例初始化
-	middleware.SevCacheInit(wsServer)
 
 	// 注册断线处理函数
 	wsServer.SetOffLineHookFunc(model.LoseConnectFunc)
@@ -42,16 +34,8 @@ func main() {
 	wsServer.BindPkgParser(parser)
 
 	// 路由注册
-	net.GateRouteRegister(wsServer)
+	net.GameRouteRegister(wsServer)
 
-	// 业务代码
-	redisFlushAll()
-
-	// 服务器启动
-	wsServer.Start()
-}
-
-func redisFlushAll(){
 	//redis数据初始化
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "123.207.49.151:6379",
@@ -67,4 +51,7 @@ func redisFlushAll(){
 	if err != nil {
 		fmt.Println("rdb.FlushAll_Err:", err)
 	}
+
+	// 服务器启动
+	wsServer.Start()
 }

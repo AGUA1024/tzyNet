@@ -4,10 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/gorilla/websocket"
 	"go.etcd.io/etcd/clientv3"
 	"net"
+	"net/http"
 	"strconv"
 	"tzyNet/tCommon"
+	"tzyNet/tIMiddleware"
 	"tzyNet/tINet"
 	"tzyNet/tServer"
 )
@@ -24,6 +27,7 @@ type SevBase struct {
 	host    string
 	port    uint32
 	sevName string
+	mq      tIMiddleware.IMq
 }
 
 func (this *SevBase) GetHost() string {
@@ -38,13 +42,21 @@ func (this *SevBase) GetSevName() string {
 	return this.sevName
 }
 
-func NewService(hostAddr string, protocolType uint16, sevName string) (tINet.IService, error) {
+func (this *SevBase) GetMq() tIMiddleware.IMq {
+	return this.mq
+}
+
+func (this *SevBase) BindMq(mq tIMiddleware.IMq) {
+	this.mq = mq
+}
+
+func NewGateWay(hostAddr string, protocolType uint16, sevName string) (tINet.IGateway, error) {
 	switch protocolType {
 	case Tcp:
 	case Http:
-		//return tServer.NewHttpServer(host, port, podName)
+		//return tServer.NewHttpGateway(host, port, podName)
 	case WebSocket:
-		server, err := newWsService(hostAddr, sevName)
+		server, err := newWsGateway(hostAddr, sevName)
 		if err != nil {
 			return nil, err
 		}
@@ -52,6 +64,32 @@ func NewService(hostAddr string, protocolType uint16, sevName string) (tINet.ISe
 	}
 
 	return nil, errors.New("invalid_sev_type")
+}
+
+func NewService(hostAddr string, sevName string) (tINet.IService, error) {
+	ip, port, err := ParseURL(hostAddr)
+	if err != nil {
+		return nil, err
+	}
+
+	Service = &WsService{
+		SevBase: SevBase{
+			host:    ip,
+			port:    port,
+			sevName: sevName,
+		},
+		RouteMaster: RouteMaster{},
+		ConMaster: &WsConMaster{
+			wsUpgrader: &websocket.Upgrader{
+				CheckOrigin: func(r *http.Request) bool {
+					return true
+				},
+			},
+			mpCon:    make(map[uint64]tINet.ICon),
+			maxConId: 0,
+		},
+	}
+	return Service, nil
 }
 
 func ParseURL(urlStr string) (string, uint32, error) {

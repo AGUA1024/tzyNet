@@ -20,7 +20,7 @@ type WsService struct {
 	pkgParser tINet.IMsgParser
 }
 
-func newWsService(hostAddr string, sevName string) (tINet.IService, error) {
+func newWsGateway(hostAddr string, sevName string) (tINet.IGateway, error) {
 	ip, port, err := ParseURL(hostAddr)
 	if err != nil {
 		return nil, err
@@ -85,8 +85,7 @@ func (this *WsService) ListenAndHandle(con tINet.ICon) {
 
 		}
 
-		req := con.GetRequest(msg)
-		this.MsgHandle(req)
+		this.MsgHandle(msg)
 	}
 }
 

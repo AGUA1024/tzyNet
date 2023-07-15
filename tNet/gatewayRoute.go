@@ -85,7 +85,6 @@ func (this *WsService) GetFuncByrouteCmd(cmd uint32) func(*tCommon.ConContext, [
 }
 
 // 路由处理
-func (this *WsService) MsgHandle(req tINet.IRequest) {
-
-	//this.CallApiWithReq(req)
+func (this *WsService) MsgHandle(msg tINet.IMsg) {
+	this.mq.PushMsg(msg.GetServName(), msg)
 }
