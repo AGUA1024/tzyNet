@@ -14,10 +14,15 @@ type IService interface {
 	// 获取数据包解析器
 	GetPkgParser() IMsgParser
 
-	// 绑定Mq实例
+	// 绑定Mq集群实例
 	BindMq(mq tIMiddleware.IMq)
-	// 获取Mq实例
-	GetMq()tIMiddleware.IMq
+	// 获取Mq集群实例
+	GetMq() tIMiddleware.IMq
+
+	// 绑定Cache集群实例
+	BindCache(cache tIMiddleware.ICache)
+	// 获取Cache集群实例
+	GetCache() tIMiddleware.ICache
 
 	// 获取当前服务属性参数
 	GetHost() string

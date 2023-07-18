@@ -15,6 +15,21 @@ type DefaultPbPkg struct {
 	DataSrc *ioBuf.ClientBuf
 }
 
+func (this *DefaultPbPkg) GetServName() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (this *DefaultPbPkg) Serialize() []byte {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (this *DefaultPbPkg) Deserialize() tINet.IMsg {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (this *DefaultPbPkg) SetDataSrc(src any) {
 	iobuf, _ := src.(ioBuf.ClientBuf)
 	this.DataSrc = &iobuf

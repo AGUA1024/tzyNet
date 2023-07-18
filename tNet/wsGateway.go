@@ -7,11 +7,11 @@ import (
 	"reflect"
 	"sync/atomic"
 	"tzyNet/tCommon"
+	"tzyNet/tIMiddleware"
 	"tzyNet/tINet"
-	"tzyNet/tModel"
 )
 
-type WsService struct {
+type WsGateway struct {
 	OnLineFunc func(ctx *tCommon.ConContext)
 	OffLineFun func(ctx *tCommon.ConContext)
 	SevBase
@@ -20,13 +20,21 @@ type WsService struct {
 	pkgParser tINet.IMsgParser
 }
 
+func (this *WsGateway) BindCache(cache tIMiddleware.ICache) {
+	this.cache = cache
+}
+
+func (this *WsGateway) GetCache() tIMiddleware.ICache {
+	return this.cache
+}
+
 func newWsGateway(hostAddr string, sevName string) (tINet.IGateway, error) {
 	ip, port, err := ParseURL(hostAddr)
 	if err != nil {
 		return nil, err
 	}
 
-	Service = &WsService{
+	Service = &WsGateway{
 		SevBase: SevBase{
 			host:    ip,
 			port:    port,
@@ -47,7 +55,7 @@ func newWsGateway(hostAddr string, sevName string) (tINet.IGateway, error) {
 }
 
 // 启动服务
-func (this *WsService) Start() {
+func (this *WsGateway) Start() {
 	// 服务器初始化
 	this.ServerInit()
 
@@ -66,6 +74,7 @@ func (this *WsService) Start() {
 	serverAddr := fmt.Sprintf("%s:%d", this.GetHost(), this.GetPort())
 	fmt.Println("[tzyNet] Service started successfully.")
 	fmt.Printf("[tzyNet] Listen:%s:%d%s\n", this.GetHost(), this.GetPort(), this.reqPath)
+
 	err := http.ListenAndServe(serverAddr, nil)
 	if err != nil {
 		tCommon.Logger.SystemErrorLog(err)
@@ -73,12 +82,12 @@ func (this *WsService) Start() {
 }
 
 // 服务器初始化
-func (this *WsService) ServerInit() {
+func (this *WsGateway) ServerInit() {
 	// 服务器服务注册
 	etcdRegisterService(this)
 }
 
-func (this *WsService) ListenAndHandle(con tINet.ICon) {
+func (this *WsGateway) ListenAndHandle(con tINet.ICon) {
 	for {
 		msg, err := con.ReadMsg()
 		if err != nil {
@@ -89,7 +98,7 @@ func (this *WsService) ListenAndHandle(con tINet.ICon) {
 	}
 }
 
-func (this *WsService) CallApiWithReq(req tINet.IRequest) {
+func (this *WsGateway) CallApiWithReq(req tINet.IRequest) {
 	msg := req.GetMsg()
 	cmd := msg.GetRouteCmd()
 
@@ -114,37 +123,37 @@ func (this *WsService) CallApiWithReq(req tINet.IRequest) {
 }
 
 // 绑定数据封包函数
-func (this *WsService) BindPkgParser(parser tINet.IMsgParser) {
+func (this *WsGateway) BindPkgParser(parser tINet.IMsgParser) {
 	this.pkgParser = parser
 }
 
 // 将流数据转化为封包数据
-func (this *WsService) GetPkgParser() tINet.IMsgParser {
+func (this *WsGateway) GetPkgParser() tINet.IMsgParser {
 	return this.pkgParser
 }
 
 // 设置上线处理函数
-func (this *WsService) SetOnLineHookFunc(fun func(ctx *tCommon.ConContext)) {
+func (this *WsGateway) SetOnLineHookFunc(fun func(ctx *tCommon.ConContext)) {
 	this.OnLineFunc = fun
 }
 
 // 获取上线处理函数
-func (this *WsService) GetOnLineHookFunc() func(ctx *tCommon.ConContext) {
+func (this *WsGateway) GetOnLineHookFunc() func(ctx *tCommon.ConContext) {
 	return this.OnLineFunc
 }
 
 // 设置断线处理函数
-func (this *WsService) SetOffLineHookFunc(fun func(ctx *tCommon.ConContext)) {
+func (this *WsGateway) SetOffLineHookFunc(fun func(ctx *tCommon.ConContext)) {
 	this.OffLineFun = fun
 }
 
 // 获取断线处理函数
-func (this *WsService) GetOffLineHookFunc() func(ctx *tCommon.ConContext) {
+func (this *WsGateway) GetOffLineHookFunc() func(ctx *tCommon.ConContext) {
 	return this.OffLineFun
 }
 
 // 连接注册
-func (this *WsService) ConRegister(respRw http.ResponseWriter, req *http.Request) (tINet.ICon, error) {
+func (this *WsGateway) ConRegister(respRw http.ResponseWriter, req *http.Request) (tINet.ICon, error) {
 	// 升级WebSocket通信管道
 	wsCon, err := this.ConMaster.wsUpgrader.Upgrade(respRw, req, nil)
 	if err != nil {
@@ -169,7 +178,7 @@ func (this *WsService) ConRegister(respRw http.ResponseWriter, req *http.Request
 	// 注册连接
 	this.ConMaster.ConAdd(con)
 
-	tCommon.MpConRoutineStorage[connectId] = make(map[string]any)
+	MpConRoutineStorage[connectId] = make(map[string]any)
 
 	return con, nil
 }
@@ -190,5 +199,5 @@ func destroyConGlobalObj(conCtx *tCommon.ConContext) {
 	conCtx.GetConGlobalObj().WsCon.Close()
 
 	// 销毁connectGorutine全局空间
-	delete(tCommon.MpConRoutineStorage, conCtx.ConnectId)
+	delete(MpConRoutineStorage, conCtx.ConnectId)
 }

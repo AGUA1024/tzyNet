@@ -29,10 +29,10 @@ func main() {
 
 	// 服务Mq实例初始化
 	middleware.SevMqInit(wsServer)
-	// 服务数据库实例初始化
-	middleware.SevDbInit(wsServer)
 	// 服务缓存中间件实例初始化
 	middleware.SevCacheInit(wsServer)
+	// 服务数据库实例初始化
+	//middleware.SevDbInit(wsServer)
 
 	// 注册断线处理函数
 	wsServer.SetOffLineHookFunc(model.LoseConnectFunc)

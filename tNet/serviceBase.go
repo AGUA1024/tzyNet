@@ -12,7 +12,7 @@ import (
 	"tzyNet/tCommon"
 	"tzyNet/tIMiddleware"
 	"tzyNet/tINet"
-	"tzyNet/tServer"
+	"tzyNet/tMiddleware/tServRegistry"
 )
 
 const (
@@ -28,6 +28,8 @@ type SevBase struct {
 	port    uint32
 	sevName string
 	mq      tIMiddleware.IMq
+	cache   tIMiddleware.ICache
+	db      tIMiddleware.IDb
 }
 
 func (this *SevBase) GetHost() string {
@@ -72,7 +74,7 @@ func NewService(hostAddr string, sevName string) (tINet.IService, error) {
 		return nil, err
 	}
 
-	Service = &WsService{
+	Service = &WsGateway{
 		SevBase: SevBase{
 			host:    ip,
 			port:    port,
@@ -114,7 +116,7 @@ func ParseURL(urlStr string) (string, uint32, error) {
 // 服务器注册etcd
 func etcdRegisterService(server tINet.IService) {
 	// 创建租约
-	cli := tServer.Etcd_Client
+	cli := tServRegistry.Etcd_Client
 	sevName, ip, port := server.GetSevName(), server.GetHost(), server.GetPort()
 
 	resp, err := cli.Grant(context.Background(), 10)
@@ -132,12 +134,12 @@ func etcdRegisterService(server tINet.IService) {
 	}
 
 	// 设置心跳，避免租约过期
-	tServer.Etcd_keepLive_ch, err = cli.KeepAlive(context.Background(), resp.ID)
+	tServRegistry.Etcd_keepLive_ch, err = cli.KeepAlive(context.Background(), resp.ID)
 	if err != nil {
 		tCommon.Logger.SystemErrorLog(err)
 	}
 	go func() {
-		for range tServer.Etcd_keepLive_ch {
+		for range tServRegistry.Etcd_keepLive_ch {
 		}
 	}()
 
