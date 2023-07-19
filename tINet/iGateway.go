@@ -7,7 +7,7 @@ type IGateway interface{
 
 	// 注册请求路径
 	RoutePath(routePath string) IServerRouteGroup
-
+	
 	// 设置上线处理函数
 	SetOnLineHookFunc(fun func(ctx *tCommon.ConContext))
 	// 执行上线处理函数

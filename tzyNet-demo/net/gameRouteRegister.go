@@ -3,12 +3,12 @@ package net
 import (
 	"tzyNet/tINet"
 	"tzyNet/tNet"
-	"tzyNet/tzyNet-demo/api"
+	"tzyNet/tzyNet-demo/app/gateWay/api"
 	"tzyNet/tzyNet-demo/model"
 )
 
 // Game服务路由组
-const(
+const (
 	route_Group_Act1 = iota
 )
 

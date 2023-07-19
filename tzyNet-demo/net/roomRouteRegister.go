@@ -3,8 +3,7 @@ package net
 import (
 	"tzyNet/tINet"
 	"tzyNet/tNet"
-	"tzyNet/tzyNet-demo/api"
-	"tzyNet/tzyNet-demo/model"
+	"tzyNet/tzyNet-demo/app/gateWay/api"
 )
 
 // Room路由组
@@ -29,9 +28,6 @@ const (
 
 // 路由注册
 func RoomRouteRegister(routeMaster tINet.IService) {
-	// 注册断线处理函数
-	routeMaster.SetOffLineHookFunc(model.LoseConnectFunc)
-
 	// 设置路由解析器
 	parser := tNet.NewPkgParser[*tNet.DefaultPbPkgParser]()
 	routeMaster.BindPkgParser(parser)

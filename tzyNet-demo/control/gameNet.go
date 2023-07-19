@@ -3,14 +3,14 @@ package control
 import (
 	"context"
 	"tzyNet/tCommon"
-	"tzyNet/tServer"
-	api "tzyNet/tzyNet-demo/api/protobuf"
+	"tzyNet/tMiddleware/tServRegistry"
+	"tzyNet/tzyNet-demo/app/gateWay/api/protobuf"
 )
 
 // 获取游戏服网关
 func GetGateWay(ctx *tCommon.ConContext, roomId uint64) *api.GetGateWay_OutObj {
 	// 发现服务
-	addrs, err := tServer.DiscoverService(tServer.Etcd_Client, "")
+	addrs, err := tServRegistry.DiscoverService(tServRegistry.Etcd_Client, "")
 	if err != nil {
 		tCommon.Logger.GameErrorLog(ctx, ERR_NO_GATEWAY, "无可用网关")
 	}
@@ -20,7 +20,7 @@ func GetGateWay(ctx *tCommon.ConContext, roomId uint64) *api.GetGateWay_OutObj {
 	host := addrs[nodeId]
 
 	// port
-	resp, err := tServer.Etcd_Client.Get(context.Background(), tServer.Etcd_sevPort_Key)
+	resp, err := tServRegistry.Etcd_Client.Get(context.Background(), tServRegistry.Etcd_sevPort_Key)
 	if err != nil {
 		tCommon.Logger.GameErrorLog(ctx, ERR_ETCD_GET_PORT, "从获取ETCD获取端口出错")
 	}

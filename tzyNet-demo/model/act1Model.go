@@ -7,7 +7,7 @@ import (
 	"tzyNet/tCommon"
 	"tzyNet/tModel"
 	"tzyNet/tNet"
-	api "tzyNet/tzyNet-demo/api/protobuf"
+	"tzyNet/tzyNet-demo/app/gateWay/api/protobuf"
 )
 
 // 游戏基础配置设置
@@ -173,7 +173,7 @@ func (this *Act1Model) NewActModel(ctx *tCommon.ConContext) ActModelInterface {
 	Save(ctx, act1Model)
 
 	curPlayerIndex := act1Model.ActInfo.CurPlayerIndex
-	if act1Model.ActInfo.PlayerList[curPlayerIndex].IsRobot{
+	if act1Model.ActInfo.PlayerList[curPlayerIndex].IsRobot {
 		act1Model.RotboToDo(curPlayerIndex)
 	}
 	return act1Model
@@ -230,7 +230,7 @@ func (act *Act1Model) PlayCard(ctx *tCommon.ConContext, cardIndex int) (uint32, 
 
 	// 不是当前出牌人或者存在事件则报错
 	if ctx.GetConGlobalObj().Uid != act1Info.PlayerList[act1Info.CurPlayerIndex].Uid || act1Info.EventPlayer != nil {
-		fmt.Println("不是当前出牌人,无法出牌,uid:",ctx.GetConGlobalObj().Uid,"curUid:",act1Info.PlayerList[act1Info.CurPlayerIndex].Uid)
+		fmt.Println("不是当前出牌人,无法出牌,uid:", ctx.GetConGlobalObj().Uid, "curUid:", act1Info.PlayerList[act1Info.CurPlayerIndex].Uid)
 		return EVENT_TYPE_ERROR, nil
 	}
 
@@ -361,7 +361,7 @@ func (act *Act1Model) PlayCard(ctx *tCommon.ConContext, cardIndex int) (uint32, 
 func (act *Act1Model) EventHandler(ctx *tCommon.ConContext, chooseIndex uint32) (uint32, []uint32) {
 	// 获取游戏信息
 	act1Info := act.ActInfo
-	fmt.Println("EventHandler,chooseIndex:",chooseIndex)
+	fmt.Println("EventHandler,chooseIndex:", chooseIndex)
 	// 事件玩家的信息
 	if act1Info.EventPlayer == nil {
 		fmt.Println("没有事件可以处理")
@@ -383,7 +383,7 @@ func (act *Act1Model) EventHandler(ctx *tCommon.ConContext, chooseIndex uint32) 
 	switch eventType {
 	case EVENT_TYPE_FORBID: // 嫁祸
 		// 非法的参数
-		player,ok := act1Info.PlayerList[chooseIndex]
+		player, ok := act1Info.PlayerList[chooseIndex]
 		if !ok || player.IsDie {
 			fmt.Println("被嫁祸的玩家已经出局了或者被指定的玩家不存在")
 			return EVENT_TYPE_ERROR, nil
@@ -398,7 +398,7 @@ func (act *Act1Model) EventHandler(ctx *tCommon.ConContext, chooseIndex uint32) 
 		act.RotboToDo(chooseIndex)
 	case EVENT_TYPE_FORBID_THWICE: // 嫁祸*2
 		// 非法的参数
-		eventPlayer,ok := act1Info.PlayerList[eventPlayerIndex]
+		eventPlayer, ok := act1Info.PlayerList[eventPlayerIndex]
 		if !ok || eventPlayer.IsDie {
 			fmt.Println("被嫁祸*2的玩家已经出局了或者被指定的玩家不存在")
 			return EVENT_TYPE_ERROR, nil
@@ -476,7 +476,7 @@ func (act *Act1Model) EventHandler(ctx *tCommon.ConContext, chooseIndex uint32) 
 			var bombIndex int
 			if len(act1Info.CardPool) == 0 {
 				bombIndex = 0
-			}else {
+			} else {
 				bombIndex = rand.Intn(len(act1Info.CardPool))
 			}
 
@@ -635,7 +635,7 @@ func nextTurn(act *Act1Model) {
 		return
 	}
 
-	fmt.Println("playerList[curIndex].BameNum:",playerlist[curIndex].BameNum)
+	fmt.Println("playerList[curIndex].BameNum:", playerlist[curIndex].BameNum)
 	var maxPlayerIndex uint32 = 0
 	for index, _ := range actInfo.PlayerList {
 		if index > maxPlayerIndex {
@@ -842,8 +842,8 @@ func (act *Act1Model) TurnTimeOut(ctx *tCommon.ConContext) (uint32, []uint32) {
 			// 删除游戏数据
 			act.DelAct(ctx)
 
-			for _,playerUid := range act1Info.Rank{
-				events = append(events,act1Info.MpUidToIndex[playerUid])
+			for _, playerUid := range act1Info.Rank {
+				events = append(events, act1Info.MpUidToIndex[playerUid])
 			}
 			return EVENT_TYPE_GAME_OVER, events
 		}

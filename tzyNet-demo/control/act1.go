@@ -3,7 +3,7 @@ package control
 import (
 	"strconv"
 	"tzyNet/tCommon"
-	api "tzyNet/tzyNet-demo/api/protobuf"
+	"tzyNet/tzyNet-demo/app/gateWay/api/protobuf"
 	"tzyNet/tzyNet-demo/model"
 )
 
@@ -53,7 +53,7 @@ func EventHandle(ctx *tCommon.ConContext, targetIndex uint32) *api.Act1Game_OutO
 	act1Model := getAct1Model(ctx)
 
 	// 权限判断
-	if act1Model.ActInfo.EventPlayer == nil{
+	if act1Model.ActInfo.EventPlayer == nil {
 		tCommon.Logger.GameErrorLog(ctx, ERR_EVENT_IS_NOT_EXIST, "act1:事件不存在，无法处理事件")
 	}
 

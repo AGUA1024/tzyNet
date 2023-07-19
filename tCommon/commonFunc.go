@@ -6,6 +6,7 @@ import (
 	"gopkg.in/yaml.v3"
 	"os"
 	"tzyNet/tNet/ioBuf"
+	"tzyNet/tzyNet-demo/config"
 )
 
 const (
@@ -38,7 +39,7 @@ func OutPutStream[T proto.Message](ctx *ConContext, obj T, errId uint32) {
 		Logger.SystemErrorLog("GET_OUT_STREAM_Marshal_ERROR", err)
 	}
 
-	err = ctx.GetConGlobalObj().WsCon.WriteMessage(BinaryMessage, outStream)
+	err = ctx.GetConGlobalObj().WsCon.WriteMessage(config.BinaryMessage, outStream)
 	if err != nil {
 		Logger.SystemErrorLog("OUT_STREAM_ERROR", err)
 	}
@@ -49,7 +50,7 @@ func GetYamlMapCfg(fileName string, index ...string) any {
 	var ret any
 
 	// 读取文件所有内容装到 []byte 中
-	cfgFile := CONFIG_PATH + `/` + fileName + ".yaml"
+	cfgFile := config.CONFIG_PATH + `/` + fileName + ".yaml"
 	bytes, err := os.ReadFile(cfgFile)
 	if err != nil {
 		Logger.SystemErrorLog("GET_YAML_CFG_ERROR:" + cfgFile)

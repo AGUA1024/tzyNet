@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"tzyNet/tCommon"
-	api "tzyNet/tzyNet-demo/api/protobuf"
+	"tzyNet/tzyNet-demo/app/gateWay/api/protobuf"
 	"tzyNet/tzyNet-demo/model"
 	"tzyNet/tzyNet-demo/sdk"
 )

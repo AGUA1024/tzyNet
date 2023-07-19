@@ -27,7 +27,6 @@ func (this *RouteMaster) BindPkgParser(parser tINet.IMsgParser) {
 
 // 将流数据转化为封包数据
 func (this *RouteMaster) GetPkg(byteMsg []byte) (tINet.IMsg, error) {
-
 	return this.pkgParser.UnMarshal(byteMsg)
 }
 
@@ -68,7 +67,7 @@ func (this *RouteCmdMaster) Route(cmd uint32, fun func(ctx *tCommon.ConContext, 
 	this.mpCmd[cmd] = fun
 }
 
-func (this *WsService) GetFuncByrouteCmd(cmd uint32) func(*tCommon.ConContext, []byte) {
+func (this *WsGateway) GetFuncByrouteCmd(cmd uint32) func(*tCommon.ConContext, []byte) {
 	highCmd := (cmd >> 16) & 0xffff
 	lowCmd := cmd & 0xffff
 	routeGroup, ok := this.routeGroup.mpRouteGroup[highCmd]
@@ -85,6 +84,6 @@ func (this *WsService) GetFuncByrouteCmd(cmd uint32) func(*tCommon.ConContext, [
 }
 
 // 路由处理
-func (this *WsService) MsgHandle(msg tINet.IMsg) {
+func (this *WsGateway) MsgHandle(msg tINet.IMsg) {
 	this.mq.PushMsg(msg.GetServName(), msg)
 }

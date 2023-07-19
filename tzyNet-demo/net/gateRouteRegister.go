@@ -3,7 +3,7 @@ package net
 import (
 	"tzyNet/tINet"
 	"tzyNet/tNet"
-	"tzyNet/tzyNet-demo/api"
+	"tzyNet/tzyNet-demo/app/gateWay/api"
 	"tzyNet/tzyNet-demo/model"
 )
 
@@ -11,7 +11,6 @@ import (
 const (
 	route_Group_Gate = iota
 )
-
 
 // 路由
 const (

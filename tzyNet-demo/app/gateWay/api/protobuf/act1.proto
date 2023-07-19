@@ -1,0 +1,64 @@
+syntax="proto3"; //版本号
+package api;  //包名
+option go_package = "./;api";
+
+// 游戏初始化
+//message Act1GameInit_InObj {
+//}
+
+// 回包
+message Act1Game_OutObj {
+  act1Info gameInfo=1;
+  uint32 eventType=2;
+  repeated uint32 eventData=3;
+}
+
+// 摸牌
+//message GetCardFromPool_InObj{
+//}
+
+// 打牌
+message PlayCard_InObj{
+  uint32 cardIndex=1;
+}
+
+// 处理事件
+message EventHandle_InObj{
+   uint32 chooseIndex=1;
+}
+
+// 超时提醒
+message TimeOut_InObj{
+  uint32 seqId=1;
+}
+
+// 基础数据结构
+message act1Info{
+  map<uint32,act1PlayerInfo> playerList=1;
+  uint32 curPlayerIndex=2;
+  repeated uint32 cardPool=3;
+  repeated uint32 discardPool=4;
+  bool direction=5;
+  act1PlayerInfo bombPlayer=7;
+  eventPlayerInfo eventPlayer=8;
+  uint32 seqId=9;
+  uint32 bombNum=10;  // 卡池内炸弹数量
+}
+
+message act1PlayerInfo{
+  uint64 uid = 1;
+  repeated uint32 cards = 2;
+  uint32 bameNum = 3;
+  bool isDie = 4;
+}
+
+message eventPlayerInfo{
+  uint32 playerIndex=1;
+  uint32 eventType=2;
+}
+
+// 获取游戏对局信息
+message GetAct1Info_OutObj {
+  act1Info gameInfo=1;
+}
+

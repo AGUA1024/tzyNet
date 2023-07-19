@@ -3,6 +3,7 @@ package tIMiddleware
 import (
 	"context"
 	"tzyNet/tINet"
+	"tzyNet/tMiddleware"
 )
 
 type IMq interface {
@@ -12,6 +13,5 @@ type IMq interface {
 }
 
 type IMqOpts interface {
-	// 配置集群主机地址
-	SetClusterHosts(hosts []string)
+	tMiddleware.OptsBase
 }

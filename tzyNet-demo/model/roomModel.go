@@ -7,7 +7,8 @@ import (
 	"tzyNet/tCommon"
 	"tzyNet/tModel"
 	"tzyNet/tNet/ioBuf"
-	api "tzyNet/tzyNet-demo/api/protobuf"
+	"tzyNet/tzyNet-demo/app/gateWay/api/protobuf"
+	"tzyNet/tzyNet-demo/config"
 	"tzyNet/tzyNet-demo/sdk"
 )
 
@@ -268,7 +269,7 @@ func MsgRoomBroadcast[T proto.Message](ctx *tCommon.ConContext, obj T) (any, err
 			continue
 		}
 
-		if err = tCommon.MpUserStorage[uid].WsCon.WriteMessage(tCommon.BinaryMessage, outStream); err != nil {
+		if err = tCommon.MpUserStorage[uid].WsCon.WriteMessage(config.BinaryMessage, outStream); err != nil {
 			continue
 		}
 	}
@@ -280,7 +281,7 @@ func MsgRoomBroadcast[T proto.Message](ctx *tCommon.ConContext, obj T) (any, err
 			continue
 		}
 
-		if err = tCommon.MpUserStorage[uid].WsCon.WriteMessage(tCommon.BinaryMessage, outStream); err != nil {
+		if err = tCommon.MpUserStorage[uid].WsCon.WriteMessage(config.BinaryMessage, outStream); err != nil {
 			continue
 		}
 	}
